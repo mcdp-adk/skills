@@ -20,12 +20,10 @@ Search the live web and X with xAI's Grok. Use it when freshness matters — sta
 
 ## Setup
 
-Read `{baseDir}/.env` before searching. This keeps authentication out of the prompt.
+The script automatically loads `{baseDir}/.env` for authentication. Do NOT read, display, or copy the contents of `.env` — it contains the API key. If `XAI_API_KEY` is missing, tell the user to get a key at https://console.x.ai and create `{baseDir}/.env` from `{baseDir}/.env.example`.
 
 - Required: `XAI_API_KEY=...`
 - Optional: `HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY`, `NO_PROXY`, custom CA bundle via `--ca-bundle`
-
-If `XAI_API_KEY` is missing, tell the user to get a key at https://console.x.ai and create `{baseDir}/.env` from `{baseDir}/.env.example`.
 
 ## How to search
 
@@ -46,14 +44,18 @@ The script exposes what the API can do, grouped into 6 parameters. Pick the comb
 | `--continue RESPONSE_ID` | Continue a previous search | none |
 | `--image-understanding` / `--video-understanding` | Analyze media in results | off |
 
+Advanced options (`--model`, `--effort`, `--max-results`, `--timeout`, `--max-retries`, `--raw`) are available — run `python3 {baseDir}/scripts/search.py --help` for details.
+
 **Time formats**: relative (`2h`, `7d`, `2w`, `yesterday`, `today`, `now`) or ISO date (`2026-07-01`). All times are UTC.
 
 **Important time fact**: X search supports strict date filtering. Web search does NOT — `--since`/`--until` for web is only a model-level hint, not a strict filter. When web recency matters, also state the time range explicitly in the query text.
 
+**Time precision**: `--since`/`--until` accept hour-level input like `2h`, but the API only accepts date-level (`YYYY-MM-DD`). So `--since 2h` becomes today's date — it's a date-level filter, not an hour-level window. For precise hour-level recency, state the exact time range in the query text (e.g. "in the past 2 hours").
+
 ### Depth: fast vs deep
 
 - `fast` (default): single-agent `grok-4.3`, quick live search. Use for most queries.
-- `deep`: multi-agent `grok-4.20-multi-agent` with 16 agents. 5-20x cost, 9 RPM limit, much slower. Only for broad, multi-source research where fast isn't enough.
+- `deep`: multi-agent `grok-4.20-multi-agent` with 16 agents. Significantly higher cost (multiple agents, each with its own token usage and tool calls), 9 requests/sec limit, much slower. Only for broad, multi-source research where fast isn't enough.
 
 Don't confuse "I want a longer answer" with "I need deep research". Deep is for breadth and cross-source synthesis, not for depth of a single-topic answer.
 
@@ -92,7 +94,7 @@ The script outputs JSON to stdout:
 ### Real-time events (breaking news, outages, announcements)
 
 ```bash
-python3 {baseDir}/scripts/search.py --source both --since "24h" "Track [EVENT]. Build a timeline ordered by when things happened. For each item, label it: confirmed (primary source or 2+ independent credible sources), reported (named credible outlet but not independently confirmed), or X-only/unconfirmed (social signal only). List both the event time and the source publication time. Do not treat X posts as fact confirmation."
+python3 {baseDir}/scripts/search.py --source both --since "24h" "Track [EVENT] in the past 24 hours. Build a timeline ordered by when things happened. For each item, label it: confirmed (primary source or 2+ independent credible sources), reported (named credible outlet but not independently confirmed), or X-only/unconfirmed (social signal only). List both the event time and the source publication time. Do not treat X posts as fact confirmation."
 ```
 
 Upgrade to `--depth deep` if sources conflict or the event spans multiple parties.
@@ -145,7 +147,7 @@ Domain whitelist supports max 5 domains.
 
 Apply these to every search result, regardless of intent:
 
-1. **Citation verification**: Only use URLs from the API's `citations` array as evidence. URLs in `citation_coverage.unmatched_text_urls` are not backed by API citations — treat them as unverified.
+1. **Citation verification**: The API's `citations` array is a candidate source list, not verified evidence. A URL appearing there doesn't mean the source supports the claim. Only treat a source as evidence after checking the page content actually supports the claim. URLs in `citation_coverage.unmatched_text_urls` are not backed by API citations — treat them as unverified.
 
 2. **Evidence tiering**: Label each source: Tier 1 (official/academic), Tier 2 (industry media), Tier 3 (social media). Don't present Tier 3 as if it were Tier 1.
 
@@ -160,8 +162,8 @@ Apply these to every search result, regardless of intent:
 - Local file search or code analysis
 - Questions where training data is sufficient and freshness doesn't matter
 - Tasks needing reliable historical data before 2023 (X recall drops significantly)
-- Scraping X at scale (rate limits: 37 RPM fast, 9 RPM deep)
-- Legal opinions, compliance certification, or formal fact adjudication (citation hallucination rate is high)
+- Scraping X at scale (rate limits: 37 requests/sec fast, 9 requests/sec deep)
+- Legal opinions, compliance certification, or formal fact adjudication (AI-generated citations may not support their attached claims)
 - Trading signals or price predictions (latency and rate limits make this unsuitable)
 
 ## Limitations
@@ -169,10 +171,10 @@ Apply these to every search result, regardless of intent:
 - Breaking news on X can be noisy — early posts often outrun reliable confirmation
 - Web search has no strict date filter — express time windows in the query text
 - Paywalled or private content is not accessible
-- Multi-agent deep research is slow (can take minutes) and expensive (5-20x cost)
+- Multi-agent deep research is slow (can take minutes) and has significantly higher cost (multiple agents, each with its own token usage and tool calls)
 - Over-filtering can hide the best evidence — start broad, then narrow
 - **Verify important citations against the source pages** — not all sources support the claims they're attached to
-- Citation hallucination rate is significant (>30% in some studies) — never present AI-generated citations as verified without checking
+- Citation hallucination rate is significant — AI-generated citations may not actually support the claims they're attached to. Always verify against source pages.
 
 ## References
 

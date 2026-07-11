@@ -1,6 +1,8 @@
 # API Reference
 
-Details for the xAI Responses API as used by this skill. Sourced from [docs.x.ai](https://docs.x.ai), July 2025.
+Details for the xAI Responses API as used by this skill. Sourced from [docs.x.ai](https://docs.x.ai), 2026-07.
+
+Key pages: /developers/models, /developers/tools/web-search, /developers/tools/x-search, /developers/tools/citations, /developers/model-capabilities/text/multi-agent
 
 ## Endpoint
 
@@ -12,7 +14,7 @@ Headers: `Authorization: Bearer <key>`, `Content-Type: application/json`
 
 ## Models
 
-| Model | Context | Input $/M | Output $/M | RPM | Use for |
+| Model | Context | Input $/M | Output $/M | Req/sec | Use for |
 |---|---|---|---|---|---|
 | `grok-4.3` (default) | 1M | $1.25 | $2.50 | 37 | Fast live search, single-agent reasoning |
 | `grok-4.20-multi-agent` | 1M | $1.25 | $2.50 | 9 | Deep research, multi-source synthesis |
@@ -30,7 +32,7 @@ Headers: `Authorization: Bearer <key>`, `Content-Type: application/json`
 - `grok-latest` — tracks xAI's latest Grok model (may change without notice)
 - Fixed date aliases (e.g. `grok-4.20-multi-agent-0309`) — never change
 
-Prefer fixed `grok-4.3` as default to avoid behavior drift.
+`grok-4.3` is a stable alias that tracks the latest 4.3 release — suitable as default, but may update when xAI publishes new versions. For absolute reproducibility, use date-pinned versions (e.g. `grok-4.20-multi-agent-0309`).
 
 ## Tools
 
@@ -129,7 +131,7 @@ Citations format in text: `[[N]](url)`
 
 Tool calls: $5.00 per 1,000 calls (web_search, x_search).
 
-Multi-agent cost: all agents' tokens are billed. 16-agent deep research can be 5-20x a single-agent call.
+Multi-agent cost: all agents' tokens are billed. 16-agent deep research costs significantly more than a single-agent call (all agents' tokens are billed).
 
 ## Common gotchas
 

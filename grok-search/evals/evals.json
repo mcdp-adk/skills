@@ -43,10 +43,10 @@
     },
     {
       "id": 5,
-      "prompt": "I'm getting 'RuntimeError: Event loop is closed' in my Python asyncio code. What causes this and how do I fix it?",
-      "expected_output": "Technical diagnosis with solution steps, linking to relevant Stack Overflow answers or GitHub issues",
+      "prompt": "Is there a known issue or recent bug report about 'RuntimeError: Event loop is closed' in Python 3.13 asyncio?",
+      "expected_output": "Recent bug reports or issues about the RuntimeError in Python 3.13 asyncio with citations",
       "expectations": [
-        "The agent searches for the exact error message",
+        "The agent searches for recent issues/bug reports",
         "The output includes specific code fixes or workarounds",
         "The response cites technical sources like Stack Overflow or Python docs"
       ]
@@ -57,6 +57,7 @@
       "expected_output": "Summary of recent Grok API announcements from official xAI accounts",
       "expectations": [
         "The agent uses --source x and --x-allow flags to filter by account",
+        "The agent uses --since to scope to recent posts",
         "The output includes X post citations from the specified accounts",
         "The response focuses on API-related announcements"
       ]
@@ -79,6 +80,34 @@
         "The agent uses --since and --until for time scoping",
         "The agent also states the time window (April 2026) in the query text",
         "The output includes citations from news sources"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "I just searched for competitive analysis of AI coding assistants. Now dive deeper into the funding and partnership aspects specifically.",
+      "expected_output": "Follow-up research that continues the previous search, focusing on funding and partnerships",
+      "expectations": [
+        "The agent uses --continue with a response_id from a previous search",
+        "The response builds on the previous context rather than starting fresh",
+        "The output focuses on funding and partnership aspects"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Search X but exclude posts from @spambot and @cryptopump",
+      "expected_output": "X search results excluding the specified accounts",
+      "expectations": [
+        "The agent uses --source x and --x-exclude flags",
+        "The specified handles are excluded from the search"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Find web results about climate policy but exclude reddit.com and quora.com",
+      "expected_output": "Web search results excluding social discussion platforms",
+      "expectations": [
+        "The agent uses --source web and --web-exclude flags",
+        "The specified domains are excluded from the search"
       ]
     }
   ]

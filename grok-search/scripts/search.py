@@ -94,7 +94,10 @@ def parse_time(value: str, name: str, now: dt.datetime) -> dt.datetime:
     if len(value) > 1 and value[-1] in "hdw" and value[:-1].isdigit():
         amount = int(value[:-1])
         unit = {"h": "hours", "d": "days", "w": "weeks"}[value[-1]]
-        return now - dt.timedelta(**{unit: amount})
+        try:
+            return now - dt.timedelta(**{unit: amount})
+        except OverflowError as exc:
+            raise SearchError("ARGUMENT_ERROR", f"{name} value is too large") from exc
     try:
         parsed = dt.datetime.fromisoformat(value.replace("Z", "+00:00"))
     except ValueError as exc:
@@ -152,7 +155,7 @@ def resolve_config(args: argparse.Namespace) -> ResolvedConfig:
         raise SearchError("ARGUMENT_ERROR", "grok-4.20-multi-agent does not support effort none")
     if model == "grok-4.3" and effort == "xhigh":
         raise SearchError("ARGUMENT_ERROR", "grok-4.3 does not support effort xhigh")
-    timeout = args.timeout if args.timeout is not None else (120 if args.depth == "deep" else 60)
+    timeout = args.timeout if args.timeout is not None else (600 if args.depth == "deep" else 60)
     if timeout <= 0:
         raise SearchError("ARGUMENT_ERROR", "--timeout must be greater than 0")
     now = dt.datetime.now(UTC)
