@@ -2,7 +2,7 @@
 
 Details for the xAI Responses API as used by this skill. Sourced from [docs.x.ai](https://docs.x.ai), 2026-07.
 
-Key pages: /developers/models, /developers/tools/web-search, /developers/tools/x-search, /developers/tools/citations, /developers/model-capabilities/text/multi-agent
+Key pages: [models](https://docs.x.ai/developers/models), [web-search](https://docs.x.ai/developers/tools/web-search), [x-search](https://docs.x.ai/developers/tools/x-search), [citations](https://docs.x.ai/developers/tools/citations), [multi-agent](https://docs.x.ai/developers/model-capabilities/text/multi-agent)
 
 ## Endpoint
 
@@ -141,4 +141,4 @@ Multi-agent cost: all agents' tokens are billed. 16-agent deep research costs si
 - `store: false` disables multi-turn
 - `enable_image_understanding` on web_search also affects x_search (side effect)
 - Multi-agent model doesn't support Chat Completions API or client-side function calling
-- `grok-latest` alias drifts — use fixed `grok-4.3` for stability
+- Use a date-pinned model (e.g. `grok-4.20-multi-agent-0309`) for absolute reproducibility.
