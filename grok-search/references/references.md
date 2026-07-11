@@ -16,9 +16,19 @@ Headers: `Authorization: Bearer <key>`, `Content-Type: application/json`
 
 | Model | Context | Input $/M | Output $/M | Req/sec | Use for |
 |---|---|---|---|---|---|
-| `grok-4.3` (default) | 1M | $1.25 | $2.50 | 37 | Fast live search, single-agent reasoning |
-| `grok-4.20-multi-agent` | 1M | $1.25 | $2.50 | 9 | Deep research, multi-source synthesis |
-| `grok-4.5` | 500K | $2.00 | $6.00 | 150 | Reasoning always on, cannot disable |
+| `grok-4.3` (skill default) | 1M | $1.25 | $2.50 | 37 | Single-agent live search |
+| `grok-4.20-multi-agent` | 1M | $1.25 | $2.50 | 9 | Beta multi-agent model |
+| `grok-4.5` | 500K | $2.00 | $6.00 | 150 | Reasoning always on; unavailable in the EU |
+
+### Skill presets
+
+| Preset | Model | effort | Agent count |
+|---|---|---|---|
+| `single` (default) | `grok-4.3` | `low` | 1 |
+| `multi-4` | `grok-4.20-multi-agent` | `low` | 4 |
+| `multi-16` | `grok-4.20-multi-agent` | `high` | 16 |
+
+Presets only select the actual model and agent count; they do not promise search scope, answer depth, or quality. `--model` and `--effort` override the preset. When an explicit model changes family without an explicit effort, this skill resets effort to `low` for known families and leaves it unset for unknown models. The Beta multi-agent model does not automatically fall back to `single` after a failure.
 
 ### Effort semantics
 
@@ -26,13 +36,17 @@ Headers: `Authorization: Bearer <key>`, `Content-Type: application/json`
 
 **grok-4.20-multi-agent**: `reasoning.effort` controls agent count: `low`/`medium` = 4 agents, `high`/`xhigh` = 16 agents. `none` not supported. Must use Responses API (not Chat Completions). No client-side function calling.
 
+**grok-4.5**: xAI's official default effort is `high`. This skill deliberately sends `low` when no explicit `--effort` is supplied, including after a cross-family model override.
+
 ### Aliases
 
 - `grok-4.3-latest` — tracks latest grok-4.3 release
-- `grok-latest` — tracks xAI's latest Grok model (may change without notice)
+- `grok-latest` — tracks xAI's latest Grok model (may change without notice); this skill treats it as an unknown family
 - Fixed date aliases (e.g. `grok-4.20-multi-agent-0309`) — never change
 
 `grok-4.3` is a stable alias that tracks the latest 4.3 release — suitable as default, but may update when xAI publishes new versions. For absolute reproducibility, use date-pinned versions (e.g. `grok-4.20-multi-agent-0309`).
+
+`grok-4-1-fast` is retired; do not select it for new requests.
 
 ## Tools
 
