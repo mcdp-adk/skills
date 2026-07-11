@@ -364,7 +364,7 @@ def parse_response(data: dict[str, Any]) -> tuple[str, list[str], bool]:
 
 
 def normalize_url(value: str) -> str:
-    value = value.strip().strip("<>").rstrip(".,;:!?)\]}\"")
+    value = value.strip().strip("<>").rstrip(".,;:!\"]}")
     try:
         parts = urllib.parse.urlsplit(value)
     except ValueError:
