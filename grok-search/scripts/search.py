@@ -120,6 +120,16 @@ def clean_handles(items: list[str]) -> list[str]:
     return [handle for item in items if (handle := item.strip().lstrip("@"))]
 
 
+def model_family(model: str) -> str:
+    if model.startswith("grok-4.20-multi-agent"):
+        return "multi-agent"
+    if model.startswith("grok-4.3") or model == "grok-latest":
+        return "grok-4.3"
+    if model.startswith("grok-4.5"):
+        return "grok-4.5"
+    return "unknown"
+
+
 def resolve_config(args: argparse.Namespace) -> ResolvedConfig:
     if args.source not in {"web", "x", "both"}:
         raise SearchError("ARGUMENT_ERROR", "--source must be web, x, or both")
@@ -151,10 +161,13 @@ def resolve_config(args: argparse.Namespace) -> ResolvedConfig:
         raise SearchError("ARGUMENT_ERROR", "--max-retries must be 0 or greater")
     preset_model, preset_effort = ("grok-4.3", None) if args.depth == "fast" else ("grok-4.20-multi-agent", "high")
     model, effort = args.model or preset_model, args.effort if args.effort is not None else preset_effort
-    if model == "grok-4.20-multi-agent" and effort == "none":
+    family = model_family(model)
+    if family == "multi-agent" and effort == "none":
         raise SearchError("ARGUMENT_ERROR", "grok-4.20-multi-agent does not support effort none")
-    if model == "grok-4.3" and effort == "xhigh":
+    if family == "grok-4.3" and effort == "xhigh":
         raise SearchError("ARGUMENT_ERROR", "grok-4.3 does not support effort xhigh")
+    if family == "grok-4.5" and effort in ("none", "xhigh"):
+        raise SearchError("ARGUMENT_ERROR", "grok-4.5 does not support effort none or xhigh")
     timeout = args.timeout if args.timeout is not None else (600 if args.depth == "deep" else 60)
     if timeout <= 0:
         raise SearchError("ARGUMENT_ERROR", "--timeout must be greater than 0")
