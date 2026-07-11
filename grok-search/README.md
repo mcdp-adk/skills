@@ -6,7 +6,7 @@ An [Agent Skills](https://agentskills.io) skill for real-time web and X (Twitter
 
 - **Web Search** — Real-time web search with domain filtering
 - **X Search** — X platform post search with date range and account filtering
-- **Deep Research** — Optional multi-agent search and synthesis (`--depth deep`, 16 agents, 5-20x cost)
+- **Deep Research** — Optional multi-agent search and synthesis (`--depth deep`, 16 agents, significantly higher cost)
 
 ## Setup
 
