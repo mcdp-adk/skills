@@ -38,7 +38,7 @@ The script exposes what the API can do, grouped into 6 parameters. Pick the comb
 | Parameter | What it controls | Default |
 |---|---|---|
 | `--source web\|x\|both` | Where to search | `both` |
-| `--depth fast\|deep` | How deep to search | `fast` |
+| `--preset single\|multi-4\|multi-16` | Select the actual model and agent count | `single` |
 | `--since` / `--until` | Time window | none |
 | `--web-allow` / `--web-exclude` / `--x-allow` / `--x-exclude` | Restrict sources | none |
 | `--continue RESPONSE_ID` | Continue a previous search | none |
@@ -52,12 +52,15 @@ Advanced options (`--model`, `--effort`, `--max-results`, `--timeout`, `--max-re
 
 **Time precision**: `--since`/`--until` accept hour-level input like `2h`, but the API only accepts date-level (`YYYY-MM-DD`). So `--since 2h` becomes the UTC date containing the resolved timestamp — it's a date-level filter, not an hour-level window. For precise hour-level recency, state the exact time range in the query text (e.g. "in the past 2 hours").
 
-### Depth: fast vs deep
+### Preset：模型与 agent 数
 
-- `fast` (default): single-agent `grok-4.3`, quick live search. Use for most queries.
-- `deep`: multi-agent `grok-4.20-multi-agent` with 16 agents. Significantly higher cost (multiple agents, each with its own token usage and tool calls), 9 requests/sec limit, much slower. Only for broad, multi-source research where fast isn't enough.
+- `single`（默认）：`grok-4.3`，`low` effort，1 个 agent。
+- `multi-4`：`grok-4.20-multi-agent`，`low` effort，4 个 agent。
+- `multi-16`：`grok-4.20-multi-agent`，`high` effort，16 个 agent。
 
-Don't confuse "I want a longer answer" with "I need deep research". Deep is for breadth and cross-source synthesis, not for depth of a single-topic answer.
+这三个 preset 只表示实际使用的模型和 agent 数，不保证搜索范围、答案深度或质量。multi-agent 是 Beta；请求失败时不会自动降级或改用 single。
+
+`--model` 和 `--effort` 可覆盖 preset。若显式 `--model` 切换到不同模型家族且未传 `--effort`，脚本会重置为该家族的 `low`；未知模型则不推断 effort。`grok-4.5` 的官方默认 effort 是 `high`，但本 skill 在未显式传 `--effort` 时使用 `low`。
 
 ### Reading the result
 
@@ -71,7 +74,14 @@ The script outputs JSON to stdout:
   "citations": ["https://example.com/source1"],
   "request_summary": {
     "source": "both",
-    "model": "grok-4.3",
+    "preset_used": "single",
+    "preset_explicit": false,
+    "preset_overridden": false,
+    "model_used": "grok-4.3",
+    "effort_sent": "low",
+    "agent_count": 1,
+    "timeout_seconds": 60,
+    "warnings": [],
     "x_time_filter": "strict",
     "model_search_hint": "non_strict",
     "web_strict_filter_available": false
@@ -97,7 +107,7 @@ The script outputs JSON to stdout:
 python3 {baseDir}/scripts/search.py --source both --since "24h" "Track [EVENT] in the past 24 hours. Build a timeline ordered by when things happened. For each item, label it: confirmed (primary source or 2+ independent credible sources), reported (named credible outlet but not independently confirmed), or X-only/unconfirmed (social signal only). List both the event time and the source publication time. Do not treat X posts as fact confirmation."
 ```
 
-Upgrade to `--depth deep` if sources conflict or the event spans multiple parties.
+如需使用 multi-agent，可选择 `--preset multi-4` 或 `--preset multi-16`。
 
 ### X sentiment and reactions
 
@@ -121,19 +131,19 @@ For technical claims, add `--web-allow arxiv.org --web-allow github.com` to rest
 python3 {baseDir}/scripts/search.py --source both "Analyze [COMPANY/PRODUCT] in [TIME RANGE]: 1. Official announcements, funding, product launches, pricing changes. 2. Actual user/developer/analyst reactions on X. 3. Competitor responses. Separate confirmed facts, speculation, and social signals."
 ```
 
-Use `--depth deep` for cross-company or cross-market analysis.
+跨公司或跨市场分析可选择 `--preset multi-4` 或 `--preset multi-16`。
 
-### Deep multi-source research
+### Multi-agent multi-source research
 
 ```bash
 # First round
-python3 {baseDir}/scripts/search.py --source both --depth deep "Research [QUESTION]. Define scope, time window, key sub-questions, and evidence standards. Give preliminary findings, conflicting evidence, and gaps that still need verification."
+python3 {baseDir}/scripts/search.py --source both --preset multi-16 "Research [QUESTION]. Define scope, time window, key sub-questions, and evidence standards. Give preliminary findings, conflicting evidence, and gaps that still need verification."
 
 # Follow-up rounds (use response_id from previous output)
-python3 {baseDir}/scripts/search.py --source both --depth deep --continue resp_abc123 "Address the gaps from the previous round: [SPECIFIC SUB-QUESTION]. Audit whether previous conclusions are supported by primary sources. Revise any conclusions with insufficient evidence."
+python3 {baseDir}/scripts/search.py --source both --preset multi-16 --continue resp_abc123 "Address the gaps from the previous round: [SPECIFIC SUB-QUESTION]. Audit whether previous conclusions are supported by primary sources. Revise any conclusions with insufficient evidence."
 ```
 
-Only use `deep` when the task is broad, has conflicting sources, or needs cross-source synthesis. Multi-turn value is auditing previous gaps, not just asking "more detail".
+Multi-turn value is auditing previous gaps, not just asking "more detail". multi-agent 是 Beta，失败时不会自动改用 single。
 
 ### Technical documentation lookup
 
@@ -162,7 +172,7 @@ Apply these to every search result, regardless of intent:
 - Local file search or code analysis
 - Questions where training data is sufficient and freshness doesn't matter
 - Historical X coverage may be incomplete — verify coverage before relying on it for older events
-- Scraping X at scale (rate limits: 37 requests/sec fast, 9 requests/sec deep)
+- Scraping X at scale (rate limits vary by model; multi-agent is limited to 9 requests/sec)
 - Legal opinions, compliance certification, or formal fact adjudication (AI-generated citations may not support their attached claims)
 - Trading signals or price predictions (latency and rate limits make this unsuitable)
 
@@ -171,7 +181,7 @@ Apply these to every search result, regardless of intent:
 - Breaking news on X can be noisy — early posts often outrun reliable confirmation
 - Web search has no strict date filter — express time windows in the query text
 - Paywalled or private content is not accessible
-- Multi-agent deep research is slow (can take minutes) and has significantly higher cost (multiple agents, each with its own token usage and tool calls)
+- Multi-agent requests can take minutes and have significantly higher cost (multiple agents, each with its own token usage and tool calls)
 - Over-filtering can hide the best evidence — start broad, then narrow
 - **Verify important citations against the source pages** — not all sources support the claims they're attached to
 - Citation hallucination rate is significant — AI-generated citations may not actually support the claims they're attached to. Always verify against source pages.
