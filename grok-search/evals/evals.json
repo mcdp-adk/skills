@@ -84,7 +84,7 @@
     },
     {
       "id": 9,
-      "prompt": "I just searched for competitive analysis of AI coding assistants. Now dive deeper into the funding and partnership aspects specifically.",
+      "prompt": "I previously searched for competitive analysis of AI coding assistants and got response_id resp_abc123. Continue that research and dive deeper into the funding and partnership aspects specifically.",
       "expected_output": "Follow-up research that continues the previous search, focusing on funding and partnerships",
       "expectations": [
         "The agent uses --continue with a response_id from a previous search",
