@@ -36,7 +36,8 @@ Timeout is computed from the final model and effort, not the preset name:
 
 | Model family | Effort | Default timeout |
 |---|---|---|
-| grok-4.3 / grok-4.5 | none / low | 60s |
+| grok-4.3 | none / low | 60s |
+| grok-4.5 | low | 60s |
 | grok-4.3 / grok-4.5 | medium / high | 120s |
 | multi-agent | low / medium (4 agents) | 300s |
 | multi-agent | high / xhigh (16 agents) | 600s |
