@@ -25,6 +25,11 @@ from typing import Any
 API_URL = "https://api.x.ai/v1/responses"
 EXIT_GENERAL, EXIT_AUTH, EXIT_ENV = 1, 2, 3
 UTC = dt.timezone.utc
+PRESETS = {
+    "single": ("grok-4.3", "low"),
+    "multi-4": ("grok-4.20-multi-agent", "low"),
+    "multi-16": ("grok-4.20-multi-agent", "high"),
+}
 
 
 class SearchError(Exception):
@@ -37,7 +42,9 @@ class SearchError(Exception):
 class ResolvedConfig:
     query: str
     source: str
-    depth: str
+    preset: str
+    preset_explicit: bool
+    preset_overridden: bool
     model: str
     effort: str | None
     since: dt.datetime | None
@@ -65,9 +72,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Search the web and X using xAI.")
     parser.add_argument("query", nargs="?", help="Query text; reads stdin when omitted.")
     parser.add_argument("--source", default="both", metavar="web|x|both")
-    parser.add_argument("--depth", default="fast", metavar="fast|deep")
-    parser.add_argument("--model", help="Override the depth preset model.")
-    parser.add_argument("--effort", choices=["none", "low", "medium", "high", "xhigh"], help="Override the depth preset effort.")
+    parser.add_argument("--preset", choices=PRESETS, metavar="single|multi-4|multi-16", help="Select a model and reasoning-effort preset (default: single).")
+    parser.add_argument("--model", help="Override the preset model.")
+    parser.add_argument("--effort", choices=["none", "low", "medium", "high", "xhigh"], help="Override the preset effort.")
     parser.add_argument("--since", help="UTC relative time or ISO date/time.")
     parser.add_argument("--until", help="UTC relative time or ISO date/time.")
     parser.add_argument("--web-allow", action="append", default=[], metavar="DOMAIN")
@@ -121,20 +128,38 @@ def clean_handles(items: list[str]) -> list[str]:
 
 
 def model_family(model: str) -> str:
-    if model.startswith("grok-4.20-multi-agent"):
+    if model == "grok-4.20-multi-agent" or model.startswith("grok-4.20-multi-agent-"):
         return "multi-agent"
-    if model.startswith("grok-4.3") or model == "grok-latest":
+    if model == "grok-4.3" or model.startswith("grok-4.3-"):
         return "grok-4.3"
-    if model.startswith("grok-4.5"):
+    if model == "grok-4.5" or model.startswith("grok-4.5-"):
         return "grok-4.5"
     return "unknown"
+
+
+def default_effort(family: str) -> str | None:
+    return "low" if family in {"grok-4.3", "grok-4.5", "multi-agent"} else None
+
+
+def default_timeout(family: str, effort: str | None) -> int:
+    if family in {"grok-4.3", "grok-4.5"}:
+        return 60 if effort in {None, "low"} else 120
+    if family == "multi-agent":
+        return 600 if effort in {"high", "xhigh"} else 300
+    return 600
+
+
+def agent_count(family: str, effort: str | None) -> int | None:
+    if family in {"grok-4.3", "grok-4.5"}:
+        return 1
+    if family == "multi-agent":
+        return 16 if effort in {"high", "xhigh"} else 4
+    return None
 
 
 def resolve_config(args: argparse.Namespace) -> ResolvedConfig:
     if args.source not in {"web", "x", "both"}:
         raise SearchError("ARGUMENT_ERROR", "--source must be web, x, or both")
-    if args.depth not in {"fast", "deep"}:
-        raise SearchError("ARGUMENT_ERROR", "--depth must be fast or deep")
     web_allow, web_exclude = clean_domains(args.web_allow), clean_domains(args.web_exclude)
     x_allow, x_exclude = clean_handles(args.x_allow), clean_handles(args.x_exclude)
     if (args.web_allow and not web_allow) or (args.web_exclude and not web_exclude):
@@ -159,16 +184,23 @@ def resolve_config(args: argparse.Namespace) -> ResolvedConfig:
         raise SearchError("ARGUMENT_ERROR", "--max-results must be greater than 0")
     if args.max_retries < 0:
         raise SearchError("ARGUMENT_ERROR", "--max-retries must be 0 or greater")
-    preset_model, preset_effort = ("grok-4.3", None) if args.depth == "fast" else ("grok-4.20-multi-agent", "high")
-    model, effort = args.model or preset_model, args.effort if args.effort is not None else preset_effort
-    family = model_family(model)
+    preset = args.preset or "single"
+    preset_model, preset_effort = PRESETS[preset]
+    model = args.model or preset_model
+    preset_family, family = model_family(preset_model), model_family(model)
+    if args.effort is not None:
+        effort = args.effort
+    elif args.model and family != preset_family:
+        effort = default_effort(family)
+    else:
+        effort = preset_effort
     if family == "multi-agent" and effort == "none":
         raise SearchError("ARGUMENT_ERROR", "grok-4.20-multi-agent does not support effort none")
     if family == "grok-4.3" and effort == "xhigh":
         raise SearchError("ARGUMENT_ERROR", "grok-4.3 does not support effort xhigh")
     if family == "grok-4.5" and effort in ("none", "xhigh"):
         raise SearchError("ARGUMENT_ERROR", "grok-4.5 does not support effort none or xhigh")
-    timeout = args.timeout if args.timeout is not None else (600 if args.depth == "deep" else 60)
+    timeout = args.timeout if args.timeout is not None else default_timeout(family, effort)
     if timeout <= 0:
         raise SearchError("ARGUMENT_ERROR", "--timeout must be greater than 0")
     now = dt.datetime.now(UTC)
@@ -179,7 +211,9 @@ def resolve_config(args: argparse.Namespace) -> ResolvedConfig:
     return ResolvedConfig(
         query=read_query(args.query),
         source=args.source,
-        depth=args.depth,
+        preset=preset,
+        preset_explicit=args.preset is not None,
+        preset_overridden=(model, effort) != (preset_model, preset_effort),
         model=model,
         effort=effort,
         since=since,
@@ -391,7 +425,15 @@ def citation_coverage(text: str, citations: list[str]) -> dict[str, list[str]]:
 
 def build_request_summary(config: ResolvedConfig) -> dict[str, Any]:
     has_time = config.since is not None or config.until is not None
-    return {"source": config.source, "requested_depth": config.depth, "model": config.model, "effort": config.effort,
+    family = model_family(config.model)
+    warnings = []
+    if family == "grok-4.5":
+        warnings.append("grok-4.5 costs more than the default grok-4.3 and is unavailable in the EU.")
+    if family == "unknown":
+        warnings.append("Unknown model family; reasoning defaults and agent count are not known.")
+    return {"source": config.source, "preset_used": config.preset, "preset_explicit": config.preset_explicit,
+            "preset_overridden": config.preset_overridden, "model_used": config.model, "effort_sent": config.effort,
+            "agent_count": agent_count(family, config.effort), "timeout_seconds": config.timeout, "warnings": warnings,
             "resolved_since": config.since.isoformat() if config.since else None,
             "resolved_until": config.until.isoformat() if config.until else None,
             "x_time_filter": "strict" if has_time and config.source in {"x", "both"} else "not_applied",
