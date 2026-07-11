@@ -376,7 +376,7 @@ def citation_coverage(text: str, citations: list[str]) -> dict[str, list[str]]:
     api_urls = list(dict.fromkeys(normalize_url(url) for url in citations))
     text_urls = [normalize_url(url) for url in citations if url in text]
     for match in re.finditer(r"(?<![\w\]\)])https?://[^\s<>\[\]]+", text):
-        url = match.group(0)
+        url = match.group(0).rstrip(".,;:!\"]}")
         while url.endswith(")") and url.count(")") > url.count("("):
             url = url[:-1]
         normalized = normalize_url(url)
