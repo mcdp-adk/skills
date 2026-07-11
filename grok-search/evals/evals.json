@@ -109,6 +109,26 @@
         "The agent uses --source web and --web-exclude flags",
         "The specified domains are excluded from the search"
       ]
+    },
+    {
+      "id": 12,
+      "prompt": "Analyze screenshots from the recent product launch that people are sharing on X — what new features are visible?",
+      "expected_output": "Analysis of visible features in X post screenshots with citations",
+      "expectations": [
+        "The agent uses --source x and --image-understanding",
+        "The response describes observable features from images",
+        "The output does not claim to verify image authenticity"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Find the official demo video for the new API on X and summarize what it actually shows",
+      "expected_output": "Summary of observable content in an official demo video with citations",
+      "expectations": [
+        "The agent uses --source x and --video-understanding",
+        "The response describes what the video shows",
+        "The output notes limitations of video analysis"
+      ]
     }
   ]
 }
