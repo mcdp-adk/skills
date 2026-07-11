@@ -143,7 +143,7 @@ python3 {baseDir}/scripts/search.py --source both --preset multi-16 "Research [Q
 python3 {baseDir}/scripts/search.py --source both --preset multi-16 --continue resp_abc123 "Address the gaps from the previous round: [SPECIFIC SUB-QUESTION]. Audit whether previous conclusions are supported by primary sources. Revise any conclusions with insufficient evidence."
 ```
 
-Multi-turn value is auditing previous gaps, not just asking "more detail". multi-agent 是 Beta，失败时不会自动改用 single。
+Multi-turn value is auditing previous gaps, not just asking "more detail". multi-agent 是 Beta，失败时不会自动改用 single。If a multi-agent request fails, report the failure to the user. Do not retry with `single` or change models without the user's approval.
 
 ### Technical documentation lookup
 
