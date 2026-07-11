@@ -6,7 +6,7 @@ An [Agent Skills](https://agentskills.io) skill for real-time web and X (Twitter
 
 - **Web Search** — Real-time web search with domain filtering
 - **X Search** — X platform post search with date range and account filtering
-- **Deep Research** — Optional multi-agent search and synthesis (`--depth deep`, 16 agents, significantly higher cost)
+- **Preset Selection** — Choose `single` (1 agent), `multi-4` (4 agents), or `multi-16` (16 agents)
 
 ## Setup
 
@@ -20,10 +20,16 @@ An [Agent Skills](https://agentskills.io) skill for real-time web and X (Twitter
 python3 scripts/search.py "what's the latest on EU AI Act enforcement"
 python3 scripts/search.py --source x --since "7d" "developer reactions to MCP"
 python3 scripts/search.py --source web --web-allow docs.python.org "asyncio TaskGroup"
-python3 scripts/search.py --depth deep "competitive analysis of AI coding assistants"
+python3 scripts/search.py --preset multi-16 "competitive analysis of AI coding assistants"
 ```
 
 Run `python3 scripts/search.py --help` for all options.
+
+## Presets and overrides
+
+`single` is the default: `grok-4.3` with `low` effort and 1 agent. `multi-4` uses `grok-4.20-multi-agent` with `low` effort and 4 agents; `multi-16` uses the same model with `high` effort and 16 agents. These presets only select the actual model and agent count; they do not promise broader search, deeper answers, or higher quality.
+
+`--model` and `--effort` override a preset. When `--model` crosses model families without an explicit `--effort`, the script resets effort to `low` for known families; unknown models get no inferred effort. xAI's official default for `grok-4.5` is `high`, while this skill sends `low` unless `--effort` is explicit. The multi-agent model is Beta and does not automatically fall back to `single` if a request fails.
 
 ## Requirements
 
