@@ -44,13 +44,13 @@ The script exposes what the API can do, grouped into 6 parameters. Pick the comb
 | `--continue RESPONSE_ID` | Continue a previous search | none |
 | `--image-understanding` / `--video-understanding` | Analyze media in results | off |
 
-Advanced options (`--model`, `--effort`, `--max-results`, `--timeout`, `--max-retries`, `--raw`) are available — run `python3 {baseDir}/scripts/search.py --help` for details.
+Advanced options (`--model`, `--effort`, `--max-results`, `--timeout`, `--max-retries`, `--env-file`, `--ca-bundle`, `--raw`) are available — run `python3 {baseDir}/scripts/search.py --help` for details.
 
 **Time formats**: relative (`2h`, `7d`, `2w`, `yesterday`, `today`, `now`) or ISO date (`2026-07-01`). All times are UTC.
 
 **Important time fact**: X search supports strict date filtering. Web search does NOT — `--since`/`--until` for web is only a model-level hint, not a strict filter. When web recency matters, also state the time range explicitly in the query text.
 
-**Time precision**: `--since`/`--until` accept hour-level input like `2h`, but the API only accepts date-level (`YYYY-MM-DD`). So `--since 2h` becomes today's date — it's a date-level filter, not an hour-level window. For precise hour-level recency, state the exact time range in the query text (e.g. "in the past 2 hours").
+**Time precision**: `--since`/`--until` accept hour-level input like `2h`, but the API only accepts date-level (`YYYY-MM-DD`). So `--since 2h` becomes the UTC date containing the resolved timestamp — it's a date-level filter, not an hour-level window. For precise hour-level recency, state the exact time range in the query text (e.g. "in the past 2 hours").
 
 ### Depth: fast vs deep
 
@@ -161,7 +161,7 @@ Apply these to every search result, regardless of intent:
 
 - Local file search or code analysis
 - Questions where training data is sufficient and freshness doesn't matter
-- Tasks needing reliable historical data before 2023 (X recall drops significantly)
+- Historical X coverage may be incomplete — verify coverage before relying on it for older events
 - Scraping X at scale (rate limits: 37 requests/sec fast, 9 requests/sec deep)
 - Legal opinions, compliance certification, or formal fact adjudication (AI-generated citations may not support their attached claims)
 - Trading signals or price predictions (latency and rate limits make this unsuitable)
