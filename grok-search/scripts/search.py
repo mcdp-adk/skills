@@ -428,7 +428,8 @@ def build_request_summary(config: ResolvedConfig) -> dict[str, Any]:
     family = model_family(config.model)
     warnings = []
     if family == "grok-4.5":
-        warnings.append("grok-4.5 costs more than the default grok-4.3 and is unavailable in the EU.")
+        warnings.append("grok-4.5 costs more than the default grok-4.3 model.")
+        warnings.append("grok-4.5 is unavailable in EU regions.")
     if family == "unknown":
         warnings.append("Unknown model family; reasoning defaults and agent count are not known.")
     return {"source": config.source, "preset_used": config.preset, "preset_explicit": config.preset_explicit,
