@@ -30,6 +30,20 @@ Headers: `Authorization: Bearer <key>`, `Content-Type: application/json`
 
 Presets only select the actual model and agent count; they do not promise search scope, answer depth, or quality. `--model` and `--effort` override the preset. When an explicit model changes family without an explicit effort, this skill resets effort to `low` for known families and leaves it unset for unknown models. The Beta multi-agent model does not automatically fall back to `single` after a failure.
 
+### Timeout
+
+Timeout is computed from the final model and effort, not the preset name:
+
+| Model family | Effort | Default timeout |
+|---|---|---|
+| grok-4.3 / grok-4.5 | none / low | 60s |
+| grok-4.3 / grok-4.5 | medium / high | 120s |
+| multi-agent | low / medium (4 agents) | 300s |
+| multi-agent | high / xhigh (16 agents) | 600s |
+| unknown | any | 600s |
+
+`--timeout` always overrides the default.
+
 ### Effort semantics
 
 **grok-4.3**: `reasoning.effort` controls reasoning depth: `none`/`low`/`medium`/`high`. `xhigh` not supported.
