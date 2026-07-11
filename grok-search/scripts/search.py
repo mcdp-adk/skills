@@ -373,11 +373,17 @@ def normalize_url(value: str) -> str:
 
 
 def citation_coverage(text: str, citations: list[str]) -> dict[str, list[str]]:
-    found = re.findall(r"\[[^\]]*\]\((https?://[^)]+)\)|(https?://[^\s<>]+)", text)
-    text_urls = list(dict.fromkeys(normalize_url(a or b) for a, b in found))
     api_urls = list(dict.fromkeys(normalize_url(url) for url in citations))
-    return {"text_urls": text_urls, "api_citation_urls": api_urls,
-            "unmatched_text_urls": [url for url in text_urls if url not in api_urls]}
+    text_urls = [url for url in api_urls if url in text]
+    for match in re.finditer(r"(?<![\w\]\)])https?://[^\s<>\[\]]+", text):
+        url = normalize_url(match.group(0))
+        if url not in text_urls:
+            text_urls.append(url)
+    return {
+        "text_urls": text_urls,
+        "api_citation_urls": api_urls,
+        "unmatched_text_urls": [url for url in text_urls if url not in api_urls],
+    }
 
 
 def build_request_summary(config: ResolvedConfig) -> dict[str, Any]:
