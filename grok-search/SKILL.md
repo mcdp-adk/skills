@@ -1,6 +1,6 @@
 ---
 name: grok-search
-compatibility: Requires uv or a verified local Python 3.10+; preflight the runner before searching.
+compatibility: Requires a Python 3.10+ runner (try python, then uv, then platform python). Stdlib-only.
 description: >
   Real-time web and X (Twitter) search powered by xAI Grok. Use this skill whenever
   the user wants current information, recent news, live data, X/Twitter posts, trending
@@ -18,6 +18,19 @@ description: >
 # Grok Search
 
 Search the live web and X with xAI's Grok. Use it when freshness matters — static model knowledge is often wrong or incomplete for breaking news, active discussions, and fast-moving facts.
+
+## How to run
+
+All examples below use `python "{baseDir}/scripts/search.py"` as the call structure — it is platform- and backend-agnostic, not a copy-paste command. Before the first search, pick a runner that actually works on this machine, in this order:
+
+1. `python` — try it first.
+2. No `python`, or it's a broken stub (e.g. the Windows Store placeholder that silently no-ops)? Use `uv`, which can fetch Python 3.10 on its own:
+   ```bash
+   uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --help
+   ```
+3. No `uv` either? Use the platform Python: `py -3` on Windows, `python3` on Linux/macOS.
+
+Verify once with `--help`, then keep that runner for the whole session. Don't install `uv`, Python, or `pip`. Don't switch runners after a real query starts — the script retries internally.
 
 ## Setup
 
@@ -54,47 +67,8 @@ After changing an environment variable, restart the terminal or agent process. R
 
 ## How to search
 
-### Runner preflight
-
-`python "{baseDir}/scripts/search.py" [args]` shows only the Python-script call structure. It is not a cross-platform runner recommendation. Before the first call in this session, choose a runner; do not assume that `uv` or Python is installed.
-
-Do not install `uv`, system Python, `pip`, or project dependencies. If `uv` already exists, it may download or cache managed Python 3.10; this does not call xAI or install project dependencies, but may use the network and disk.
-
-First run:
-
 ```bash
-uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --help
-```
-
-If it succeeds, use that prefix for this session. If it fails, use the platform fallback.
-
-On Windows, check the version before `--help`:
-
-```powershell
-python -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)"
-python "{baseDir}/scripts/search.py" --help
-```
-
-If both succeed, use `python`. Otherwise, run the same checks with `py -3`:
-
-```powershell
-py -3 -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)"
-py -3 "{baseDir}/scripts/search.py" --help
-```
-
-If both succeed, use `py -3`. On Linux/macOS, run the same version check and `--help` with `python3`; do not try bare `python`:
-
-```bash
-python3 -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)"
-python3 "{baseDir}/scripts/search.py" --help
-```
-
-If no runner succeeds, stop and report that `uv` or a verified Python 3.10+ was not found; do not install an environment. Only switch runners during preflight. After a real query starts, do not automatically rerun or switch runners for AUTH, HTTP, API, TIMEOUT, network, or uncertain errors; the script already retries internally. If argument parsing fails clearly before a request, correct the arguments and retry with the same runner.
-
-The script uses only the Python standard library; no `pip install` is required.
-
-```bash
-uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" "your query here"
+python "{baseDir}/scripts/search.py" "your query here"
 ```
 
 The script exposes what the API can do, grouped into 6 parameters. Pick the combination that matches what the user wants.
@@ -110,7 +84,7 @@ The script exposes what the API can do, grouped into 6 parameters. Pick the comb
 | `--continue RESPONSE_ID` | Continue a previous search | none |
 | `--image-understanding` / `--video-understanding` | Analyze media in results | off |
 
-Advanced options (`--model`, `--effort`, `--timeout`, `--max-retries`, `--env-file`, `--ca-bundle`, `--raw`) are available — run `uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --help` for details.
+Advanced options (`--model`, `--effort`, `--timeout`, `--max-retries`, `--env-file`, `--ca-bundle`, `--raw`) are available — run `python "{baseDir}/scripts/search.py" --help` for details.
 
 **Time formats**: relative (`2h`, `7d`, `2w`, `yesterday`, `today`, `now`) or ISO date (`2026-07-01`). All times are UTC.
 
@@ -164,14 +138,12 @@ The script outputs JSON to stdout:
 - `request_summary.x_time_filter` — tells you whether X time filtering was applied; web search has no time filter, so put its time range in the query text
 - `citation_coverage` — checks if URLs in the answer text appear in the API's citations list. This is mechanical URL matching, NOT fact verification. A URL being present doesn't mean the source supports the claim.
 
-All examples assume the `uv` preflight succeeded. If this session selected a local runner, replace only the `uv` runner prefix; keep the arguments unchanged.
-
 ## Decision guide: what does the user want?
 
 ### Real-time events (breaking news, outages, announcements)
 
 ```bash
-uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source both --since "24h" "Track [EVENT] in the past 24 hours. Build a timeline ordered by when things happened. For each item, label it: confirmed (primary source or 2+ independent credible sources), reported (named credible outlet but not independently confirmed), or X-only/unconfirmed (social signal only). List both the event time and the source publication time. Do not treat X posts as fact confirmation."
+python "{baseDir}/scripts/search.py" --source both --since "24h" "Track [EVENT] in the past 24 hours. Build a timeline ordered by when things happened. For each item, label it: confirmed (primary source or 2+ independent credible sources), reported (named credible outlet but not independently confirmed), or X-only/unconfirmed (social signal only). List both the event time and the source publication time. Do not treat X posts as fact confirmation."
 ```
 
 如需使用 multi-agent，可选择 `--preset multi-4` 或 `--preset multi-16`。
@@ -179,7 +151,7 @@ uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source both --
 ### X sentiment and reactions
 
 ```bash
-uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source x --since "7d" "Analyze X discussion about [TOPIC] in [TIME RANGE]. Give the main viewpoints, disagreements, recurring arguments, and representative posts. Describe the qualitative sentiment shape — do not give percentages without sampling methodology. Distinguish official accounts, domain experts, regular users, and low-quality/coordinated signals."
+python "{baseDir}/scripts/search.py" --source x --since "7d" "Analyze X discussion about [TOPIC] in [TIME RANGE]. Give the main viewpoints, disagreements, recurring arguments, and representative posts. Describe the qualitative sentiment shape — do not give percentages without sampling methodology. Distinguish official accounts, domain experts, regular users, and low-quality/coordinated signals."
 ```
 
 For specific accounts, add `--x-allow handle1 --x-allow handle2`.
@@ -187,7 +159,7 @@ For specific accounts, add `--x-allow handle1 --x-allow handle2`.
 ### Fact-checking and narrative comparison
 
 ```bash
-uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source both "Fact-check this claim: [CLAIM]. Find supporting, refuting, and unconfirmable evidence. For each piece: source URL, publication date, source type, and which part of the claim it supports or refutes. Separately list where X narrative and web/primary sources diverge. End with: conclusion, confidence level, unresolved questions, coverage limitations."
+python "{baseDir}/scripts/search.py" --source both "Fact-check this claim: [CLAIM]. Find supporting, refuting, and unconfirmable evidence. For each piece: source URL, publication date, source type, and which part of the claim it supports or refutes. Separately list where X narrative and web/primary sources diverge. End with: conclusion, confidence level, unresolved questions, coverage limitations."
 ```
 
 For technical claims, add `--web-allow arxiv.org --web-allow github.com` to restrict to authoritative sources.
@@ -195,7 +167,7 @@ For technical claims, add `--web-allow arxiv.org --web-allow github.com` to rest
 ### Market and competitive intelligence
 
 ```bash
-uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source both "Analyze [COMPANY/PRODUCT] in [TIME RANGE]: 1. Official announcements, funding, product launches, pricing changes. 2. Actual user/developer/analyst reactions on X. 3. Competitor responses. Separate confirmed facts, speculation, and social signals."
+python "{baseDir}/scripts/search.py" --source both "Analyze [COMPANY/PRODUCT] in [TIME RANGE]: 1. Official announcements, funding, product launches, pricing changes. 2. Actual user/developer/analyst reactions on X. 3. Competitor responses. Separate confirmed facts, speculation, and social signals."
 ```
 
 跨公司或跨市场分析可选择 `--preset multi-4` 或 `--preset multi-16`。
@@ -204,10 +176,10 @@ uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source both "A
 
 ```bash
 # First round
-uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source both --preset multi-16 "Research [QUESTION]. Define scope, time window, key sub-questions, and evidence standards. Give preliminary findings, conflicting evidence, and gaps that still need verification."
+python "{baseDir}/scripts/search.py" --source both --preset multi-16 "Research [QUESTION]. Define scope, time window, key sub-questions, and evidence standards. Give preliminary findings, conflicting evidence, and gaps that still need verification."
 
 # Follow-up rounds (use response_id from previous output)
-uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source both --preset multi-16 --continue resp_abc123 "Address the gaps from the previous round: [SPECIFIC SUB-QUESTION]. Audit whether previous conclusions are supported by primary sources. Revise any conclusions with insufficient evidence."
+python "{baseDir}/scripts/search.py" --source both --preset multi-16 --continue resp_abc123 "Address the gaps from the previous round: [SPECIFIC SUB-QUESTION]. Audit whether previous conclusions are supported by primary sources. Revise any conclusions with insufficient evidence."
 ```
 
 Multi-turn value is auditing previous gaps, not just asking "more detail". Multi-agent is Beta and does not automatically fall back to `single` on failure. If a multi-agent request fails, report the failure to the user. Do not retry with `single` or change models without the user's approval.
@@ -215,7 +187,7 @@ Multi-turn value is auditing previous gaps, not just asking "more detail". Multi
 ### Technical documentation lookup
 
 ```bash
-uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source web --web-allow docs.python.org --web-allow github.com "Find current official documentation for [TOPIC]. Prefer original docs over blog posts. Note version numbers and publication dates."
+python "{baseDir}/scripts/search.py" --source web --web-allow docs.python.org --web-allow github.com "Find current official documentation for [TOPIC]. Prefer original docs over blog posts. Note version numbers and publication dates."
 ```
 
 Domain whitelist supports max 5 domains.

@@ -16,18 +16,18 @@ An [Agent Skills](https://agentskills.io) skill for real-time web and X (Twitter
 
 ## Quick start
 
-These examples assume the `uv` preflight succeeded. Agents should choose a runner using [SKILL.md's Runner preflight](SKILL.md#runner-preflight), without assuming `uv` or Python is installed.
+These examples use `python` as the call structure. Before running, pick a runner that works on your machine — see [SKILL.md's How to run](SKILL.md#how-to-run).
 
 Run these commands from the `grok-search` directory:
 
 ```bash
-uv run --no-project --python 3.10 "scripts/search.py" "what's the latest on EU AI Act enforcement"
-uv run --no-project --python 3.10 "scripts/search.py" --source x --since "7d" "developer reactions to MCP"
-uv run --no-project --python 3.10 "scripts/search.py" --source web --web-allow docs.python.org "asyncio TaskGroup"
-uv run --no-project --python 3.10 "scripts/search.py" --preset multi-16 "competitive analysis of AI coding assistants"
+python "scripts/search.py" "what's the latest on EU AI Act enforcement"
+python "scripts/search.py" --source x --since "7d" "developer reactions to MCP"
+python "scripts/search.py" --source web --web-allow docs.python.org "asyncio TaskGroup"
+python "scripts/search.py" --preset multi-16 "competitive analysis of AI coding assistants"
 ```
 
-Run `uv run --no-project --python 3.10 "scripts/search.py" --help` for all options.
+Run `python "scripts/search.py" --help` for all options.
 
 ## Time filters and citations
 
@@ -45,10 +45,8 @@ See [SKILL.md](SKILL.md#troubleshooting) → Troubleshooting for exit codes, `EN
 
 ## Requirements
 
-- The script needs `uv` or a verified local Python 3.10+.
-- The script is stdlib-only; no `pip install` is required.
-- Follow the SKILL preflight first. When `uv` already exists, it can manage Python, but it is not a script dependency.
-- Without `uv`, use verified `python` and then `py -3` on Windows, or verified `python3` on Linux/macOS.
+- A Python 3.10+ runner. The script is stdlib-only; no `pip install` required.
+- Try `python` first. If it's missing or broken, use `uv run --no-project --python 3.10 "scripts/search.py"` (uv fetches Python itself). No `uv` either? Use `py -3` on Windows, `python3` on Linux/macOS.
 
 ## License
 
