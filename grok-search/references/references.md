@@ -94,11 +94,12 @@ Model-level live-search scope hint. NOT a strict per-tool filter.
 | Field | Type | Description |
 |---|---|---|
 | `mode` | `off`/`on`/`auto` | Whether to perform live search. This skill defaults to `on` |
-| `sources` | `["web"]`/`["x"]`/`["web","x"]` | Which sources to search. Derived from `--source` |
 | `from_date` | ISO8601 | Hint for result start date (not strict) |
 | `to_date` | ISO8601 | Hint for result end date (not strict) |
 | `max_search_results` | integer | Cap on search results |
 | `return_citations` | boolean | Return citation metadata. This skill defaults to `true` |
+
+This skill intentionally omits `search_parameters.sources`; the `tools` array is the sole source selector. If sent in the API schema, `search_parameters.sources` uses an object array such as `[{"type":"web"},{"type":"x"}]`; this skill does not send it.
 
 **Key difference**: `x_search.from_date`/`to_date` are strict tool-level filters. `search_parameters.from_date`/`to_date` are model-level hints that may not be enforced.
 
