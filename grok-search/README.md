@@ -27,6 +27,8 @@ uv run --no-project --python 3.10 "scripts/search.py" --preset multi-16 "competi
 
 Run `uv run --no-project --python 3.10 "scripts/search.py" --help` for all options.
 
+See [SKILL.md](SKILL.md#troubleshooting) → Troubleshooting for exit codes, `ENV_ERROR`, and configuration priority.
+
 ## Presets and overrides
 
 `single` is the default: `grok-4.3` with `low` effort and 1 agent. `multi-4` uses `grok-4.20-multi-agent` with `low` effort and 4 agents; `multi-16` uses the same model with `high` effort and 16 agents. These presets only select the actual model and agent count; they do not promise broader search, deeper answers, or higher quality.

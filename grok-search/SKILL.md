@@ -26,6 +26,33 @@ The script automatically loads `{baseDir}/.env` for authentication. Do NOT read,
 - Required: `XAI_API_KEY=...`
 - Optional: `HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY`, `NO_PROXY`, custom CA bundle via `--ca-bundle`
 
+## Troubleshooting
+
+### Exit codes
+
+- Exit 1: runtime errors and script-level argument validation errors, such as an invalid preset or source combination.
+- Exit 2: authentication failure (an invalid or expired API key), or argparse parsing errors such as an unknown flag.
+- Exit 3: environment configuration errors, such as a missing API key or malformed `.env` file.
+
+### ENV_ERROR: API key not found
+
+- Check that `<skill-root>/.env` exists and contains `XAI_API_KEY=your-key`.
+- Or set the `XAI_API_KEY` OS environment variable.
+- Priority is: non-empty OS environment variable > `.env` file.
+
+### `--env-file`
+
+Use `--env-file /path/to/.env` to specify a custom `.env` path.
+
+### Windows
+
+After changing an environment variable, restart the terminal or agent process. Running processes do not detect newly set variables.
+
+### Security
+
+- Do not expose API keys in logs or output.
+- The script does not echo API keys.
+
 ## How to search
 
 The script uses only the Python standard library; no `pip install` is required. Prefer `uv` as the runner:
