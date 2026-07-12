@@ -16,14 +16,16 @@ An [Agent Skills](https://agentskills.io) skill for real-time web and X (Twitter
 
 ## Quick start
 
+Run these commands from the repository root:
+
 ```bash
-python3 scripts/search.py "what's the latest on EU AI Act enforcement"
-python3 scripts/search.py --source x --since "7d" "developer reactions to MCP"
-python3 scripts/search.py --source web --web-allow docs.python.org "asyncio TaskGroup"
-python3 scripts/search.py --preset multi-16 "competitive analysis of AI coding assistants"
+uv run --no-project --python 3.10 "scripts/search.py" "what's the latest on EU AI Act enforcement"
+uv run --no-project --python 3.10 "scripts/search.py" --source x --since "7d" "developer reactions to MCP"
+uv run --no-project --python 3.10 "scripts/search.py" --source web --web-allow docs.python.org "asyncio TaskGroup"
+uv run --no-project --python 3.10 "scripts/search.py" --preset multi-16 "competitive analysis of AI coding assistants"
 ```
 
-Run `python3 scripts/search.py --help` for all options.
+Run `uv run --no-project --python 3.10 "scripts/search.py" --help` for all options.
 
 ## Presets and overrides
 
@@ -34,7 +36,11 @@ Run `python3 scripts/search.py --help` for all options.
 ## Requirements
 
 - Python 3.10+
-- No external dependencies (stdlib only)
+- The script is stdlib-only; no `pip install` is required.
+- Preferred runner: `uv run --no-project --python 3.10 "scripts/search.py" [args]`. `uv` is a recommended runner, not a script dependency.
+- Without `uv`, use a compatible Python 3.10+ interpreter:
+  - Unix/macOS: `python3 "scripts/search.py" [args]`
+  - Windows: `py -3 "scripts/search.py" [args]`
 
 ## License
 
