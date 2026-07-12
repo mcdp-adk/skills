@@ -27,6 +27,12 @@ uv run --no-project --python 3.10 "scripts/search.py" --preset multi-16 "competi
 
 Run `uv run --no-project --python 3.10 "scripts/search.py" --help` for all options.
 
+## Time filters and citations
+
+`--since` and `--until` are strict X search time filters. Web search has no date filter: put the web time range in the query text. `--source web --since ...` and `--source web --until ...` are rejected; with `--source both`, these flags constrain only X search.
+
+The JSON `citations` list is collected from `output_text.annotations` URL citations. The request uses Agent Tools as its sole source selector and does not send deprecated top-level live-search configuration, mode, citation-return, or result-limit fields.
+
 See [SKILL.md](SKILL.md#troubleshooting) → Troubleshooting for exit codes, `ENV_ERROR`, and configuration priority.
 
 ## Presets and overrides

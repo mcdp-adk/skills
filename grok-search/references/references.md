@@ -74,7 +74,7 @@ Timeout is computed from the final model and effort, not the preset name:
 | `enable_image_understanding` | Default false | Analyze images found on pages. **Side effect**: also enables image understanding for x_search in the same request |
 | `enable_image_search` | Default false | Embed image search results in response |
 
-**No date filtering.** Web search has no `from_date`/`to_date`. Use `search_parameters` as a model-level hint, and state time ranges in the query text.
+**No date filtering.** Web search has no `from_date`/`to_date`; state time ranges in the query text. The script rejects `--source web` combined with `--since` or `--until`.
 
 ### x_search
 
@@ -87,21 +87,7 @@ Timeout is computed from the final model and effort, not the preset name:
 | `enable_image_understanding` | Default false | Analyze images in posts |
 | `enable_video_understanding` | Default false, x_search only | Analyze videos in posts |
 
-## search_parameters (top-level)
-
-Model-level live-search scope hint. NOT a strict per-tool filter.
-
-| Field | Type | Description |
-|---|---|---|
-| `mode` | `off`/`on`/`auto` | Whether to perform live search. This skill defaults to `on` |
-| `from_date` | ISO8601 | Hint for result start date (not strict) |
-| `to_date` | ISO8601 | Hint for result end date (not strict) |
-| `max_search_results` | integer | Cap on search results |
-| `return_citations` | boolean | Return citation metadata. This skill defaults to `true` |
-
-This skill intentionally omits `search_parameters.sources`; the `tools` array is the sole source selector. If sent in the API schema, `search_parameters.sources` uses an object array such as `[{"type":"web"},{"type":"x"}]`; this skill does not send it.
-
-**Key difference**: `x_search.from_date`/`to_date` are strict tool-level filters. `search_parameters.from_date`/`to_date` are model-level hints that may not be enforced.
+The `tools` array is the sole source selector. This skill does not send the deprecated top-level live-search configuration object or its mode, citation-return, and result-limit fields.
 
 ## Multi-turn
 
@@ -132,7 +118,7 @@ output[].type == "message"
 
 Other output types (`reasoning`, `web_search_call`, `function_call`, etc.) are intermediate — skip them.
 
-Citations format in text: `[[N]](url)`
+Citations are collected from `output_text.annotations` entries with `type: "url_citation"`.
 
 ### usage object
 
@@ -166,7 +152,7 @@ Multi-agent cost: all agents' tokens are billed. 16-agent deep research costs si
 ## Common gotchas
 
 - Use `max_output_tokens`, not `max_tokens` (includes reasoning tokens)
-- Web search has no date filter — `search_parameters` is a hint, not a filter
+- Web search has no date filter — put its time range in the query text
 - `instructions` and `previous_response_id` are mutually exclusive
 - `store: false` disables multi-turn
 - `enable_image_understanding` on web_search also affects x_search (side effect)

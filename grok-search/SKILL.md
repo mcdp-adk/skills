@@ -80,16 +80,16 @@ The script exposes what the API can do, grouped into 6 parameters. Pick the comb
 |---|---|---|
 | `--source web\|x\|both` | Where to search | `both` |
 | `--preset single\|multi-4\|multi-16` | Select the actual model and agent count | `single` |
-| `--since` / `--until` | Time window | none |
+| `--since` / `--until` | X search time window | none |
 | `--web-allow` / `--web-exclude` / `--x-allow` / `--x-exclude` | Restrict sources | none |
 | `--continue RESPONSE_ID` | Continue a previous search | none |
 | `--image-understanding` / `--video-understanding` | Analyze media in results | off |
 
-Advanced options (`--model`, `--effort`, `--max-results`, `--timeout`, `--max-retries`, `--env-file`, `--ca-bundle`, `--raw`) are available — run `uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --help` for details.
+Advanced options (`--model`, `--effort`, `--timeout`, `--max-retries`, `--env-file`, `--ca-bundle`, `--raw`) are available — run `uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --help` for details.
 
 **Time formats**: relative (`2h`, `7d`, `2w`, `yesterday`, `today`, `now`) or ISO date (`2026-07-01`). All times are UTC.
 
-**Important time fact**: X search supports strict date filtering. Web search does NOT — `--since`/`--until` for web is only a model-level hint, not a strict filter. When web recency matters, also state the time range explicitly in the query text.
+**Important time fact**: X search supports strict date filtering. Web search does NOT support `--since`/`--until`; `--source web --since ...` is rejected. When web recency matters, state the time range explicitly in the query text. With `--source both`, the flags constrain only X search.
 
 **Time precision**: `--since`/`--until` accept hour-level input like `2h`, but the API only accepts date-level (`YYYY-MM-DD`). So `--since 2h` becomes the UTC date containing the resolved timestamp — it's a date-level filter, not an hour-level window. For precise hour-level recency, state the exact time range in the query text (e.g. "in the past 2 hours").
 
@@ -124,7 +124,6 @@ The script outputs JSON to stdout:
     "timeout_seconds": 60,
     "warnings": [],
     "x_time_filter": "strict",
-    "model_search_hint": "non_strict",
     "web_strict_filter_available": false
   },
   "citation_coverage": {
@@ -137,7 +136,7 @@ The script outputs JSON to stdout:
 ```
 
 - `response_id` — use with `--continue` for follow-up questions on the same topic
-- `request_summary` — tells you what actually happened (especially whether web time was strict or just a hint)
+- `request_summary.x_time_filter` — tells you whether X time filtering was applied; web search has no time filter, so put its time range in the query text
 - `citation_coverage` — checks if URLs in the answer text appear in the API's citations list. This is mechanical URL matching, NOT fact verification. A URL being present doesn't mean the source supports the claim.
 
 ## Decision guide: what does the user want?
@@ -198,7 +197,7 @@ Domain whitelist supports max 5 domains.
 
 Apply these to every search result, regardless of intent:
 
-1. **Citation verification**: The API's `citations` array is a candidate source list, not verified evidence. A URL appearing there doesn't mean the source supports the claim. Only treat a source as evidence after checking the page content actually supports the claim. URLs in `citation_coverage.unmatched_text_urls` are not backed by API citations — treat them as unverified.
+1. **Citation verification**: The `citations` list is collected from `output_text.annotations` and is a candidate source list, not verified evidence. A URL appearing there doesn't mean the source supports the claim. Only treat a source as evidence after checking the page content actually supports the claim. URLs in `citation_coverage.unmatched_text_urls` are not backed by API citations — treat them as unverified.
 
 2. **Evidence tiering**: Label each source: Tier 1 (official/academic), Tier 2 (industry media), Tier 3 (social media). Don't present Tier 3 as if it were Tier 1.
 
@@ -206,7 +205,7 @@ Apply these to every search result, regardless of intent:
 
 4. **Anti-bot is heuristic only**: You can ask the query to ignore duplicate text, promotional content, and low-information posts. But this is not bot detection — don't claim you've filtered bots or computed real sentiment statistics.
 
-5. **Time honesty**: X time filtering is strict. Web time is a hint only. If web recency matters, the query text must state the time range, and you should ask the model to note each web source's publication date.
+5. **Time honesty**: X time filtering is strict. Web search has no time filter. If web recency matters, the query text must state the time range, and you should ask the model to note each web source's publication date.
 
 ## When NOT to use this skill
 

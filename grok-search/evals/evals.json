@@ -77,8 +77,8 @@
       "prompt": "What technology news happened in April 2026?",
       "expected_output": "Summary of top technology news with time-relevant citations",
       "expectations": [
-        "The agent uses --since and --until for time scoping",
-        "The agent also states the time window (April 2026) in the query text",
+        "The agent uses --source both with --since and --until to constrain X search only",
+        "The agent states the time window (April 2026) in the query text to constrain web search",
         "The output includes citations from news sources"
       ]
     },
