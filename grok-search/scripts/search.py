@@ -325,7 +325,7 @@ def load_env_file(path: Path) -> dict[str, str]:
 
 
 def env_value(file_env: dict[str, str], *names: str) -> str | None:
-    for source in (file_env, os.environ):
+    for source in (os.environ, file_env):
         for name in names:
             if value := source.get(name): return value
     return None

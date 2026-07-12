@@ -1,9 +1,14 @@
 import email.message
 import importlib.util
+import io
+import json
+import os
 import pathlib
 import sys
+import tempfile
 import unittest
 import urllib.error
+from unittest import mock
 
 
 SCRIPT = pathlib.Path(__file__).resolve().parents[1] / "scripts" / "search.py"
@@ -129,6 +134,62 @@ class PresetResolutionTests(unittest.TestCase):
         with self.assertRaises(search.SearchError):
             search.execute_request(opener, "key", search.build_payload(config("--preset", "multi-4")), config("--preset", "multi-4"))
         self.assertEqual(opener.calls, 1)
+
+
+class EnvironmentConfigurationTests(unittest.TestCase):
+    def test_env_value_prefers_non_empty_os_value(self):
+        with mock.patch.dict(os.environ, {"XAI_API_KEY": "os_key"}, clear=True):
+            self.assertEqual(search.env_value({"XAI_API_KEY": "file_key"}, "XAI_API_KEY"), "os_key")
+        with mock.patch.dict(os.environ, {"XAI_API_KEY": ""}, clear=True):
+            self.assertEqual(search.env_value({"XAI_API_KEY": "file_key"}, "XAI_API_KEY"), "file_key")
+        with mock.patch.dict(os.environ, {}, clear=True):
+            self.assertEqual(search.env_value({"XAI_API_KEY": "file_key"}, "XAI_API_KEY"), "file_key")
+            self.assertIsNone(search.env_value({}, "XAI_API_KEY"))
+
+    def test_load_env_file_parses_supported_syntax(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = pathlib.Path(directory) / ".env"
+            path.write_text("# comment\n\nKEY=value\nexport EXPORTED=value\nSINGLE='value'\nDOUBLE=\"value\"\nEMPTY=\n", encoding="utf-8")
+            self.assertEqual(search.load_env_file(path), {"KEY": "value", "EXPORTED": "value", "SINGLE": "value", "DOUBLE": "value", "EMPTY": ""})
+
+    def test_load_env_file_rejects_malformed_line(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = pathlib.Path(directory) / ".env"
+            path.write_text("not a setting\n", encoding="utf-8")
+            with self.assertRaisesRegex(search.SearchError, "Invalid .env line 1") as raised:
+                search.load_env_file(path)
+            self.assertEqual(raised.exception.code, "ENV_ERROR")
+            self.assertEqual(raised.exception.exit_code, search.EXIT_ENV)
+
+    def test_default_env_file_is_anchored_to_skill_root(self):
+        self.assertEqual(search.default_env_file(), SCRIPT.parents[1] / ".env")
+
+    def test_env_file_is_read_by_main(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = pathlib.Path(directory) / ".env"
+            path.write_text("XAI_API_KEY=file_key\n", encoding="utf-8")
+            response = {"status": "completed", "output": [{"type": "message", "content": [{"type": "output_text", "text": "ok"}]}]}
+            with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(search.sys, "argv", ["search.py", "--env-file", str(path), "test query"]), mock.patch.object(search, "execute_request", return_value=response) as execute:
+                self.assertEqual(search.main(), 0)
+            self.assertEqual(execute.call_args.args[1], "file_key")
+
+    def test_missing_key_returns_env_error_without_request(self):
+        output = io.StringIO()
+        with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(search.sys, "argv", ["search.py", "test query"]), mock.patch.object(search, "execute_request") as execute, mock.patch.object(search.sys, "stdout", output):
+            self.assertEqual(search.main(), search.EXIT_ENV)
+        self.assertEqual(json.loads(output.getvalue())["error"]["code"], "ENV_ERROR")
+        execute.assert_not_called()
+
+    def test_malformed_env_file_returns_env_error(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = pathlib.Path(directory) / ".env"
+            path.write_text("not a setting\n", encoding="utf-8")
+            with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(search.sys, "argv", ["search.py", "--env-file", str(path), "test query"]):
+                self.assertEqual(search.main(), search.EXIT_ENV)
+
+    def test_proxy_alias_prefers_uppercase_within_a_source(self):
+        with mock.patch.dict(os.environ, {}, clear=True):
+            self.assertEqual(search.env_value({"HTTPS_PROXY": "upper", "https_proxy": "lower"}, "HTTPS_PROXY", "https_proxy"), "upper")
 
 
 if __name__ == "__main__":
