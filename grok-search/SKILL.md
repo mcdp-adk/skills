@@ -224,8 +224,7 @@ Apply these to every search result, regardless of intent:
 - Paywalled or private content is not accessible
 - Multi-agent requests can take minutes and have significantly higher cost (multiple agents, each with its own token usage and tool calls)
 - Over-filtering can hide the best evidence — start broad, then narrow
-- **Verify important citations against the source pages** — not all sources support the claims they're attached to
-- Citation hallucination rate is significant — AI-generated citations may not actually support the claims they're attached to. Always verify against source pages.
+- **Verify important citations against their source pages** — AI-generated citations may not support the claims attached to them.
 
 ## References
 

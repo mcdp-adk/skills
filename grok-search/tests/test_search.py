@@ -8,6 +8,7 @@ import sys
 import tempfile
 import unittest
 import urllib.error
+from contextlib import contextmanager
 from unittest import mock
 
 
@@ -22,6 +23,14 @@ SPEC.loader.exec_module(search)
 
 def config(*arguments):
     return search.resolve_config(search.build_parser().parse_args([*arguments, "test query"]))
+
+
+@contextmanager
+def capture_main_output():
+    stdout = io.StringIO()
+    stderr = io.StringIO()
+    with mock.patch.object(search.sys, "stdout", stdout), mock.patch.object(search.sys, "stderr", stderr):
+        yield stdout
 
 
 class PresetResolutionTests(unittest.TestCase):
@@ -169,15 +178,14 @@ class EnvironmentConfigurationTests(unittest.TestCase):
             path = pathlib.Path(directory) / ".env"
             path.write_text("XAI_API_KEY=file_key\n", encoding="utf-8")
             response = {"status": "completed", "output": [{"type": "message", "content": [{"type": "output_text", "text": "ok"}]}]}
-            with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(search.sys, "argv", ["search.py", "--env-file", str(path), "test query"]), mock.patch.object(search, "execute_request", return_value=response) as execute:
+            with capture_main_output(), mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(search.sys, "argv", ["search.py", "--env-file", str(path), "test query"]), mock.patch.object(search, "execute_request", return_value=response) as execute:
                 self.assertEqual(search.main(), 0)
             self.assertEqual(execute.call_args.args[1], "file_key")
 
     def test_missing_key_returns_env_error_without_request(self):
-        output = io.StringIO()
         with tempfile.TemporaryDirectory() as directory:
             missing_env = pathlib.Path(directory) / "missing.env"
-            with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(search.sys, "argv", ["search.py", "--env-file", str(missing_env), "test query"]), mock.patch.object(search, "execute_request") as execute, mock.patch.object(search.sys, "stdout", output):
+            with capture_main_output() as output, mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(search.sys, "argv", ["search.py", "--env-file", str(missing_env), "test query"]), mock.patch.object(search, "execute_request") as execute:
                 self.assertEqual(search.main(), search.EXIT_ENV)
         self.assertEqual(json.loads(output.getvalue())["error"]["code"], "ENV_ERROR")
         execute.assert_not_called()
@@ -186,7 +194,7 @@ class EnvironmentConfigurationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = pathlib.Path(directory) / ".env"
             path.write_text("not a setting\n", encoding="utf-8")
-            with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(search.sys, "argv", ["search.py", "--env-file", str(path), "test query"]):
+            with capture_main_output(), mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(search.sys, "argv", ["search.py", "--env-file", str(path), "test query"]):
                 self.assertEqual(search.main(), search.EXIT_ENV)
 
     def test_proxy_alias_prefers_uppercase_within_a_source(self):
