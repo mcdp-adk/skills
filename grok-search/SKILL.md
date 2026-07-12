@@ -1,5 +1,6 @@
 ---
 name: grok-search
+compatibility: Requires Python 3.10+. Prefers uv for automatic Python management.
 description: >
   Real-time web and X (Twitter) search powered by xAI Grok. Use this skill whenever
   the user wants current information, recent news, live data, X/Twitter posts, trending
@@ -27,9 +28,22 @@ The script automatically loads `{baseDir}/.env` for authentication. Do NOT read,
 
 ## How to search
 
+The script uses only the Python standard library; no `pip install` is required. Prefer `uv` as the runner:
+
 ```bash
-python3 {baseDir}/scripts/search.py "your query here"
+uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" "your query here"
 ```
+
+If `uv` is unavailable, use a compatible Python 3.10+ interpreter:
+
+- Unix/macOS:
+  ```bash
+  python3 "{baseDir}/scripts/search.py" "your query here"
+  ```
+- Windows:
+  ```powershell
+  py -3 "{baseDir}/scripts/search.py" "your query here"
+  ```
 
 The script exposes what the API can do, grouped into 6 parameters. Pick the combination that matches what the user wants.
 
@@ -44,7 +58,7 @@ The script exposes what the API can do, grouped into 6 parameters. Pick the comb
 | `--continue RESPONSE_ID` | Continue a previous search | none |
 | `--image-understanding` / `--video-understanding` | Analyze media in results | off |
 
-Advanced options (`--model`, `--effort`, `--max-results`, `--timeout`, `--max-retries`, `--env-file`, `--ca-bundle`, `--raw`) are available — run `python3 {baseDir}/scripts/search.py --help` for details.
+Advanced options (`--model`, `--effort`, `--max-results`, `--timeout`, `--max-retries`, `--env-file`, `--ca-bundle`, `--raw`) are available — run `uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --help` for details.
 
 **Time formats**: relative (`2h`, `7d`, `2w`, `yesterday`, `today`, `now`) or ISO date (`2026-07-01`). All times are UTC.
 
@@ -104,7 +118,7 @@ The script outputs JSON to stdout:
 ### Real-time events (breaking news, outages, announcements)
 
 ```bash
-python3 {baseDir}/scripts/search.py --source both --since "24h" "Track [EVENT] in the past 24 hours. Build a timeline ordered by when things happened. For each item, label it: confirmed (primary source or 2+ independent credible sources), reported (named credible outlet but not independently confirmed), or X-only/unconfirmed (social signal only). List both the event time and the source publication time. Do not treat X posts as fact confirmation."
+uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source both --since "24h" "Track [EVENT] in the past 24 hours. Build a timeline ordered by when things happened. For each item, label it: confirmed (primary source or 2+ independent credible sources), reported (named credible outlet but not independently confirmed), or X-only/unconfirmed (social signal only). List both the event time and the source publication time. Do not treat X posts as fact confirmation."
 ```
 
 如需使用 multi-agent，可选择 `--preset multi-4` 或 `--preset multi-16`。
@@ -112,7 +126,7 @@ python3 {baseDir}/scripts/search.py --source both --since "24h" "Track [EVENT] i
 ### X sentiment and reactions
 
 ```bash
-python3 {baseDir}/scripts/search.py --source x --since "7d" "Analyze X discussion about [TOPIC] in [TIME RANGE]. Give the main viewpoints, disagreements, recurring arguments, and representative posts. Describe the qualitative sentiment shape — do not give percentages without sampling methodology. Distinguish official accounts, domain experts, regular users, and low-quality/coordinated signals."
+uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source x --since "7d" "Analyze X discussion about [TOPIC] in [TIME RANGE]. Give the main viewpoints, disagreements, recurring arguments, and representative posts. Describe the qualitative sentiment shape — do not give percentages without sampling methodology. Distinguish official accounts, domain experts, regular users, and low-quality/coordinated signals."
 ```
 
 For specific accounts, add `--x-allow handle1 --x-allow handle2`.
@@ -120,7 +134,7 @@ For specific accounts, add `--x-allow handle1 --x-allow handle2`.
 ### Fact-checking and narrative comparison
 
 ```bash
-python3 {baseDir}/scripts/search.py --source both "Fact-check this claim: [CLAIM]. Find supporting, refuting, and unconfirmable evidence. For each piece: source URL, publication date, source type, and which part of the claim it supports or refutes. Separately list where X narrative and web/primary sources diverge. End with: conclusion, confidence level, unresolved questions, coverage limitations."
+uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source both "Fact-check this claim: [CLAIM]. Find supporting, refuting, and unconfirmable evidence. For each piece: source URL, publication date, source type, and which part of the claim it supports or refutes. Separately list where X narrative and web/primary sources diverge. End with: conclusion, confidence level, unresolved questions, coverage limitations."
 ```
 
 For technical claims, add `--web-allow arxiv.org --web-allow github.com` to restrict to authoritative sources.
@@ -128,7 +142,7 @@ For technical claims, add `--web-allow arxiv.org --web-allow github.com` to rest
 ### Market and competitive intelligence
 
 ```bash
-python3 {baseDir}/scripts/search.py --source both "Analyze [COMPANY/PRODUCT] in [TIME RANGE]: 1. Official announcements, funding, product launches, pricing changes. 2. Actual user/developer/analyst reactions on X. 3. Competitor responses. Separate confirmed facts, speculation, and social signals."
+uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source both "Analyze [COMPANY/PRODUCT] in [TIME RANGE]: 1. Official announcements, funding, product launches, pricing changes. 2. Actual user/developer/analyst reactions on X. 3. Competitor responses. Separate confirmed facts, speculation, and social signals."
 ```
 
 跨公司或跨市场分析可选择 `--preset multi-4` 或 `--preset multi-16`。
@@ -137,18 +151,18 @@ python3 {baseDir}/scripts/search.py --source both "Analyze [COMPANY/PRODUCT] in 
 
 ```bash
 # First round
-python3 {baseDir}/scripts/search.py --source both --preset multi-16 "Research [QUESTION]. Define scope, time window, key sub-questions, and evidence standards. Give preliminary findings, conflicting evidence, and gaps that still need verification."
+uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source both --preset multi-16 "Research [QUESTION]. Define scope, time window, key sub-questions, and evidence standards. Give preliminary findings, conflicting evidence, and gaps that still need verification."
 
 # Follow-up rounds (use response_id from previous output)
-python3 {baseDir}/scripts/search.py --source both --preset multi-16 --continue resp_abc123 "Address the gaps from the previous round: [SPECIFIC SUB-QUESTION]. Audit whether previous conclusions are supported by primary sources. Revise any conclusions with insufficient evidence."
+uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source both --preset multi-16 --continue resp_abc123 "Address the gaps from the previous round: [SPECIFIC SUB-QUESTION]. Audit whether previous conclusions are supported by primary sources. Revise any conclusions with insufficient evidence."
 ```
 
-Multi-turn value is auditing previous gaps, not just asking "more detail". multi-agent 是 Beta，失败时不会自动改用 single。If a multi-agent request fails, report the failure to the user. Do not retry with `single` or change models without the user's approval.
+Multi-turn value is auditing previous gaps, not just asking "more detail". Multi-agent is Beta and does not automatically fall back to `single` on failure. If a multi-agent request fails, report the failure to the user. Do not retry with `single` or change models without the user's approval.
 
 ### Technical documentation lookup
 
 ```bash
-python3 {baseDir}/scripts/search.py --source web --web-allow docs.python.org --web-allow github.com "Find current official documentation for [TOPIC]. Prefer original docs over blog posts. Note version numbers and publication dates."
+uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --source web --web-allow docs.python.org --web-allow github.com "Find current official documentation for [TOPIC]. Prefer original docs over blog posts. Note version numbers and publication dates."
 ```
 
 Domain whitelist supports max 5 domains.
