@@ -30,8 +30,8 @@ The script automatically loads `{baseDir}/.env` for authentication. Do NOT read,
 
 ### Exit codes
 
-- Exit 1: runtime errors and script-level argument validation errors, such as an invalid preset or source combination.
-- Exit 2: authentication failure (an invalid or expired API key), or argparse parsing errors such as an unknown flag.
+- Exit 1: runtime errors and script-level argument validation errors, such as using `--web-allow` with `--source x`.
+- Exit 2: authentication failure (an invalid or expired API key), or argparse parsing errors such as an unknown flag or invalid preset value.
 - Exit 3: environment configuration errors, such as a missing API key or malformed `.env` file.
 
 ### ENV_ERROR: API key not found

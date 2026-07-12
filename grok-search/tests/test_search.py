@@ -175,8 +175,10 @@ class EnvironmentConfigurationTests(unittest.TestCase):
 
     def test_missing_key_returns_env_error_without_request(self):
         output = io.StringIO()
-        with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(search.sys, "argv", ["search.py", "test query"]), mock.patch.object(search, "execute_request") as execute, mock.patch.object(search.sys, "stdout", output):
-            self.assertEqual(search.main(), search.EXIT_ENV)
+        with tempfile.TemporaryDirectory() as directory:
+            missing_env = pathlib.Path(directory) / "missing.env"
+            with mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(search.sys, "argv", ["search.py", "--env-file", str(missing_env), "test query"]), mock.patch.object(search, "execute_request") as execute, mock.patch.object(search.sys, "stdout", output):
+                self.assertEqual(search.main(), search.EXIT_ENV)
         self.assertEqual(json.loads(output.getvalue())["error"]["code"], "ENV_ERROR")
         execute.assert_not_called()
 
