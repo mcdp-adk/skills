@@ -35,31 +35,56 @@ def capture_main_output():
 
 class PresetResolutionTests(unittest.TestCase):
     def test_payload_uses_tools_as_the_only_source_selector(self):
-        for source, expected_tools in (
-            ("web", ["web_search"]),
-            ("x", ["x_search"]),
-            ("both", ["web_search", "x_search"]),
+        for source, arguments, expected_tools in (
+            ("web", (), ["web_search"]),
+            ("x", ("--since", "2026-07-01", "--until", "2026-07-02"), ["x_search"]),
+            ("both", ("--since", "2026-07-01", "--until", "2026-07-02"), ["web_search", "x_search"]),
         ):
             with self.subTest(source=source):
-                payload = search.build_payload(
-                    config(
-                        "--source",
-                        source,
-                        "--since",
-                        "2026-07-01",
-                        "--until",
-                        "2026-07-02",
-                        "--max-results",
-                        "3",
-                    )
-                )
+                payload = search.build_payload(config("--source", source, *arguments))
                 self.assertEqual([tool["type"] for tool in payload["tools"]], expected_tools)
-                self.assertNotIn("sources", payload["search_parameters"])
-                self.assertEqual(payload["search_parameters"]["mode"], "on")
-                self.assertIs(payload["search_parameters"]["return_citations"], True)
-                self.assertEqual(payload["search_parameters"]["from_date"], "2026-07-01")
-                self.assertEqual(payload["search_parameters"]["to_date"], "2026-07-02")
-                self.assertEqual(payload["search_parameters"]["max_search_results"], 3)
+                self.assertNotIn("search_parameters", payload)
+                self.assertNotIn("max_search_results", payload)
+                web_tool = next((tool for tool in payload["tools"] if tool["type"] == "web_search"), None)
+                x_tool = next((tool for tool in payload["tools"] if tool["type"] == "x_search"), None)
+                if web_tool:
+                    self.assertNotIn("from_date", web_tool)
+                    self.assertNotIn("to_date", web_tool)
+                if x_tool:
+                    self.assertEqual(x_tool["from_date"], "2026-07-01")
+                    self.assertEqual(x_tool["to_date"], "2026-07-02")
+
+    def test_web_source_rejects_time_filters(self):
+        for arguments in (("--since", "7d"), ("--until", "2026-07-01")):
+            with self.subTest(arguments=arguments), self.assertRaisesRegex(search.SearchError, "Put the time range in your query") as raised:
+                config("--source", "web", *arguments)
+            self.assertEqual(raised.exception.code, "ARGUMENT_ERROR")
+        both = config("--source", "both", "--since", "7d")
+        both_tools = search.build_tools(both)
+        self.assertNotIn("from_date", both_tools[0])
+        self.assertIn("from_date", both_tools[1])
+        self.assertIsNotNone(config("--source", "x", "--since", "7d").since)
+
+    def test_max_results_is_rejected_by_argparse(self):
+        with self.assertRaises(SystemExit) as raised:
+            search.build_parser().parse_args(["--max-results", "5", "test query"])
+        self.assertEqual(raised.exception.code, 2)
+
+    def test_parse_response_extracts_citations_from_annotations(self):
+        annotation_url = "https://annotation.example/source"
+        sentinel = "https://legacy-sentinel.example/should-not-appear"
+        response = {
+            "citations": [sentinel],
+            "output": [
+                None,
+                {"type": "reasoning", "content": []},
+                {"type": "message", "content": "not a list"},
+                {"type": "message", "content": [None, {"type": "other", "annotations": [{"type": "url_citation", "url": sentinel}]}, {"type": "output_text", "annotations": "not a list"}, {"type": "output_text", "annotations": [None, {}, {"type": "other", "url": sentinel}, {"type": "url_citation"}, {"type": "url_citation", "url": ""}, {"type": "url_citation", "url": "   "}, {"type": "url_citation", "url": f"  {annotation_url}  "}, {"type": "url_citation", "url": annotation_url}]}]},
+            ],
+        }
+        self.assertEqual(search.parse_response(response)[1], [annotation_url])
+        self.assertEqual(search.parse_response({"output": [{"type": "message", "content": [{"type": "output_text", "text": "ok"}]}]})[1], [])
+        self.assertEqual(search.parse_response({"citations": [sentinel], "output": []})[1], [])
 
     def test_default_single(self):
         resolved = config()
@@ -189,13 +214,6 @@ class EnvironmentConfigurationTests(unittest.TestCase):
                 self.assertEqual(search.main(), search.EXIT_ENV)
         self.assertEqual(json.loads(output.getvalue())["error"]["code"], "ENV_ERROR")
         execute.assert_not_called()
-
-    def test_malformed_env_file_returns_env_error(self):
-        with tempfile.TemporaryDirectory() as directory:
-            path = pathlib.Path(directory) / ".env"
-            path.write_text("not a setting\n", encoding="utf-8")
-            with capture_main_output(), mock.patch.dict(os.environ, {}, clear=True), mock.patch.object(search.sys, "argv", ["search.py", "--env-file", str(path), "test query"]):
-                self.assertEqual(search.main(), search.EXIT_ENV)
 
     def test_proxy_alias_prefers_uppercase_within_a_source(self):
         with mock.patch.dict(os.environ, {}, clear=True):

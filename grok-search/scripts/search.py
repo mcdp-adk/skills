@@ -56,7 +56,6 @@ class ResolvedConfig:
     continuation: str | None
     image_understanding: bool
     video_understanding: bool
-    max_results: int | None
     timeout: int
     max_retries: int
     env_file: Path
@@ -84,8 +83,8 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["none", "low", "medium", "high", "xhigh"],
         help="Override the preset effort.",
     )
-    parser.add_argument("--since", help="UTC relative time or ISO date/time.")
-    parser.add_argument("--until", help="UTC relative time or ISO date/time.")
+    parser.add_argument("--since", help="X search only; for web, state the time range in your query. UTC relative time or ISO date/time.")
+    parser.add_argument("--until", help="X search only; for web, state the time range in your query. UTC relative time or ISO date/time.")
     parser.add_argument("--web-allow", action="append", default=[], metavar="DOMAIN")
     parser.add_argument("--web-exclude", action="append", default=[], metavar="DOMAIN")
     parser.add_argument("--x-allow", action="append", default=[], metavar="HANDLE")
@@ -93,7 +92,6 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--continue", dest="continuation", metavar="RESPONSE_ID")
     parser.add_argument("--image-understanding", action="store_true")
     parser.add_argument("--video-understanding", action="store_true")
-    parser.add_argument("--max-results", type=int, metavar="N")
     parser.add_argument("--timeout", type=int, metavar="SEC")
     parser.add_argument("--max-retries", type=int, default=3, metavar="N")
     parser.add_argument("--env-file", default=str(default_env_file()), metavar="PATH")
@@ -174,6 +172,8 @@ def agent_count(family: str, effort: str | None) -> int | None:
 def resolve_config(args: argparse.Namespace) -> ResolvedConfig:
     if args.source not in {"web", "x", "both"}:
         raise SearchError("ARGUMENT_ERROR", "--source must be web, x, or both")
+    if args.source == "web" and (args.since or args.until):
+        raise SearchError("ARGUMENT_ERROR", "Time filters are not supported for web search. Put the time range in your query text, or use --source x or --source both.")
     web_allow, web_exclude = clean_domains(args.web_allow), clean_domains(args.web_exclude)
     x_allow, x_exclude = clean_handles(args.x_allow), clean_handles(args.x_exclude)
     if (args.web_allow and not web_allow) or (args.web_exclude and not web_exclude):
@@ -194,8 +194,6 @@ def resolve_config(args: argparse.Namespace) -> ResolvedConfig:
         raise SearchError("ARGUMENT_ERROR", "X filters require --source x or both")
     if args.video_understanding and args.source == "web":
         raise SearchError("ARGUMENT_ERROR", "--video-understanding requires --source x or both")
-    if args.max_results is not None and args.max_results <= 0:
-        raise SearchError("ARGUMENT_ERROR", "--max-results must be greater than 0")
     if args.max_retries < 0:
         raise SearchError("ARGUMENT_ERROR", "--max-retries must be 0 or greater")
     preset = args.preset or "single"
@@ -239,7 +237,6 @@ def resolve_config(args: argparse.Namespace) -> ResolvedConfig:
         continuation=args.continuation,
         image_understanding=args.image_understanding,
         video_understanding=args.video_understanding,
-        max_results=args.max_results,
         timeout=timeout,
         max_retries=args.max_retries,
         env_file=Path(args.env_file).expanduser(),
@@ -280,23 +277,11 @@ def build_tools(config: ResolvedConfig) -> list[dict[str, Any]]:
     return tools
 
 
-def build_search_parameters(config: ResolvedConfig) -> dict[str, Any]:
-    result: dict[str, Any] = {"mode": "on", "return_citations": True}
-    if config.max_results is not None:
-        result["max_search_results"] = config.max_results
-    if config.since:
-        result["from_date"] = config.since.date().isoformat()
-    if config.until:
-        result["to_date"] = config.until.date().isoformat()
-    return result
-
-
 def build_payload(config: ResolvedConfig) -> dict[str, Any]:
     payload: dict[str, Any] = {
         "model": config.model,
         "input": [{"role": "user", "content": config.query}],
         "tools": build_tools(config),
-        "search_parameters": build_search_parameters(config),
     }
     if config.effort is not None:
         payload["reasoning"] = {"effort": config.effort}
@@ -403,6 +388,7 @@ def execute_request(opener: urllib.request.OpenerDirector, api_key: str, payload
 
 def parse_response(data: dict[str, Any]) -> tuple[str, list[str], bool]:
     texts: list[str] = []
+    citations: list[str] = []
     found_message = False
     output = data.get("output")
     if isinstance(output, list):
@@ -410,10 +396,18 @@ def parse_response(data: dict[str, Any]) -> tuple[str, list[str], bool]:
             if not isinstance(item, dict) or item.get("type") != "message": continue
             found_message = True
             content = item.get("content")
-            if isinstance(content, list):
-                texts.extend(part["text"] for part in content if isinstance(part, dict) and part.get("type") == "output_text" and isinstance(part.get("text"), str))
-    raw_citations = data.get("citations")
-    citations = list(dict.fromkeys(url for url in raw_citations if isinstance(url, str) and url)) if isinstance(raw_citations, list) else []
+            if not isinstance(content, list): continue
+            for part in content:
+                if not isinstance(part, dict) or part.get("type") != "output_text": continue
+                if isinstance(part.get("text"), str):
+                    texts.append(part["text"])
+                annotations = part.get("annotations")
+                if not isinstance(annotations, list): continue
+                for annotation in annotations:
+                    if not isinstance(annotation, dict) or annotation.get("type") != "url_citation": continue
+                    url = annotation.get("url")
+                    if isinstance(url, str) and (url := url.strip()) and url not in citations:
+                        citations.append(url)
     return "\n".join(texts), citations, found_message
 
 
@@ -465,7 +459,6 @@ def build_request_summary(config: ResolvedConfig) -> dict[str, Any]:
         "resolved_since": config.since.isoformat() if config.since else None,
         "resolved_until": config.until.isoformat() if config.until else None,
         "x_time_filter": "strict" if has_time and config.source in {"x", "both"} else "not_applied",
-        "model_search_hint": "non_strict" if has_time else "not_applied",
         "web_strict_filter_available": False,
     }
 
