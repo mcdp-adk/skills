@@ -92,15 +92,15 @@ Advanced options (`--model`, `--effort`, `--timeout`, `--max-retries`, `--env-fi
 
 **Time precision**: `--since`/`--until` accept hour-level input like `2h`, but the API only accepts date-level (`YYYY-MM-DD`). So `--since 2h` becomes the UTC date containing the resolved timestamp — it's a date-level filter, not an hour-level window. For precise hour-level recency, state the exact time range in the query text (e.g. "in the past 2 hours").
 
-### Preset：模型与 agent 数
+### Preset: model and agent count
 
-- `single`（默认）：`grok-4.3`，`low` effort，1 个 agent。
-- `multi-4`：`grok-4.20-multi-agent`，`low` effort，4 个 agent。
-- `multi-16`：`grok-4.20-multi-agent`，`high` effort，16 个 agent。
+- `single` (default): `grok-4.3`, `low` effort, 1 agent.
+- `multi-4`: `grok-4.20-multi-agent`, `low` effort, 4 agents.
+- `multi-16`: `grok-4.20-multi-agent`, `high` effort, 16 agents.
 
-这三个 preset 只表示实际使用的模型和 agent 数，不保证搜索范围、答案深度或质量。multi-agent 是 Beta；请求失败时不会自动降级或改用 single。
+These presets only select the actual model and agent count; they do not promise broader search, deeper answers, or higher quality. multi-agent is Beta; on failure it does not auto-fall back to `single`.
 
-`--model` 和 `--effort` 可覆盖 preset。若显式 `--model` 切换到不同模型家族且未传 `--effort`，脚本会重置为该家族的 `low`；未知模型则不推断 effort。`grok-4.5` 的官方默认 effort 是 `high`，但本 skill 在未显式传 `--effort` 时使用 `low`。
+`--model` and `--effort` override a preset. If `--model` switches to a different model family without `--effort`, the script resets effort to `low` for known families; unknown models get no inferred effort. xAI's official default for `grok-4.5` is `high`, but this skill sends `low` unless `--effort` is explicit.
 
 ### Reading the result
 
@@ -146,7 +146,7 @@ The script outputs JSON to stdout:
 python "{baseDir}/scripts/search.py" --source both --since "24h" "Track [EVENT] in the past 24 hours. Build a timeline ordered by when things happened. For each item, label it: confirmed (primary source or 2+ independent credible sources), reported (named credible outlet but not independently confirmed), or X-only/unconfirmed (social signal only). List both the event time and the source publication time. Do not treat X posts as fact confirmation."
 ```
 
-如需使用 multi-agent，可选择 `--preset multi-4` 或 `--preset multi-16`。
+For multi-agent, choose `--preset multi-4` or `--preset multi-16`.
 
 ### X sentiment and reactions
 
@@ -170,7 +170,7 @@ For technical claims, add `--web-allow arxiv.org --web-allow github.com` to rest
 python "{baseDir}/scripts/search.py" --source both "Analyze [COMPANY/PRODUCT] in [TIME RANGE]: 1. Official announcements, funding, product launches, pricing changes. 2. Actual user/developer/analyst reactions on X. 3. Competitor responses. Separate confirmed facts, speculation, and social signals."
 ```
 
-跨公司或跨市场分析可选择 `--preset multi-4` 或 `--preset multi-16`。
+For cross-company or cross-market analysis, choose `--preset multi-4` or `--preset multi-16`.
 
 ### Multi-agent multi-source research
 
