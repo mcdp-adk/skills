@@ -1,6 +1,6 @@
 ---
 name: grok-search
-compatibility: Requires Python 3.10+. Prefers uv for automatic Python management.
+compatibility: Requires uv or a verified local Python 3.10+; preflight the runner before searching.
 description: >
   Real-time web and X (Twitter) search powered by xAI Grok. Use this skill whenever
   the user wants current information, recent news, live data, X/Twitter posts, trending
@@ -21,7 +21,7 @@ Search the live web and X with xAI's Grok. Use it when freshness matters — sta
 
 ## Setup
 
-The script automatically loads `{baseDir}/.env` for authentication. Do NOT read, display, or copy the contents of `.env` — it contains the API key. If `XAI_API_KEY` is missing, tell the user to get a key at https://console.x.ai and create `{baseDir}/.env` from `{baseDir}/.env.example`.
+The script automatically loads `{baseDir}/.env` for authentication. Do NOT read, display, copy, or parse `.env`; the agent must leave it to the script. If the key is missing, follow the script's `ENV_ERROR` guidance and tell the user to configure it.
 
 - Required: `XAI_API_KEY=...`
 - Optional: `HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY`, `NO_PROXY`, custom CA bundle via `--ca-bundle`
@@ -36,8 +36,7 @@ The script automatically loads `{baseDir}/.env` for authentication. Do NOT read,
 
 ### ENV_ERROR: API key not found
 
-- Check that `<skill-root>/.env` exists and contains `XAI_API_KEY=your-key`.
-- Or set the `XAI_API_KEY` OS environment variable.
+- Tell the user to get a key at https://console.x.ai and configure `XAI_API_KEY` in `<skill-root>/.env` using `.env.example`, or set the `XAI_API_KEY` OS environment variable.
 - Priority is: non-empty OS environment variable > `.env` file.
 
 ### `--env-file`
@@ -55,22 +54,48 @@ After changing an environment variable, restart the terminal or agent process. R
 
 ## How to search
 
-The script uses only the Python standard library; no `pip install` is required. Prefer `uv` as the runner:
+### Runner preflight
+
+`python "{baseDir}/scripts/search.py" [args]` shows only the Python-script call structure. It is not a cross-platform runner recommendation. Before the first call in this session, choose a runner; do not assume that `uv` or Python is installed.
+
+Do not install `uv`, system Python, `pip`, or project dependencies. If `uv` already exists, it may download or cache managed Python 3.10; this does not call xAI or install project dependencies, but may use the network and disk.
+
+First run:
+
+```bash
+uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --help
+```
+
+If it succeeds, use that prefix for this session. If it fails, use the platform fallback.
+
+On Windows, check the version before `--help`:
+
+```powershell
+python -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)"
+python "{baseDir}/scripts/search.py" --help
+```
+
+If both succeed, use `python`. Otherwise, run the same checks with `py -3`:
+
+```powershell
+py -3 -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)"
+py -3 "{baseDir}/scripts/search.py" --help
+```
+
+If both succeed, use `py -3`. On Linux/macOS, run the same version check and `--help` with `python3`; do not try bare `python`:
+
+```bash
+python3 -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)"
+python3 "{baseDir}/scripts/search.py" --help
+```
+
+If no runner succeeds, stop and report that `uv` or a verified Python 3.10+ was not found; do not install an environment. Only switch runners during preflight. After a real query starts, do not automatically rerun or switch runners for AUTH, HTTP, API, TIMEOUT, network, or uncertain errors; the script already retries internally. If argument parsing fails clearly before a request, correct the arguments and retry with the same runner.
+
+The script uses only the Python standard library; no `pip install` is required.
 
 ```bash
 uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" "your query here"
 ```
-
-If `uv` is unavailable, use a compatible Python 3.10+ interpreter:
-
-- Unix/macOS:
-  ```bash
-  python3 "{baseDir}/scripts/search.py" "your query here"
-  ```
-- Windows:
-  ```powershell
-  py -3 "{baseDir}/scripts/search.py" "your query here"
-  ```
 
 The script exposes what the API can do, grouped into 6 parameters. Pick the combination that matches what the user wants.
 
@@ -138,6 +163,8 @@ The script outputs JSON to stdout:
 - `response_id` — use with `--continue` for follow-up questions on the same topic
 - `request_summary.x_time_filter` — tells you whether X time filtering was applied; web search has no time filter, so put its time range in the query text
 - `citation_coverage` — checks if URLs in the answer text appear in the API's citations list. This is mechanical URL matching, NOT fact verification. A URL being present doesn't mean the source supports the claim.
+
+All examples assume the `uv` preflight succeeded. If this session selected a local runner, replace only the `uv` runner prefix; keep the arguments unchanged.
 
 ## Decision guide: what does the user want?
 

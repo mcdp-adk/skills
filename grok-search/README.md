@@ -16,6 +16,8 @@ An [Agent Skills](https://agentskills.io) skill for real-time web and X (Twitter
 
 ## Quick start
 
+These examples assume the `uv` preflight succeeded. Agents should choose a runner using [SKILL.md's Runner preflight](SKILL.md#runner-preflight), without assuming `uv` or Python is installed.
+
 Run these commands from the `grok-search` directory:
 
 ```bash
@@ -43,12 +45,10 @@ See [SKILL.md](SKILL.md#troubleshooting) → Troubleshooting for exit codes, `EN
 
 ## Requirements
 
-- Python 3.10+
+- The script needs `uv` or a verified local Python 3.10+.
 - The script is stdlib-only; no `pip install` is required.
-- Preferred runner: `uv run --no-project --python 3.10 "scripts/search.py" [args]`. `uv` is a recommended runner, not a script dependency.
-- Without `uv`, use a compatible Python 3.10+ interpreter:
-  - Unix/macOS: `python3 "scripts/search.py" [args]`
-  - Windows: `py -3 "scripts/search.py" [args]`
+- Follow the SKILL preflight first. When `uv` already exists, it can manage Python, but it is not a script dependency.
+- Without `uv`, use verified `python` and then `py -3` on Windows, or verified `python3` on Linux/macOS.
 
 ## License
 

@@ -6,7 +6,7 @@
       "prompt": "Search for the latest news about the EU AI Act enforcement in 2026",
       "expected_output": "Synthesized answer about EU AI Act enforcement with citations from authoritative sources",
       "expectations": [
-        "The agent runs scripts/search.py using uv or a compatible Python 3.10+ interpreter with a query about EU AI Act",
+        "Before the real call, the agent runs a zero-API runner preflight: use uv when its preflight succeeds, otherwise use a platform-verified local Python 3.10+ runner, without installing an environment",
         "The output includes citations from official or news sources",
         "The response contains recent 2026 enforcement details"
       ]
