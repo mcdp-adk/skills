@@ -281,8 +281,7 @@ def build_tools(config: ResolvedConfig) -> list[dict[str, Any]]:
 
 
 def build_search_parameters(config: ResolvedConfig) -> dict[str, Any]:
-    sources = ["web", "x"] if config.source == "both" else [config.source]
-    result: dict[str, Any] = {"mode": "on", "sources": sources, "return_citations": True}
+    result: dict[str, Any] = {"mode": "on", "return_citations": True}
     if config.max_results is not None:
         result["max_search_results"] = config.max_results
     if config.since:

@@ -20,6 +20,33 @@ def config(*arguments):
 
 
 class PresetResolutionTests(unittest.TestCase):
+    def test_payload_uses_tools_as_the_only_source_selector(self):
+        for source, expected_tools in (
+            ("web", ["web_search"]),
+            ("x", ["x_search"]),
+            ("both", ["web_search", "x_search"]),
+        ):
+            with self.subTest(source=source):
+                payload = search.build_payload(
+                    config(
+                        "--source",
+                        source,
+                        "--since",
+                        "2026-07-01",
+                        "--until",
+                        "2026-07-02",
+                        "--max-results",
+                        "3",
+                    )
+                )
+                self.assertEqual([tool["type"] for tool in payload["tools"]], expected_tools)
+                self.assertNotIn("sources", payload["search_parameters"])
+                self.assertEqual(payload["search_parameters"]["mode"], "on")
+                self.assertIs(payload["search_parameters"]["return_citations"], True)
+                self.assertEqual(payload["search_parameters"]["from_date"], "2026-07-01")
+                self.assertEqual(payload["search_parameters"]["to_date"], "2026-07-02")
+                self.assertEqual(payload["search_parameters"]["max_search_results"], 3)
+
     def test_default_single(self):
         resolved = config()
         self.assertEqual((resolved.model, resolved.effort, search.agent_count(search.model_family(resolved.model), resolved.effort), resolved.timeout), ("grok-4.3", "low", 1, 60))
