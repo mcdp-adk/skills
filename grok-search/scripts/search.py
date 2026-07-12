@@ -72,9 +72,18 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Search the web and X using xAI.")
     parser.add_argument("query", nargs="?", help="Query text; reads stdin when omitted.")
     parser.add_argument("--source", default="both", metavar="web|x|both")
-    parser.add_argument("--preset", choices=PRESETS, metavar="single|multi-4|multi-16", help="Select a model and reasoning-effort preset (default: single).")
+    parser.add_argument(
+        "--preset",
+        choices=PRESETS,
+        metavar="single|multi-4|multi-16",
+        help="Select a model and reasoning-effort preset (default: single).",
+    )
     parser.add_argument("--model", help="Override the preset model.")
-    parser.add_argument("--effort", choices=["none", "low", "medium", "high", "xhigh"], help="Override the preset effort.")
+    parser.add_argument(
+        "--effort",
+        choices=["none", "low", "medium", "high", "xhigh"],
+        help="Override the preset effort.",
+    )
     parser.add_argument("--since", help="UTC relative time or ISO date/time.")
     parser.add_argument("--until", help="UTC relative time or ISO date/time.")
     parser.add_argument("--web-allow", action="append", default=[], metavar="DOMAIN")
@@ -94,8 +103,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def parse_time(value: str, name: str, now: dt.datetime) -> dt.datetime:
-    relative = {"now": now, "today": now.replace(hour=0, minute=0, second=0, microsecond=0),
-                "yesterday": (now - dt.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)}
+    relative = {
+        "now": now,
+        "today": now.replace(hour=0, minute=0, second=0, microsecond=0),
+        "yesterday": (now - dt.timedelta(days=1)).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        ),
+    }
     if value in relative:
         return relative[value]
     if len(value) > 1 and value[-1] in "hdw" and value[:-1].isdigit():
@@ -319,7 +333,11 @@ def env_value(file_env: dict[str, str], *names: str) -> str | None:
 
 
 def build_proxy_map(file_env: dict[str, str]) -> dict[str, str] | None:
-    proxy = env_value(file_env, "HTTPS_PROXY", "https_proxy") or env_value(file_env, "ALL_PROXY", "all_proxy") or env_value(file_env, "HTTP_PROXY", "http_proxy")
+    proxy = (
+        env_value(file_env, "HTTPS_PROXY", "https_proxy")
+        or env_value(file_env, "ALL_PROXY", "all_proxy")
+        or env_value(file_env, "HTTP_PROXY", "http_proxy")
+    )
     return {"http": proxy, "https": proxy} if proxy else None
 
 
@@ -359,15 +377,18 @@ def execute_request(opener: urllib.request.OpenerDirector, api_key: str, payload
         try:
             with opener.open(build_request(api_key, payload), timeout=config.timeout) as response:
                 data = json.loads(response.read().decode("utf-8"))
-                if not isinstance(data, dict): raise SearchError("PARSE_ERROR", "API response is not a JSON object")
+                if not isinstance(data, dict):
+                    raise SearchError("PARSE_ERROR", "API response is not a JSON object")
                 return data
         except urllib.error.HTTPError as exc:
             body, status = error_body(exc), exc.code
-            if status == 401: raise SearchError("AUTH_ERROR", "Invalid API key. Get one at https://console.x.ai", EXIT_AUTH) from exc
-            if status == 400: raise SearchError("BAD_REQUEST", f"Bad request: {body}" if body else "Bad request") from exc
-            retryable = status == 429
-            if not retryable or attempt >= config.max_retries: raise SearchError("HTTP_ERROR", body or f"HTTP {status}") from exc
-            delay = retry_delay(attempt, exc.headers.get("Retry-After") if status == 429 else None)
+            if status == 401:
+                raise SearchError("AUTH_ERROR", "Invalid API key. Get one at https://console.x.ai", EXIT_AUTH) from exc
+            if status == 400:
+                raise SearchError("BAD_REQUEST", f"Bad request: {body}" if body else "Bad request") from exc
+            if status != 429 or attempt >= config.max_retries:
+                raise SearchError("HTTP_ERROR", body or f"HTTP {status}") from exc
+            delay = retry_delay(attempt, exc.headers.get("Retry-After"))
         except (TimeoutError, socket.timeout) as exc:
             raise SearchError("TIMEOUT", "Request timed out and may have been processed. Check your account before retrying.") from exc
         except urllib.error.URLError as exc:
@@ -430,26 +451,42 @@ def build_request_summary(config: ResolvedConfig) -> dict[str, Any]:
     if family == "grok-4.5":
         warnings.append("grok-4.5 costs more than the default grok-4.3 model.")
         warnings.append("grok-4.5 is unavailable in EU regions.")
-    if family == "unknown":
+    elif family == "unknown":
         warnings.append("Unknown model family; reasoning defaults and agent count are not known.")
-    return {"source": config.source, "preset_used": config.preset, "preset_explicit": config.preset_explicit,
-            "preset_overridden": config.preset_overridden, "model_used": config.model, "effort_sent": config.effort,
-            "agent_count": agent_count(family, config.effort), "timeout_seconds": config.timeout, "warnings": warnings,
-            "resolved_since": config.since.isoformat() if config.since else None,
-            "resolved_until": config.until.isoformat() if config.until else None,
-            "x_time_filter": "strict" if has_time and config.source in {"x", "both"} else "not_applied",
-            "model_search_hint": "non_strict" if has_time else "not_applied",
-            "web_strict_filter_available": False}
+    return {
+        "source": config.source,
+        "preset_used": config.preset,
+        "preset_explicit": config.preset_explicit,
+        "preset_overridden": config.preset_overridden,
+        "model_used": config.model,
+        "effort_sent": config.effort,
+        "agent_count": agent_count(family, config.effort),
+        "timeout_seconds": config.timeout,
+        "warnings": warnings,
+        "resolved_since": config.since.isoformat() if config.since else None,
+        "resolved_until": config.until.isoformat() if config.until else None,
+        "x_time_filter": "strict" if has_time and config.source in {"x", "both"} else "not_applied",
+        "model_search_hint": "non_strict" if has_time else "not_applied",
+        "web_strict_filter_available": False,
+    }
 
 
 def success_payload(data: dict[str, Any], config: ResolvedConfig) -> dict[str, Any]:
-    if data.get("status") != "completed": raise SearchError("INCOMPLETE", f"Response status is {data.get('status')!r}, not 'completed'")
+    if data.get("status") != "completed":
+        raise SearchError("INCOMPLETE", f"Response status is {data.get('status')!r}, not 'completed'")
     text, citations, found_message = parse_response(data)
-    if not found_message: raise SearchError("EMPTY_RESPONSE", "Completed response contains no message output")
+    if not found_message:
+        raise SearchError("EMPTY_RESPONSE", "Completed response contains no message output")
     response_id = data.get("id") if isinstance(data.get("id"), str) and data["id"] else None
-    return {"ok": True, "response_id": response_id, "text": text, "citations": citations,
-            "request_summary": build_request_summary(config), "citation_coverage": citation_coverage(text, citations),
-            "usage": data.get("usage") if isinstance(data.get("usage"), dict) else {}}
+    return {
+        "ok": True,
+        "response_id": response_id,
+        "text": text,
+        "citations": citations,
+        "request_summary": build_request_summary(config),
+        "citation_coverage": citation_coverage(text, citations),
+        "usage": data.get("usage") if isinstance(data.get("usage"), dict) else {},
+    }
 
 
 def error_payload(exc: SearchError) -> dict[str, Any]:
@@ -467,7 +504,8 @@ def main() -> int:
         file_env = load_env_file(config.env_file)
         if no_proxy := env_value(file_env, "NO_PROXY", "no_proxy"): os.environ["NO_PROXY"] = no_proxy
         api_key = env_value(file_env, "XAI_API_KEY")
-        if not api_key: raise SearchError("ENV_ERROR", f"API key not found. Set XAI_API_KEY in the environment or in {config.env_file}.", EXIT_ENV)
+        if not api_key:
+            raise SearchError("ENV_ERROR", f"API key not found. Set XAI_API_KEY in the environment or in {config.env_file}.", EXIT_ENV)
         eprint("Searching...")
         data = execute_request(build_opener(build_proxy_map(file_env), config.ca_bundle), api_key, build_payload(config), config)
         emit(data if config.raw else success_payload(data, config))
