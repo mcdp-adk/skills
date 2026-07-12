@@ -39,32 +39,6 @@ The script automatically loads `{baseDir}/.env` for authentication. Do NOT read,
 - Required: `XAI_API_KEY=...`
 - Optional: `HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY`, `NO_PROXY`, custom CA bundle via `--ca-bundle`
 
-## Troubleshooting
-
-### Exit codes
-
-- Exit 1: runtime errors and script-level argument validation errors, such as using `--web-allow` with `--source x`.
-- Exit 2: authentication failure (an invalid or expired API key), or argparse parsing errors such as an unknown flag or invalid preset value.
-- Exit 3: environment configuration errors, such as a missing API key or malformed `.env` file.
-
-### ENV_ERROR: API key not found
-
-- Tell the user to get a key at https://console.x.ai and configure `XAI_API_KEY` in `<skill-root>/.env` using `.env.example`, or set the `XAI_API_KEY` OS environment variable.
-- Priority is: non-empty OS environment variable > `.env` file.
-
-### `--env-file`
-
-Use `--env-file /path/to/.env` to specify a custom `.env` path.
-
-### Windows
-
-After changing an environment variable, restart the terminal or agent process. Running processes do not detect newly set variables.
-
-### Security
-
-- Do not expose API keys in logs or output.
-- The script does not echo API keys.
-
 ## How to search
 
 ```bash
@@ -88,9 +62,7 @@ Advanced options (`--model`, `--effort`, `--timeout`, `--max-retries`, `--env-fi
 
 **Time formats**: relative (`2h`, `7d`, `2w`, `yesterday`, `today`, `now`) or ISO date (`2026-07-01`). All times are UTC.
 
-**Important time fact**: X search supports strict date filtering. Web search does NOT support `--since`/`--until`; `--source web --since ...` is rejected. When web recency matters, state the time range explicitly in the query text. With `--source both`, the flags constrain only X search.
-
-**Time precision**: `--since`/`--until` accept hour-level input like `2h`, but the API only accepts date-level (`YYYY-MM-DD`). So `--since 2h` becomes the UTC date containing the resolved timestamp — it's a date-level filter, not an hour-level window. For precise hour-level recency, state the exact time range in the query text (e.g. "in the past 2 hours").
+**X vs web time**: X search supports strict date filtering via `--since`/`--until`. Web search does NOT — `--source web --since ...` is rejected. When web recency matters, state the time range explicitly in the query text. With `--source both`, the flags constrain only X search. Note: `--since 2h` resolves to a date-level filter (the UTC date containing that timestamp), not an hour-level window — for precise hour-level recency, state the exact range in the query text (e.g. "in the past 2 hours").
 
 ### Preset: model and agent count
 
@@ -98,9 +70,7 @@ Advanced options (`--model`, `--effort`, `--timeout`, `--max-retries`, `--env-fi
 - `multi-4`: `grok-4.20-multi-agent`, `low` effort, 4 agents.
 - `multi-16`: `grok-4.20-multi-agent`, `high` effort, 16 agents.
 
-These presets only select the actual model and agent count; they do not promise broader search, deeper answers, or higher quality. multi-agent is Beta; on failure it does not auto-fall back to `single`.
-
-`--model` and `--effort` override a preset. If `--model` switches to a different model family without `--effort`, the script resets effort to `low` for known families; unknown models get no inferred effort. xAI's official default for `grok-4.5` is `high`, but this skill sends `low` unless `--effort` is explicit.
+Presets only select the model and agent count; they do not promise broader search, deeper answers, or higher quality. multi-agent is Beta and does not auto-fall back to `single` on failure. `--model` and `--effort` override a preset — see [references.md](references/references.md) for override and effort semantics.
 
 ### Reading the result
 
@@ -192,37 +162,57 @@ python "{baseDir}/scripts/search.py" --source web --web-allow docs.python.org --
 
 Domain whitelist supports max 5 domains.
 
-## Universal evidence rules
+## Guardrails
 
-Apply these to every search result, regardless of intent:
-
-1. **Citation verification**: The `citations` list is collected from `output_text.annotations` and is a candidate source list, not verified evidence. A URL appearing there doesn't mean the source supports the claim. Only treat a source as evidence after checking the page content actually supports the claim. URLs in `citation_coverage.unmatched_text_urls` are not backed by API citations — treat them as unverified.
-
-2. **Evidence tiering**: Label each source: Tier 1 (official/academic), Tier 2 (industry media), Tier 3 (social media). Don't present Tier 3 as if it were Tier 1.
-
-3. **Uncertainty labeling**: For high-stakes outputs, explicitly state: what's confirmed, what's conflicting, what's social-only, what has insufficient evidence, and what the coverage limitations are.
-
-4. **Anti-bot is heuristic only**: You can ask the query to ignore duplicate text, promotional content, and low-information posts. But this is not bot detection — don't claim you've filtered bots or computed real sentiment statistics.
-
-5. **Time honesty**: X time filtering is strict. Web search has no time filter. If web recency matters, the query text must state the time range, and you should ask the model to note each web source's publication date.
-
-## When NOT to use this skill
+### When NOT to use this skill
 
 - Local file search or code analysis
 - Questions where training data is sufficient and freshness doesn't matter
-- Historical X coverage may be incomplete — verify coverage before relying on it for older events
-- Scraping X at scale (rate limits vary by model; multi-agent is limited to 9 requests/sec)
-- Legal opinions, compliance certification, or formal fact adjudication (AI-generated citations may not support their attached claims)
+- Legal opinions, compliance certification, or formal fact adjudication
 - Trading signals or price predictions (latency and rate limits make this unsuitable)
 
-## Limitations
+### Handling results
 
-- Breaking news on X can be noisy — early posts often outrun reliable confirmation
-- Web search has no strict date filter — express time windows in the query text
+- **Citations are candidates, not verified evidence.** The `citations` list comes from `output_text.annotations` — a URL there doesn't mean the source supports the claim. Verify against source pages. URLs in `citation_coverage.unmatched_text_urls` are unverified.
+- **Tier your sources:** Tier 1 (official/academic), Tier 2 (industry media), Tier 3 (social media). Don't present Tier 3 as if it were Tier 1.
+- **Label uncertainty:** For high-stakes outputs, state what's confirmed, conflicting, social-only, or has insufficient evidence.
+- **Anti-bot is heuristic only:** You can ask the query to ignore duplicates and spam, but this isn't bot detection — don't claim filtered bots or computed sentiment statistics.
+
+### Constraints
+
+- Web search has no date filter — state time ranges in the query text
+- Breaking news on X is noisy — early posts often outrun confirmation
 - Paywalled or private content is not accessible
-- Multi-agent requests can take minutes and have significantly higher cost (multiple agents, each with its own token usage and tool calls)
-- Over-filtering can hide the best evidence — start broad, then narrow
-- **Verify important citations against their source pages** — AI-generated citations may not support the claims attached to them.
+- Multi-agent requests take minutes and cost significantly more (all agents' tokens are billed)
+- Over-filtering hides the best evidence — start broad, then narrow
+- Historical X coverage may be incomplete — verify coverage before relying on it for older events
+- Scraping X at scale is limited by rate (multi-agent: 9 req/sec)
+
+## Troubleshooting
+
+### Exit codes
+
+- Exit 1: runtime errors and script-level argument validation errors, such as using `--web-allow` with `--source x`.
+- Exit 2: authentication failure (an invalid or expired API key), or argparse parsing errors such as an unknown flag or invalid preset value.
+- Exit 3: environment configuration errors, such as a missing API key or malformed `.env` file.
+
+### ENV_ERROR: API key not found
+
+- Tell the user to get a key at https://console.x.ai and configure `XAI_API_KEY` in `<skill-root>/.env` using `.env.example`, or set the `XAI_API_KEY` OS environment variable.
+- Priority is: non-empty OS environment variable > `.env` file.
+
+### `--env-file`
+
+Use `--env-file /path/to/.env` to specify a custom `.env` path.
+
+### Windows
+
+After changing an environment variable, restart the terminal or agent process. Running processes do not detect newly set variables.
+
+### Security
+
+- Do not expose API keys in logs or output.
+- The script does not echo API keys.
 
 ## References
 
