@@ -16,7 +16,7 @@ An [Agent Skills](https://agentskills.io) skill for real-time web and X (Twitter
 
 ## Quick start
 
-Run these commands from the repository root:
+Run these commands from the `grok-search` directory:
 
 ```bash
 uv run --no-project --python 3.10 "scripts/search.py" "what's the latest on EU AI Act enforcement"
