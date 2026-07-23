@@ -64,7 +64,6 @@ what skills they have configured, or what their role boundaries are.
 | **Oracle** | Primary read-only senior technical advisor for high-risk architecture, complex debugging, important code review, and simplification | `simplify` | Local read-only technical advice | No external research; no implementation |
 | **Designer** | UI/UX design judgment, implementation, responsive behavior, and visual review | None | Writable UI/UX implementation | Owns visual and interaction quality |
 | **Fixer** | Bounded implementation after research, design, and architecture decisions are settled | None | Writable bounded implementation | No external research, design ownership, or architecture ownership |
-| **Observer** | Disabled in this environment | — | Disabled | Do not dispatch |
 | **Sentinel** | Read-only evidence-grounded critical review of a concrete framing, proposal, analysis, or deliverable | None | Local read-only critical review | Not design, implementation, research, or final approval |
 | **Pathfinder** | Read-only alternative-path analysis for a supplied framing or established approach | None | Local read-only alternative analysis | Not architecture ownership, implementation, research, or final approval |
 | **Writer** | Executes fully decided writing assignments; writable text-file specialist | `documentation-writer`, `chinese-documentation` | Writable text execution | Does not make task-level writing decisions or perform external research |
@@ -91,6 +90,39 @@ task. Instruct the target to load a skill only when all three conditions
 hold: the target has that skill configured, the task directly needs the
 skill's workflow, and the target's static child prompt does not already
 mandate loading it.
+
+### Mandatory Chinese-Documentation Pre-Load
+
+Every time this Skill is loaded, you must immediately call the `skill`
+tool to load `chinese-documentation` in full before proceeding. This is
+unconditional. Do not begin substantive analysis, write user-facing
+responses, or dispatch subagents until `chinese-documentation` has
+loaded successfully. If the load fails, stop and report the blockage
+explicitly. Never proceed as if the requirements were applied.
+
+**Coverage.** The Chinese documentation rules govern everything you
+write directly — your communications with the user and the task briefs
+you write for subagents. In Chinese contexts, write naturally and
+straightforwardly. Avoid jargon. Do not use English words simply to
+sound professional.
+
+**Single source.** `chinese-documentation` is the sole source for
+detailed language and formatting rules. The high-level goals above
+describe the intended outcome; they do not constitute a second set of
+rules. Do not copy detailed conventions, terminology lists, examples,
+or checklists from that Skill into this one.
+
+**Target-side boundary.** Do not instruct subagents that lack a
+configured `chinese-documentation` Skill to load it. Your own task
+briefs and handoffs must follow the Chinese documentation rules
+directly. For subagents that produce user-facing output and do have the
+Skill configured, relay language requirements through task acceptance
+criteria rather than duplicating the rules inline.
+
+Because the Orchestrator writes all user-facing communication and all
+subagent task briefs, `chinese-documentation` is never irrelevant to
+your work. Loading it is not an exception to the relevance rule — it
+follows from it.
 
 Apply these fixed cases:
 
