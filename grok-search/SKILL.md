@@ -52,7 +52,7 @@ The script exposes what the API can do, grouped into 6 parameters. Pick the comb
 | Parameter | What it controls | Default |
 |---|---|---|
 | `--source web\|x\|both` | Where to search | `both` |
-| `--preset single\|multi-4\|multi-16` | Select the actual model and agent count | `single` |
+| `--preset single\|multi-4\|multi-16` | Select the actual model and agent count | `multi-4` |
 | `--since` / `--until` | X search time window | none |
 | `--web-allow` / `--web-exclude` / `--x-allow` / `--x-exclude` | Restrict sources | none |
 | `--continue RESPONSE_ID` | Continue a previous search | none |
@@ -64,13 +64,13 @@ Advanced options (`--model`, `--effort`, `--timeout`, `--max-retries`, `--env-fi
 
 **X vs web time**: X search supports strict date filtering via `--since`/`--until`. Web search does NOT — `--source web --since ...` is rejected. When web recency matters, state the time range explicitly in the query text. With `--source both`, the flags constrain only X search. Note: `--since 2h` resolves to a date-level filter (the UTC date containing that timestamp), not an hour-level window — for precise hour-level recency, state the exact range in the query text (e.g. "in the past 2 hours").
 
-### Preset: model and agent count
+### Preset selection
 
-- `single` (default): `grok-4.3`, `low` effort, 1 agent.
-- `multi-4`: `grok-4.20-multi-agent`, `low` effort, 4 agents.
-- `multi-16`: `grok-4.20-multi-agent`, `high` effort, 16 agents.
+- `single`: Explicitly use for an individual fact, version number, single official documentation page, specified account or page, or when the user asks for speed or lower cost.
+- `multi-4` (default): Omit `--preset` for ordinary current-information searches. It uses `grok-4.20-multi-agent`, `low` effort, 4 agents.
+- `multi-16`: Explicitly use only when the user requests comprehensive or deep research and the task is multi-faceted, such as work spanning multiple entities or markets, several sub-questions, conflicting-evidence audits, or complex multi-turn research. It uses `grok-4.20-multi-agent`, `high` effort, 16 agents.
 
-Presets only select the model and agent count; they do not promise broader search, deeper answers, or higher quality. multi-agent is Beta and does not auto-fall back to `single` on failure. `--model` and `--effort` override a preset — see [references.md](references/references.md) for override and effort semantics.
+Presets only select the model and agent count; they do not promise broader search, deeper answers, or higher quality. multi-agent is Beta. All agents' tokens are billed, requests may take minutes, and the multi-agent rate limit is 9 requests per second. A failed multi-agent request does not fall back to `single`. `--model` and `--effort` override a preset — see [references.md](references/references.md) for override and effort semantics.
 
 ### Reading the result
 
@@ -84,13 +84,13 @@ The script outputs JSON to stdout:
   "citations": ["https://example.com/source1"],
   "request_summary": {
     "source": "both",
-    "preset_used": "single",
+    "preset_used": "multi-4",
     "preset_explicit": false,
     "preset_overridden": false,
-    "model_used": "grok-4.3",
+    "model_used": "grok-4.20-multi-agent",
     "effort_sent": "low",
-    "agent_count": 1,
-    "timeout_seconds": 60,
+    "agent_count": 4,
+    "timeout_seconds": 300,
     "warnings": [],
     "x_time_filter": "strict",
     "web_strict_filter_available": false
@@ -116,15 +116,13 @@ The script outputs JSON to stdout:
 python "{baseDir}/scripts/search.py" --source both --since "24h" "Track [EVENT] in the past 24 hours. Build a timeline ordered by when things happened. For each item, label it: confirmed (primary source or 2+ independent credible sources), reported (named credible outlet but not independently confirmed), or X-only/unconfirmed (social signal only). List both the event time and the source publication time. Do not treat X posts as fact confirmation."
 ```
 
-For multi-agent, choose `--preset multi-4` or `--preset multi-16`.
-
 ### X sentiment and reactions
 
 ```bash
 python "{baseDir}/scripts/search.py" --source x --since "7d" "Analyze X discussion about [TOPIC] in [TIME RANGE]. Give the main viewpoints, disagreements, recurring arguments, and representative posts. Describe the qualitative sentiment shape — do not give percentages without sampling methodology. Distinguish official accounts, domain experts, regular users, and low-quality/coordinated signals."
 ```
 
-For specific accounts, add `--x-allow handle1 --x-allow handle2`.
+For a lightweight request about specific accounts, add `--preset single` and `--x-allow handle1 --x-allow handle2`.
 
 ### Fact-checking and narrative comparison
 
@@ -139,8 +137,6 @@ For technical claims, add `--web-allow arxiv.org --web-allow github.com` to rest
 ```bash
 python "{baseDir}/scripts/search.py" --source both "Analyze [COMPANY/PRODUCT] in [TIME RANGE]: 1. Official announcements, funding, product launches, pricing changes. 2. Actual user/developer/analyst reactions on X. 3. Competitor responses. Separate confirmed facts, speculation, and social signals."
 ```
-
-For cross-company or cross-market analysis, choose `--preset multi-4` or `--preset multi-16`.
 
 ### Multi-agent multi-source research
 
@@ -157,7 +153,7 @@ Multi-turn value is auditing previous gaps, not just asking "more detail". Multi
 ### Technical documentation lookup
 
 ```bash
-python "{baseDir}/scripts/search.py" --source web --web-allow docs.python.org --web-allow github.com "Find current official documentation for [TOPIC]. Prefer original docs over blog posts. Note version numbers and publication dates."
+python "{baseDir}/scripts/search.py" --source web --preset single --web-allow docs.python.org --web-allow github.com "Find current official documentation for [TOPIC]. Prefer original docs over blog posts. Note version numbers and publication dates."
 ```
 
 Domain whitelist supports max 5 domains.
@@ -183,10 +179,8 @@ Domain whitelist supports max 5 domains.
 - Web search has no date filter — state time ranges in the query text
 - Breaking news on X is noisy — early posts often outrun confirmation
 - Paywalled or private content is not accessible
-- Multi-agent requests take minutes and cost significantly more (all agents' tokens are billed)
 - Over-filtering hides the best evidence — start broad, then narrow
 - Historical X coverage may be incomplete — verify coverage before relying on it for older events
-- Scraping X at scale is limited by rate (multi-agent: 9 req/sec)
 
 ## Troubleshooting
 

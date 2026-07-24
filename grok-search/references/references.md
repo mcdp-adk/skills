@@ -16,7 +16,7 @@ Headers: `Authorization: Bearer <key>`, `Content-Type: application/json`
 
 | Model | Context | Input $/M | Output $/M | Req/sec | Use for |
 |---|---|---|---|---|---|
-| `grok-4.3` (skill default) | 1M | $1.25 | $2.50 | 37 | Single-agent live search |
+| `grok-4.3` | 1M | $1.25 | $2.50 | 37 | Single-agent live search |
 | `grok-4.20-multi-agent` | 1M | $1.25 | $2.50 | 9 | Beta multi-agent model |
 | `grok-4.5` | 500K | $2.00 | $6.00 | 150 | Reasoning always on; unavailable in the EU |
 
@@ -24,11 +24,11 @@ Headers: `Authorization: Bearer <key>`, `Content-Type: application/json`
 
 | Preset | Model | effort | Agent count |
 |---|---|---|---|
-| `single` (default) | `grok-4.3` | `low` | 1 |
-| `multi-4` | `grok-4.20-multi-agent` | `low` | 4 |
+| `single` | `grok-4.3` | `low` | 1 |
+| `multi-4` (default) | `grok-4.20-multi-agent` | `low` | 4 |
 | `multi-16` | `grok-4.20-multi-agent` | `high` | 16 |
 
-Presets only select the actual model and agent count; they do not promise search scope, answer depth, or quality. `--model` and `--effort` override the preset. When an explicit model changes family without an explicit effort, this skill resets effort to `low` for known families and leaves it unset for unknown models. The Beta multi-agent model does not automatically fall back to `single` after a failure.
+Presets only select the actual model and agent count; they do not promise search scope, answer depth, or quality. `--model` and `--effort` override the preset. When an explicit model changes family without an explicit effort, this skill resets effort to `low` for known families and leaves it unset for unknown models. The Beta multi-agent model bills tokens used by all agents, may take minutes, is subject to a 9 requests-per-second rate limit, and does not automatically fall back to `single` after a failure.
 
 ### Timeout
 
@@ -59,7 +59,7 @@ Timeout is computed from the final model and effort, not the preset name:
 - `grok-latest` — tracks xAI's latest Grok model (may change without notice); this skill treats it as an unknown family
 - Fixed date aliases (e.g. `grok-4.20-multi-agent-0309`) — never change
 
-`grok-4.3` is a stable alias that tracks the latest 4.3 release — suitable as default, but may update when xAI publishes new versions. For absolute reproducibility, use date-pinned versions (e.g. `grok-4.20-multi-agent-0309`).
+`grok-4.3` is a stable alias that tracks the latest 4.3 release — suitable for the single-agent preset, but may update when xAI publishes new versions. For absolute reproducibility, use date-pinned versions (e.g. `grok-4.20-multi-agent-0309`).
 
 `grok-4-1-fast` is retired; do not select it for new requests.
 

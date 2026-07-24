@@ -86,26 +86,34 @@ class PresetResolutionTests(unittest.TestCase):
         self.assertEqual(search.parse_response({"output": [{"type": "message", "content": [{"type": "output_text", "text": "ok"}]}]})[1], [])
         self.assertEqual(search.parse_response({"citations": [sentinel], "output": []})[1], [])
 
-    def test_default_single(self):
+    def test_default_multi_4(self):
         resolved = config()
-        self.assertEqual((resolved.model, resolved.effort, search.agent_count(search.model_family(resolved.model), resolved.effort), resolved.timeout), ("grok-4.3", "low", 1, 60))
+        self.assertEqual((resolved.preset, resolved.model, resolved.effort, search.agent_count(search.model_family(resolved.model), resolved.effort), resolved.timeout), ("multi-4", "grok-4.20-multi-agent", "low", 4, 300))
         self.assertFalse(resolved.preset_explicit)
+        self.assertFalse(resolved.preset_overridden)
 
-    def test_multi_presets(self):
-        for preset, effort, count, timeout in (("multi-4", "low", 4, 300), ("multi-16", "high", 16, 600)):
+    def test_explicit_presets(self):
+        for preset, model, effort, count, timeout in (("single", "grok-4.3", "low", 1, 60), ("multi-4", "grok-4.20-multi-agent", "low", 4, 300), ("multi-16", "grok-4.20-multi-agent", "high", 16, 600)):
             resolved = config("--preset", preset)
-            self.assertEqual((resolved.effort, search.agent_count("multi-agent", resolved.effort), resolved.timeout), (effort, count, timeout))
+            family = search.model_family(resolved.model)
+            self.assertEqual((resolved.model, resolved.effort, search.agent_count(family, resolved.effort), resolved.timeout, resolved.preset_explicit), (model, effort, count, timeout, True))
 
-    def test_same_family_and_date_pinned_overrides_keep_preset_effort(self):
+    def test_same_family_overrides_keep_preset_effort(self):
         for model in ("grok-4.3-custom", "grok-4.3-0309"):
-            resolved = config("--model", model)
+            resolved = config("--preset", "single", "--model", model)
             self.assertEqual((resolved.effort, resolved.timeout, resolved.preset_overridden), ("low", 60, True))
+
+    def test_default_model_overrides(self):
+        resolved = config("--model", "grok-4.3")
+        self.assertEqual((resolved.preset, resolved.model, resolved.effort, resolved.timeout, resolved.preset_overridden), ("multi-4", "grok-4.3", "low", 60, True))
+        resolved = config("--model", "grok-4.20-multi-agent")
+        self.assertEqual((resolved.effort, resolved.timeout, resolved.preset_overridden), ("low", 300, False))
 
     def test_cross_family_overrides_reset_effort(self):
         resolved = config("--preset", "multi-16", "--model", "grok-4.5")
         self.assertEqual((resolved.effort, search.agent_count("grok-4.5", resolved.effort), resolved.timeout, resolved.preset_overridden), ("low", 1, 60, True))
-        resolved = config("--model", "grok-4.20-multi-agent")
-        self.assertEqual((resolved.effort, search.agent_count("multi-agent", resolved.effort), resolved.timeout), ("low", 4, 300))
+        resolved = config("--preset", "single", "--model", "grok-4.20-multi-agent")
+        self.assertEqual((resolved.effort, search.agent_count("multi-agent", resolved.effort), resolved.timeout, resolved.preset_overridden), ("low", 4, 300, True))
 
     def test_unknown_models(self):
         resolved = config("--model", "other-model")
@@ -121,32 +129,31 @@ class PresetResolutionTests(unittest.TestCase):
         self.assertEqual((search.agent_count("multi-agent", resolved.effort), resolved.timeout), (16, 600))
 
     def test_effort_changes_timeout_and_multi_agent_count(self):
-        for effort in ("medium", "high"):
-            self.assertEqual(config("--effort", effort).timeout, 120)
+        for effort, count, timeout in (("medium", 4, 300), ("high", 16, 600)):
+            resolved = config("--effort", effort)
+            self.assertEqual((search.agent_count("multi-agent", resolved.effort), resolved.timeout, resolved.preset_overridden), (count, timeout, True))
         for effort, count, timeout in (("medium", 4, 300), ("xhigh", 16, 600)):
             resolved = config("--preset", "multi-4", "--effort", effort)
             self.assertEqual((search.agent_count("multi-agent", resolved.effort), resolved.timeout), (count, timeout))
 
     def test_invalid_efforts(self):
-        for arguments in (("--effort", "xhigh"), ("--model", "grok-4.5", "--effort", "none"), ("--model", "grok-4.5", "--effort", "xhigh"), ("--model", "grok-4.20-multi-agent", "--effort", "none")):
+        for arguments in (("--preset", "single", "--effort", "xhigh"), ("--model", "grok-4.5", "--effort", "none"), ("--model", "grok-4.5", "--effort", "xhigh"), ("--model", "grok-4.20-multi-agent", "--effort", "none")):
             with self.assertRaises(search.SearchError):
                 config(*arguments)
 
     def test_request_summary_and_unknown_payload(self):
         resolved = config()
         summary = search.build_request_summary(resolved)
-        self.assertEqual({key: summary[key] for key in ("preset_used", "preset_explicit", "preset_overridden", "model_used", "effort_sent", "agent_count", "timeout_seconds", "warnings")}, {"preset_used": "single", "preset_explicit": False, "preset_overridden": False, "model_used": "grok-4.3", "effort_sent": "low", "agent_count": 1, "timeout_seconds": 60, "warnings": []})
+        self.assertEqual({key: summary[key] for key in ("preset_used", "preset_explicit", "preset_overridden", "model_used", "effort_sent", "agent_count", "timeout_seconds", "warnings")}, {"preset_used": "multi-4", "preset_explicit": False, "preset_overridden": False, "model_used": "grok-4.20-multi-agent", "effort_sent": "low", "agent_count": 4, "timeout_seconds": 300, "warnings": []})
         unknown = config("--model", "other-model")
         self.assertNotIn("reasoning", search.build_payload(unknown))
 
-    def test_summary_warnings_and_preset_flags(self):
+    def test_summary_warnings(self):
         grok_45 = search.build_request_summary(config("--model", "grok-4.5"))
-        self.assertEqual(grok_45["warnings"], ["grok-4.5 costs more than the default grok-4.3 model.", "grok-4.5 is unavailable in EU regions."])
+        self.assertEqual(grok_45["warnings"], ["grok-4.5 has higher per-token pricing than grok-4.3.", "grok-4.5 is unavailable in EU regions."])
         unknown = search.build_request_summary(config("--model", "other-model"))
         self.assertEqual(unknown["warnings"], ["Unknown model family; reasoning defaults and agent count are not known."])
         self.assertIsNone(unknown["agent_count"])
-        self.assertTrue(config("--preset", "single").preset_explicit)
-        self.assertFalse(config("--model", "grok-4.3").preset_overridden)
 
     def test_citation_coverage_normalizes_trailing_punctuation(self):
         wiki = "https://en.wikipedia.org/wiki/XAI_(company)"

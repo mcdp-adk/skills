@@ -25,6 +25,7 @@ from typing import Any
 API_URL = "https://api.x.ai/v1/responses"
 EXIT_GENERAL, EXIT_AUTH, EXIT_ENV = 1, 2, 3
 UTC = dt.timezone.utc
+DEFAULT_PRESET = "multi-4"
 PRESETS = {
     "single": ("grok-4.3", "low"),
     "multi-4": ("grok-4.20-multi-agent", "low"),
@@ -75,7 +76,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--preset",
         choices=PRESETS,
         metavar="single|multi-4|multi-16",
-        help="Select a model and reasoning-effort preset (default: single).",
+        help=f"Select a model and reasoning-effort preset (default: {DEFAULT_PRESET}).",
     )
     parser.add_argument("--model", help="Override the preset model.")
     parser.add_argument(
@@ -196,7 +197,7 @@ def resolve_config(args: argparse.Namespace) -> ResolvedConfig:
         raise SearchError("ARGUMENT_ERROR", "--video-understanding requires --source x or both")
     if args.max_retries < 0:
         raise SearchError("ARGUMENT_ERROR", "--max-retries must be 0 or greater")
-    preset = args.preset or "single"
+    preset = args.preset or DEFAULT_PRESET
     preset_model, preset_effort = PRESETS[preset]
     model = args.model or preset_model
     preset_family, family = model_family(preset_model), model_family(model)
@@ -442,7 +443,7 @@ def build_request_summary(config: ResolvedConfig) -> dict[str, Any]:
     family = model_family(config.model)
     warnings = []
     if family == "grok-4.5":
-        warnings.append("grok-4.5 costs more than the default grok-4.3 model.")
+        warnings.append("grok-4.5 has higher per-token pricing than grok-4.3.")
         warnings.append("grok-4.5 is unavailable in EU regions.")
     elif family == "unknown":
         warnings.append("Unknown model family; reasoning defaults and agent count are not known.")
