@@ -53,8 +53,11 @@ criteria rather than duplicating the rules inline.
 
 ## Local Agent–Skill Binding
 
-This section is a user-maintained projection of which agents have which
-Skills configured. It is not the OMO Slim roster. Every OMO
+This section is a user-maintained projection of native Skill
+configuration: which agents have which Skills configured, their
+visibility, and `skill` tool loading responsibility. It is not a
+registry of all readable method files, not a general file-read
+permission table, and not an ad-hoc task path record. Every OMO
 configuration change must be reflected here.
 
 | Agent | Configured Skills | Loading Responsibility |
@@ -64,8 +67,9 @@ configuration change must be reflected here.
 | Writer | `documentation-writer`, `chinese-documentation` | Writer's static prompt loads both Skills at task start. You do not instruct Writer to load them. |
 | All other currently configured OMO subagents | (none) | — |
 
-The Orchestrator has access to all configured Skills. This does not
-change the routing rules injected by OMO Slim.
+The Orchestrator has access to all configured Skills and may use
+trusted exact paths provided by the user or current task. This does
+not change the routing rules injected by OMO Slim.
 
 ## Delegation-Prompt Compilation Process
 
@@ -95,20 +99,29 @@ static OMO prompts are the authoritative source for role boundaries.
 
 ### Step 2 — Determine Relevant Skills
 
-For each candidate, consult the local binding table above. Filter to
-Skills whose subject matter is substantively relevant to the current
-task. A Skill is relevant when its methods, boundaries, deliverables,
-or verification requirements could affect how the work is scoped or how
-the task contract must be written. When relevance is unclear, err on
-the side of reading.
+Judge relevance by the task, not by configuration. A Skill is relevant
+when its methods, boundaries, deliverables, or verification
+requirements could affect how the work is scoped or how the task
+contract must be written. When unclear, err on the side of reading.
+
+Consider only: Skills the Orchestrator has already discovered, and
+trusted exact method paths explicitly provided by the user or current
+task. Do not scan arbitrary unconfigured directories.
+
+After determining relevance, consult the binding table for the target
+agent's native access mode — this informs target-side access, not the
+relevance judgment. A Skill not configured for the candidate is not
+automatically irrelevant.
 
 ### Step 3 — Read Relevant Skills in Full
 
-Before final delegation, load into your own context every Skill
-identified as relevant in Step 2. Use the `skill` tool for each. Do
-not skip a Skill because you recognise its name or recall its
-description. Read the full body. If a Skill load fails, stop and
-report.
+Before final delegation, read every relevant Skill into your own
+context. Use the `skill` tool for natively loadable Skills; use
+ordinary file read for trusted exact paths. Read the full body. Record
+the base directory or resource path for path-based reads.
+
+If a load or read fails, stop and report. Do not search for
+substitutes, fall back to description or memory, or guess the body.
 
 ### Step 4 — Establish the Lane's Intended Contribution
 
@@ -180,6 +193,11 @@ permissions, user goals, or frozen decisions:
 3. Otherwise, stop and ask the user. Do not silently drop a Skill
    requirement or stretch an agent beyond its OMO contract.
 
+Regardless of how the body was obtained — native tool or trusted path
+— merge it into the same taskified application and conflict
+resolution. After resolving conflicts, decide whether the target needs
+the full body (see Target-Side Skill Access).
+
 ### Step 8 — Compose the Materialized Handoff
 
 Write the contract compactly, following the task's natural causal
@@ -217,17 +235,31 @@ Judge three things:
 When you find a problem, rewrite the relationship or delete the
 redundancy. Do not add fixed headings.
 
-## Target-Side Skill Loading
+## Target-Side Skill Access
 
-The local binding table is the sole source of loading responsibility.
-Instruct the target to load a Skill only when the table explicitly
-requires it. Do not require Skills the target has not configured or
-that its static prompt already mandates.
+The binding table is the sole source of native Skill visibility,
+`skill` tool authorisation, and loading responsibility. Default to
+compiling only the necessary methods into the contract.
 
-Regardless of target-side loading, the Orchestrator must compile every
-applicable method, gate, deliverable, evidence, and verification
-requirement into the contract. A loading instruction cannot substitute
-for the concrete application requirements.
+When the target has the Skill configured and the full body would
+materially affect its local judgments, follow the binding table and
+static prompt to use native `skill` loading.
+
+When the target lacks the Skill but the full body would materially
+affect its local judgments, require it to read a trusted exact path
+provided in the contract. This is a controlled task-level exception,
+not native Skill loading — it grants neither discovery, `skill` tool
+access, nor expanded permissions.
+
+The contract for a path-based read must state: why the source is
+needed, the exact read scope, the base directory or resource path,
+which methods apply and which do not, and conflict and failure
+behaviour. The target must not search for substitutes, bypass explicit
+prohibitions, or execute Skill scripts or side effects unless
+separately authorised and permitted.
+
+Neither loading nor path reading substitutes for the compiled
+application requirements from Step 7.
 
 ## Session and Handoff Invariants
 
@@ -244,3 +276,6 @@ for the concrete application requirements.
   materials. Do not write dangling references ("continue above," "use
   our previous result," "follow that Skill"), pass a Skill name as if
   it were completed research, or pass unresolved conflicts downstream.
+- When the contract requires the target to read a file path, that
+  path must be reachable in the target session. If unreachable, the
+  target must report the blockage rather than search for alternatives.
