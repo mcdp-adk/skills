@@ -96,8 +96,8 @@ invariants guide every choice:
 ### Step 1 — Identify Candidate Agents
 
 Identify which agent or agents could plausibly perform the work, based
-on the task objective and the OMO role capability categories. The
-static OMO prompts are the authoritative source for role boundaries.
+on the task objective, current routing guidance, target role contract,
+and actual permissions. This Skill does not redefine agent roles.
 
 Candidate agents and initial routing are provisional until relevant
 method sources have been read and reconciled. Do not freeze lane scope,
@@ -135,15 +135,17 @@ when new resources are needed, or when a user action, tool action, path,
 version, or other concrete signal indicates that the source changed.
 
 When a local source changed and its exact path is available, read that
-path to observe the current file. Do not assume repeating a native
-`skill` call refreshes a previously registered body. If no confirmed
-current body can be obtained, report the blockage. Base reuse on the
-body's current completeness and identity — not on tool invocation
-history, memory, or speculative compaction state.
+path to observe the current file. Do not infer freshness from repeating
+the same retrieval; use a method that can confirm the current source. If
+no confirmed current body can be obtained, report the blockage. Base
+reuse on the body's current completeness and identity — not on tool
+invocation history, memory, or speculative compaction state.
 
-Body reuse reuses the authoritative source text only. It does not reuse
-derived requirements, relevance judgments, or conflict reconciliations
-from a previous lane.
+Body reuse provides the authoritative source text only. Do not
+automatically carry derived requirements, relevance judgments, or
+conflict reconciliations into another lane. Reassess their applicability
+there while preserving user-confirmed decisions and materialized results
+that remain valid.
 
 If a load or read fails, stop and report. Do not search for
 substitutes, fall back to description or memory, or guess the body.
@@ -209,8 +211,14 @@ and acceptance — never as an appended summary, pasted body, or Skill
 name substitute. A Skill cannot expand an agent's capabilities, and an
 Orchestrator-level conflict must not be passed downstream.
 
+Also reconcile the relevant requirements with project instructions
+applicable to the current lane. Keep those instructions at their source
+and materialize only the boundaries the target needs rather than copying
+the full instruction files.
+
 When a Skill requirement conflicts with OMO boundaries, actual
-permissions, user goals, or frozen decisions:
+permissions, applicable project instructions, user goals, or frozen
+decisions:
 
 1. Rewrite the deliverable or select a different agent if the
    conflict can be resolved without changing the task objective,
@@ -264,28 +272,30 @@ redundancy. Do not add fixed headings.
 
 ## Target-Side Skill Access
 
-The binding table is the sole source of native Skill visibility,
-`skill` tool authorisation, and loading responsibility. Default to
-compiling only the necessary methods into the contract. Give the target
-the full body only when Step 7 determines that its details would
-materially affect the target's local judgments.
+Use the binding table to decide how a handoff should address target-side
+native loading. Treat it as a maintained responsibility projection, not
+as permission or access enforcement, and respect the target's current
+availability and permissions. Default to compiling only the necessary
+methods into the contract. Give the target the full body only when Step
+7 determines that its details would materially affect the target's
+local judgments.
 
 Under that condition, when the target has the Skill configured and no
-concrete signal makes the native body stale or uncertain, follow the
-binding table and static prompt to use native `skill` loading.
+concrete signal makes the available body stale or uncertain, follow the
+binding table and current target-side loading guidance.
 
 Under the same condition, require a trusted exact-path read when the
 target lacks the Skill, or when a concrete source change makes the
-native body's freshness uncertain. This is a controlled task-level
+available body's freshness uncertain. This is a controlled task-level
 exception, not native Skill loading — it grants neither discovery,
 `skill` tool access, nor expanded permissions.
 
-If the target's static prompt also mandates native loading, keep that
-requirement and identify the exact path as the current authoritative
-method source for this lane. Compile the relevant requirements and
-conflict boundaries in Step 7. If the path is unreachable and the
-native body's freshness cannot be confirmed, report the blockage rather
-than treating the native body as refreshed.
+If the target's current role guidance also mandates native loading, keep
+that requirement and identify the exact path as the current
+authoritative method source for this lane. Compile the relevant
+requirements and conflict boundaries in Step 7. If the path is
+unreachable and the available body's freshness cannot be confirmed,
+report the blockage rather than treating it as refreshed.
 
 The contract for a path-based read must state: why the source is
 needed, the exact read scope, the base directory or resource path,
