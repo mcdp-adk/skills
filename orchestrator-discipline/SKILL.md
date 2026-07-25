@@ -3,10 +3,12 @@ name: orchestrator-discipline
 description: >
   OMO Slim personal difference layer and delegation-prompt compilation
   workflow. Provides a user-maintained local Agent–Skill binding,
-  mandatory Skill pre-reading before delegation, and a process for
-  composing task contracts that reconcile Skill requirements with OMO
-  role boundaries, actual permissions, user goals, and frozen decisions.
-  Trigger whenever the Orchestrator prepares to delegate work.
+  mandatory Skill pre-reading, and a process for composing task contracts
+  that reconcile Skill requirements with OMO role boundaries, actual
+  permissions, user goals, and frozen decisions. Trigger when the
+  Orchestrator considers or modifies a substantive delegation, decides
+  candidate agents, establishes lane scope, or composes a task contract
+  or acceptance criteria. Also trigger when the user names this Skill.
 ---
 
 # Orchestrator Discipline
@@ -97,6 +99,10 @@ Identify which agent or agents could plausibly perform the work, based
 on the task objective and the OMO role capability categories. The
 static OMO prompts are the authoritative source for role boundaries.
 
+Candidate agents and initial routing are provisional until relevant
+method sources have been read and reconciled. Do not freeze lane scope,
+contract terms, or acceptance criteria before Step 7.
+
 ### Step 2 — Determine Relevant Skills
 
 Judge relevance by the task, not by configuration. A Skill is relevant
@@ -113,12 +119,31 @@ agent's native access mode — this informs target-side access, not the
 relevance judgment. A Skill not configured for the candidate is not
 automatically irrelevant.
 
-### Step 3 — Read Relevant Skills in Full
+### Step 3 — Ensure Relevant Method Sources Are Available
 
-Before final delegation, read every relevant Skill into your own
-context. Use the `skill` tool for natively loadable Skills; use
-ordinary file read for trusted exact paths. Read the full body. Record
-the base directory or resource path for path-based reads.
+Before finalising routing, lane scope, contract, or acceptance, ensure
+that every relevant authoritative body is complete, reliable, and
+identifiable in the current Orchestrator context. Use the `skill` tool
+for natively loadable Skills and ordinary file read for trusted exact
+paths. Record the base directory or resource path for path-based reads.
+
+Reuse a body only when it is complete in the current context, its source
+identity is known, no concrete signal indicates a change, and the lane
+does not need resources not yet read. Reacquire it in a new session,
+when the body is incomplete, when source identity cannot be confirmed,
+when new resources are needed, or when a user action, tool action, path,
+version, or other concrete signal indicates that the source changed.
+
+When a local source changed and its exact path is available, read that
+path to observe the current file. Do not assume repeating a native
+`skill` call refreshes a previously registered body. If no confirmed
+current body can be obtained, report the blockage. Base reuse on the
+body's current completeness and identity — not on tool invocation
+history, memory, or speculative compaction state.
+
+Body reuse reuses the authoritative source text only. It does not reuse
+derived requirements, relevance judgments, or conflict reconciliations
+from a previous lane.
 
 If a load or read fails, stop and report. Do not search for
 substitutes, fall back to description or memory, or guess the body.
@@ -174,11 +199,13 @@ judgment; review, research, and diagnosis lanes keep conclusions open
 to counter-evidence but do not expand the user goal or action
 authority.
 
-### Step 7 — Apply Skill Requirements and Resolve Conflicts
+### Step 7 — Extract Skill Requirements and Resolve Conflicts
 
-Embed each relevant Skill's methods, approval gates, deliverable and
-evidence requirements, and verification criteria at the positions they
-actually govern — never as an appended summary, pasted body, or Skill
+Even when the authoritative body is reused, re-extract for each lane:
+the relevant methods, approval gates, deliverable and evidence
+requirements, and verification criteria. Place them at the positions
+they actually govern — in the work approach, action gates, outputs,
+and acceptance — never as an appended summary, pasted body, or Skill
 name substitute. A Skill cannot expand an agent's capabilities, and an
 Orchestrator-level conflict must not be passed downstream.
 
@@ -194,9 +221,9 @@ permissions, user goals, or frozen decisions:
    requirement or stretch an agent beyond its OMO contract.
 
 Regardless of how the body was obtained — native tool or trusted path
-— merge it into the same taskified application and conflict
-resolution. After resolving conflicts, decide whether the target needs
-the full body (see Target-Side Skill Access).
+— it enters the same extraction, reconciliation, and contract
+compilation process. After resolving conflicts, decide whether the
+target needs the full body (see Target-Side Skill Access).
 
 ### Step 8 — Compose the Materialized Handoff
 
@@ -239,27 +266,38 @@ redundancy. Do not add fixed headings.
 
 The binding table is the sole source of native Skill visibility,
 `skill` tool authorisation, and loading responsibility. Default to
-compiling only the necessary methods into the contract.
+compiling only the necessary methods into the contract. Give the target
+the full body only when Step 7 determines that its details would
+materially affect the target's local judgments.
 
-When the target has the Skill configured and the full body would
-materially affect its local judgments, follow the binding table and
-static prompt to use native `skill` loading.
+Under that condition, when the target has the Skill configured and no
+concrete signal makes the native body stale or uncertain, follow the
+binding table and static prompt to use native `skill` loading.
 
-When the target lacks the Skill but the full body would materially
-affect its local judgments, require it to read a trusted exact path
-provided in the contract. This is a controlled task-level exception,
-not native Skill loading — it grants neither discovery, `skill` tool
-access, nor expanded permissions.
+Under the same condition, require a trusted exact-path read when the
+target lacks the Skill, or when a concrete source change makes the
+native body's freshness uncertain. This is a controlled task-level
+exception, not native Skill loading — it grants neither discovery,
+`skill` tool access, nor expanded permissions.
+
+If the target's static prompt also mandates native loading, keep that
+requirement and identify the exact path as the current authoritative
+method source for this lane. Compile the relevant requirements and
+conflict boundaries in Step 7. If the path is unreachable and the
+native body's freshness cannot be confirmed, report the blockage rather
+than treating the native body as refreshed.
 
 The contract for a path-based read must state: why the source is
 needed, the exact read scope, the base directory or resource path,
-which methods apply and which do not, and conflict and failure
+which methods constrain this lane and which relevant content is
+excluded or handled by other boundaries, and conflict and failure
 behaviour. The target must not search for substitutes, bypass explicit
 prohibitions, or execute Skill scripts or side effects unless
 separately authorised and permitted.
 
-Neither loading nor path reading substitutes for the compiled
-application requirements from Step 7.
+Neither loading nor path reading substitutes for the concrete methods,
+approval gates, deliverable, and verification requirements compiled in
+Step 7.
 
 ## Session and Handoff Invariants
 
