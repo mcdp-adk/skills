@@ -60,9 +60,9 @@ configuration change must be reflected here.
 | Agent | Configured Skills | Loading Responsibility |
 |-------|-------------------|----------------------|
 | Oracle | `simplify` | Oracle's static prompt does **not** load it automatically. For any task that substantively needs simplification review, the delegation prompt must explicitly instruct Oracle to load `simplify` before review. |
-| Writer | `documentation-writer`, `chinese-documentation` | Writer's static prompt loads both Skills at task start. You do not instruct Writer to load them. |
-| Committer | `conventional-commit` | Committer's static prompt loads it at task start. You do not instruct Committer to load it. |
 | All other currently configured OMO subagents | (none) | — |
+| Committer | `conventional-commit` | Committer's static prompt loads it at task start. You do not instruct Committer to load it. |
+| Writer | `documentation-writer`, `chinese-documentation` | Writer's static prompt loads both Skills at task start. You do not instruct Writer to load them. |
 
 The Orchestrator has access to all configured Skills. This does not
 change the routing rules injected by OMO Slim.
@@ -154,10 +154,6 @@ permissions, user goals, or frozen decisions:
 Whether the target agent must reload a Skill is determined by the
 local binding table above:
 
-- **Writer** and **Committer** static prompts already mandate their
-  Skills at task start. Do not instruct them to load Skills. The Skill
-  application contract in the delegation prompt provides role-specific
-  requirements derived from those Skills.
 - **Oracle** must be instructed to load `simplify` when the task
   substantively needs simplification review. Oracle's static prompt
   does not load it automatically. The loading instruction alone is not
@@ -166,6 +162,10 @@ local binding table above:
 - Agents without configured Skills must never receive a Skill name as
   a substitute for instructions. Incorporate the relevant substance
   directly into the task prompt.
+- **Committer** and **Writer** static prompts already mandate their
+  Skills at task start. Do not instruct them to load Skills. The Skill
+  application contract in the delegation prompt provides role-specific
+  requirements derived from those Skills.
 
 ### Task Contract Content
 
