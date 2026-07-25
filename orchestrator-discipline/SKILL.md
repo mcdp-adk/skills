@@ -69,7 +69,23 @@ change the routing rules injected by OMO Slim.
 
 ## Delegation-Prompt Compilation Process
 
-Before every substantive delegation, follow this mandatory process.
+Before every substantive delegation, compile the minimum context the
+lane needs — no more, no less. Every item must earn its place by
+shaping understanding, permissions, action, or acceptance. Three
+invariants guide every choice:
+
+- **Compile the minimum connected context.** Each included item must
+  produce, support, constrain, preserve open questions, orient, or
+  verify the current work. Drop background that would not change
+  understanding, judgment, permission, action, or acceptance.
+- **Calibrate reasoning freedom separately from action authority.**
+  Permission to examine premises, find counter-evidence, or propose
+  alternative frames does not imply permission to alter user goals,
+  reserved decisions, scope, or high-consequence actions.
+- **Make the handoff independently closable.** A new session armed only
+  with its static role, the contract, and explicit materials must be
+  able to start, judge permissions, deliver, and know when to conclude
+  or stop. Self-contained does not mean copying full history.
 
 ### Step 1 — Identify Candidate Agents
 
@@ -94,150 +110,137 @@ not skip a Skill because you recognise its name or recall its
 description. Read the full body. If a Skill load fails, stop and
 report.
 
-### Step 4 — Extract Applicable Requirements
+### Step 4 — Establish the Lane's Intended Contribution
 
-From each loaded Skill, extract:
+Start from the user goal and confirmed decisions. Determine what this
+lane must produce — a result, judgment, recommendation, or reduction
+of specific uncertainty. State what triggered the task, but include
+only the causes that affect understanding or action. Distinguish
+user-confirmed goals from your current interpretation.
 
-- Methods the agent must follow.
-- Approval gates the agent must honour.
-- Deliverable and evidence requirements.
-- Verification criteria the Skill imposes.
-- Any content that conflicts with the agent's OMO role boundary,
-  actual permissions, user goals, or frozen decisions.
+Do not write speculative root causes, problem framings, or solution
+prescriptions as premises the subagent must accept. Resolve ambiguity
+only from clear existing evidence. If that would add or change the user
+goal, scope, final deliverable, or a reserved decision, ask the user. Do
+not delegate that choice to the subagent on the user's behalf.
 
-A Skill describes a method; it does not expand an agent's OMO
-capabilities. The final task contract must be simultaneously compatible
-with the agent's OMO role boundary, actual permissions, the user goal,
-all relevant Skill methods, and every frozen decision. A requirement
-from one source that is incompatible with any of the others is not an
-automatic deletion — it is a conflict that must enter Conflict
-Resolution. Do not silently drop any constraint from the contract
-before resolving the incompatibility.
+### Step 5 — Compile the Minimum Connected Context
+Select only the inputs, paths, evidence, completed direct dependencies,
+constraints, current understanding, and open questions the lane needs.
+State what key evidence supports and what it does not prove; show how
+dependencies, decisions, and unknowns affect the current work. Where
+interpretation could diverge, naturally separate evidence from
+assumptions, unresolved questions from reserved decisions, and
+delegable local judgments from those you retain. Materialize upstream
+outcomes as accepted findings, evidence, paths, artifacts, and current
+state. Preserve their source, uncertainty, and decision status while
+discarding process narratives. When a prerequisite is unfinished,
+either block or narrow
+the lane to independent work. Delete orphaned background.
 
-### Step 5 — Compose the Task Contract
+### Step 6 — Calibrate Reasoning Freedom and Action Authority
 
-Combine the extracted Skill requirements with:
+Weigh unknowns, framing risk, cost, impact, and reversibility. Specify:
 
-- The task objective, scope, and user goal.
-- Frozen decisions that the agent must accept.
-- The agent's OMO role boundaries and actual permissions.
-- Direct dependencies (terminal results from completed lanes).
-- Accepted facts, evidence, paths, and artifacts.
+- Which premises the agent may examine and whether it may seek
+  counter-evidence; whether it may only propose, also test, or continue
+  under an alternative frame without changing user goals, reserved
+  decisions, or scope.
+- Which local judgments it may make and which decisions the user or
+  Orchestrator reserves.
+- What it may read, search, recommend, modify, or execute, and which
+  actions require approval.
+- When it must only report a contradiction or recommend a change, and
+  under what conditions open-ended investigation is bounded.
 
-Write a **derived Skill application contract** — concrete instructions
-that incorporate what the Skill requires, translated into the current
-task's context. A Skill name or loading instruction alone cannot serve
-as the Skill application contract. When the local binding requires the
-target to load a Skill, the delegation prompt may and must name that
-Skill, but must simultaneously provide the role-compatible application
-contract derived by the Orchestrator. Never paste the Skill's body
-into the delegation prompt.
+Adapt, but do not formalise: high unknowns warrant broader reasoning
+freedom; high impact, cost, or irreversibility narrows action
+authority; when both are high, separate investigation from action or
+set evidence gates; mature execution lanes allow necessary local
+judgment; review, research, and diagnosis lanes keep conclusions open
+to counter-evidence but do not expand the user goal or action
+authority.
 
-### Conflict Resolution
+### Step 7 — Apply Skill Requirements and Resolve Conflicts
+
+Embed each relevant Skill's methods, approval gates, deliverable and
+evidence requirements, and verification criteria at the positions they
+actually govern — never as an appended summary, pasted body, or Skill
+name substitute. A Skill cannot expand an agent's capabilities, and an
+Orchestrator-level conflict must not be passed downstream.
 
 When a Skill requirement conflicts with OMO boundaries, actual
 permissions, user goals, or frozen decisions:
 
-1. If the conflict can be resolved by rewriting the deliverable or
-   selecting a different agent without changing the task objective,
-   scope, cost level, final deliverable, or any frozen decision,
-   do so directly.
-2. If a simple analysis, implementation, or verification split (one
-   that does not change the objective, scope, cost level, final
-   deliverable, or any frozen decision) would resolve the conflict,
-   split the work.
+1. Rewrite the deliverable or select a different agent if the
+   conflict can be resolved without changing the task objective,
+   scope, cost level, final deliverable, or any frozen decision.
+2. Split into analysis, implementation, or verification if that
+   resolves the conflict without changing the above.
 3. Otherwise, stop and ask the user. Do not silently drop a Skill
    requirement or stretch an agent beyond its OMO contract.
 
-### Target-Side Skill Loading
+### Step 8 — Compose the Materialized Handoff
 
-Whether the target agent must reload a Skill is determined by the
-local binding table above:
+Write the contract compactly, following the task's natural causal
+order — no fixed headings, no fixed sequence. Place materials near the
+judgments, actions, or outputs they inform and replace dangling
+references with facts, paths, artifacts, and current state.
 
-- **Oracle** must be instructed to load `simplify` when the task
-  substantively needs simplification review. Oracle's static prompt
-  does not load it automatically. The loading instruction alone is not
-  sufficient; the delegation prompt must also include the
-  Orchestrator-derived role-compatible Skill application contract.
-- Agents without configured Skills must never receive a Skill name as
-  a substitute for instructions. Incorporate the relevant substance
-  directly into the task prompt.
-- **Committer** and **Writer** static prompts already mandate their
-  Skills at task start. Do not instruct them to load Skills. The Skill
-  application contract in the delegation prompt provides role-specific
-  requirements derived from those Skills.
+Make explicit: output, purpose, lane-specific acceptance evidence,
+completion and stopping behaviour, approval gates, and blocker
+handling. Match acceptance to the lane's actual contribution: system
+effects by behaviour, validation, and regression; judgments by
+evidence quality, alternative explanations, residual uncertainty,
+conclusion boundaries, decision value, and a justified stopping point;
+cause identification by reproducibility, hypothesis discrimination,
+causal evidence, and a safe next step.
 
-### Task Contract Content
+Add structure for multiple dependencies, consequential assumptions,
+contestable framing, approval gates, high-impact actions, or multiple
+artifacts. Simple lanes need only a short paragraph or a few bullet
+points. Length follows the risk of misunderstanding and wrong
+decisions, not file count or task type name.
 
-Every delegation prompt is self-contained and receives only what the
-target needs for its lane:
+### Step 9 — Confirm Sufficiency, Closure, and Minimality
 
-| Included | Excluded |
-|----------|----------|
-| Task objective | Full scheduling plan |
-| Scope (read, search, write boundaries) | Other agent state |
-| Confirmed facts and frozen decisions | Internal routing rationale |
-| Direct dependencies (completed, reconciled) | Rejected alternatives |
-| Role-specific Skill application contract | Task IDs |
-| Deliverable and evidence requirements | Complete conversation history |
-| Acceptance criteria | Other lanes' internal state |
-| Blocker handling instructions | |
+Judge three things:
 
-### Materialized Handoff
+- Can a new session understand why the task exists, select a
+  reasonable first step, judge its permissions, and know what to
+  deliver and when to stop?
+- Is any relationship missing that would produce a wrong target,
+  premise, permission, or acceptance reading?
+- If removing an item would leave understanding, judgment, action,
+  and acceptance unchanged, remove it.
 
-Downstream agents receive already coordinated and reconciled facts,
-suggestions, paths, and constraints. Do not:
+When you find a problem, rewrite the relationship or delete the
+redundancy. Do not add fixed headings.
 
-- Pass a Skill name as if it were completed research.
-- Require an agent to load a Skill it does not have configured.
-- Ask an agent to resolve Skill conflicts that belong in the
-  Orchestrator's compilation step.
+## Target-Side Skill Loading
 
-## Task Contract Checklist
+The local binding table is the sole source of loading responsibility.
+Instruct the target to load a Skill only when the table explicitly
+requires it. Do not require Skills the target has not configured or
+that its static prompt already mandates.
 
-Apply this checklist proportionately. Include each item when relevant
-to the lane; skip items that do not apply.
+Regardless of target-side loading, the Orchestrator must compile every
+applicable method, gate, deliverable, evidence, and verification
+requirement into the contract. A loading instruction cannot substitute
+for the concrete application requirements.
 
-- **Objective:** what the lane must accomplish, stated in terms of the
-  user goal.
-- **Rationale:** why the work matters, tied to the user goal.
-- **Scope:** read, search, and write boundaries. Which paths,
-  subsystems, or domains are in scope and which are excluded.
-- **Ownership:** which files, subsystems, or decisions the agent owns,
-  and which paths it must not touch.
-- **Frozen decisions:** decisions already made that the agent must
-  accept without reopening.
-- **Delegated decisions:** decisions the agent may make locally within
-  its role boundaries.
-- **Terminal dependencies:** completed results from other lanes that
-  the agent must use as accepted input.
-- **Accepted facts, evidence, paths, and artifacts:** concrete material
-  the agent should rely on, plus explicit uncertainty where facts are
-  incomplete.
-- **Skill application contract:** concrete instructions derived from
-  relevant Skills, translated into the current task context. A Skill
-  name or loading instruction alone cannot fulfil this item. When the
-  local binding requires the target to load a Skill, name it
-  explicitly, but always accompany it with the role-compatible
-  application contract derived by the Orchestrator. Never paste a
-  Skill body.
-- **Constraints and prohibited actions:** what the agent must not do,
-  including capabilities it must not use even if available.
-- **Deliverable and evidence requirements:** what the agent must
-  produce and what evidence must support it.
-- **Acceptance and verification:** who verifies the result and against
-  what criteria.
-- **Blocker behavior:** what the agent should do if critical input is
-  missing or the task does not fit its role. The agent should return a
-  brief reason rather than attempting partial work outside its
-  contract.
+## Session and Handoff Invariants
 
-## Session References
-
-A new session must never receive dangling references such as "continue
-above," "use our previous result," or "follow that skill." Every new
-task prompt is self-contained.
-
-A reused session still receives the latest decisions, changed
-boundaries, and current increment. Do not assume the agent remembers
-prior task content just because the session is reused.
+- A new session receives no hidden chat history and no other agent's
+  internal state. It must operate from its static role, the contract,
+  and the materials provided.
+- A reused session still receives the latest decisions, changed
+  boundaries, and current increment. Do not assume the agent remembers
+  prior task content.
+- Pass only the materialized facts, materials, relationships,
+  constraints, and direct dependencies the current lane requires.
+- Do not pass: full history, the full scheduling plan, task IDs,
+  other agents' internal state, rejected alternatives, or irrelevant
+  materials. Do not write dangling references ("continue above," "use
+  our previous result," "follow that Skill"), pass a Skill name as if
+  it were completed research, or pass unresolved conflicts downstream.
