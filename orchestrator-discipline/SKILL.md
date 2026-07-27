@@ -69,6 +69,7 @@ configuration change must be reflected here.
 | Agent | Configured Skills | Loading Responsibility |
 |-------|-------------------|----------------------|
 | Oracle | `simplify` | Oracle's static prompt does **not** load it automatically. For any task that substantively needs simplification review, the delegation prompt must explicitly instruct Oracle to load `simplify` before review. |
+| Librarian | `grok-search` | Librarian's static prompt does **not** load it automatically. For any task that substantively needs current information, real-time data, X/Twitter search, or live fact-checking, the delegation prompt must explicitly instruct Librarian to load `grok-search` before research. |
 | Designer | `agent-browser` | Designer's static prompt does **not** load it automatically. For any task that substantively needs browser or Electron interaction, the delegation prompt must explicitly instruct Designer to load `agent-browser` before proceeding. |
 | Committer | `conventional-commit` | Committer's static prompt loads it at task start. You do not instruct Committer to load it. |
 | Writer | `documentation-writer`, `chinese-documentation` | Writer's static prompt loads both Skills at task start. You do not instruct Writer to load them. |
