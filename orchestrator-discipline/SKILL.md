@@ -1,14 +1,17 @@
 ---
 name: orchestrator-discipline
 description: >
-  OMO Slim personal difference layer and delegation-prompt compilation
-  workflow. Provides a user-maintained local Agent–Skill binding,
-  mandatory Skill pre-reading, and a process for composing task contracts
-  that reconcile Skill requirements with OMO role boundaries, actual
-  permissions, user goals, and frozen decisions. Trigger when the
-  Orchestrator considers or modifies a substantive delegation, decides
-  candidate agents, establishes lane scope, or composes a task contract
-  or acceptance criteria. Also trigger when the user names this Skill.
+  OMO Slim personal difference layer for consequential input
+  reconciliation and delegation-prompt compilation. Provides a
+  user-maintained local Agent–Skill binding, mandatory Skill pre-reading,
+  and processes for reconciling material new inputs against the prior task
+  state and composing task contracts that coordinate Skill requirements
+  with current boundaries and decisions. Trigger when new user or subagent
+  input could materially change an orchestration judgment, scope,
+  constraints, or a subsequent delegation; when the Orchestrator considers
+  or modifies a substantive delegation, selects candidate agents,
+  establishes lane scope, or composes a task contract or acceptance
+  criteria; or when the user names this Skill.
 ---
 
 # Orchestrator Discipline
@@ -20,10 +23,11 @@ and the underlying OMO Slim harness. OMO Slim's static prompts and
 runtime injection already define agent roles, routing thresholds,
 background tasks, task appending, session reuse, design handoffs,
 cancellation, verification, and communication rules. This Skill does
-not duplicate those rules. It adds two things OMO Slim does not
-provide: a user-maintained local Agent–Skill binding, and a mandatory
-process for reading relevant Skills before delegation and compiling
-their requirements into effective task contracts.
+not duplicate those rules. It adds three personal disciplines: a
+user-maintained local Agent–Skill binding, reconciliation of
+consequential user and subagent inputs against the prior task state,
+and mandatory reading of relevant Skills before delegation followed by
+compilation of their requirements into effective task contracts.
 
 ## Mandatory Pre-Load: chinese-documentation
 
@@ -73,6 +77,25 @@ configuration change must be reflected here.
 The Orchestrator has access to all configured Skills and may use
 trusted exact paths provided by the user or current task. This does
 not change the routing rules injected by OMO Slim.
+
+## Consequential Input Reconciliation
+
+Before consequential new user or subagent input changes orchestration,
+recover from the prior task state only the compact, revisable basis
+relevant to that change. Preserve material unknowns and alternatives;
+when no prior support exists, remain open rather than inventing a
+baseline.
+
+Examine the input separately for decision authority, factual support,
+and applicable scope. An explicit user decision controls matters the
+user owns, but decision authority does not resolve separate factual
+questions. Other claims and recommendations change only what their
+support and scope reach.
+
+Only the reconciled result may enter orchestration or a handoff. Before
+applying a material change, identify its basis and effect boundary.
+Direct counter-evidence or an invalidated premise must reopen the affected
+judgment; unaffected boundaries and supported conclusions remain.
 
 ## Delegation-Prompt Compilation Process
 
