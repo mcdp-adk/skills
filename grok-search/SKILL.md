@@ -1,213 +1,137 @@
 ---
 name: grok-search
-compatibility: Requires a Python 3.10+ runner (try python, then uv, then platform python). Stdlib-only.
+compatibility: Requires a Python 3.10+ runner (try python, then platform python, then uv). Stdlib-only.
 description: >
-  Real-time web and X (Twitter) search powered by xAI Grok. Use this skill whenever
-  the user wants current information, recent news, live data, X/Twitter posts, trending
-  topics, sentiment, fact-checking, or anything requiring up-to-date internet data.
-  Trigger when the user says "search for", "look up", "what's the latest on", "find
-  recent", "what are people saying about", "check X/Twitter for", "news about",
-  "current status of", "is this true", "verify this claim", or asks about something
-  time-sensitive that a language model wouldn't know from training data alone.
-  Also trigger proactively when a question clearly needs current information,
-  real-time data, social media sentiment, or fact verification against live sources.
-  Do NOT trigger for local file search, code analysis, or tasks that don't need
-  live internet data.
+  Use when the task requires actually retrieving content from the external Web
+  or X: current information, a specified official page or account, a specified
+  historical date range, or external verification of a claim or other content
+  the user supplied. It also covers the narrow management of this CLI: running,
+  configuring, or troubleshooting `grok-search`, and explaining its JSON,
+  errors, `response_id`, or continuation behavior. Do not use for general local
+  file or repository search, code analysis, analysis of user-provided content
+  without external sources, or stable-knowledge answers when external retrieval
+  was not requested. Even troubleshooting must not read or display `.env`.
+  Current legal or market materials may be retrieved, but this skill does not
+  provide legal certification or predict prices.
 ---
 
 # Grok Search
 
-Search the live web and X with xAI's Grok. Use it when freshness matters — static model knowledge is often wrong or incomplete for breaking news, active discussions, and fast-moving facts.
+`{baseDir}` means this skill's root directory: the directory containing
+`SKILL.md`. If the harness leaves the placeholder unchanged, substitute that
+directory's absolute path in the commands below.
 
-## How to run
+Use the bundled script to search the live Web and X through xAI Grok. It returns
+a synthesized answer with source URLs and a continuation ID when available.
 
-All examples below use `python "{baseDir}/scripts/search.py"` as the call structure — it is platform- and backend-agnostic, not a copy-paste command. Before the first search, pick a runner that actually works on this machine, in this order:
+## Run the tool
 
-1. `python` — try it first.
-2. No `python`, or it's a broken stub (e.g. the Windows Store placeholder that silently no-ops)? Use `uv`, which can fetch Python 3.10 on its own:
-   ```bash
-   uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --help
-   ```
-3. No `uv` either? Use the platform Python: `py -3` on Windows, `python3` on Linux/macOS.
+Before the first search, verify runners in this order and use the first one that
+succeeds:
 
-Verify once with `--help`, then keep that runner for the whole session. Don't install `uv`, Python, or `pip`. Don't switch runners after a real query starts — the script retries internally.
+1. `python`.
+2. The platform runner: `py -3` on Windows or `python3` on Linux/macOS.
+3. An already installed `uv`, using `uv run --no-project --python 3.10`.
 
-## Setup
+Each candidate must verify the script with `--help`:
 
-The script automatically loads `{baseDir}/.env` for authentication. Do NOT read, display, copy, or parse `.env`; the agent must leave it to the script. If the key is missing, follow the script's `ENV_ERROR` guidance and tell the user to configure it.
+```bash
+python "{baseDir}/scripts/search.py" --help
+py -3 "{baseDir}/scripts/search.py" --help          # Windows
+python3 "{baseDir}/scripts/search.py" --help        # Linux/macOS
+uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --help
+```
 
-- Required: `XAI_API_KEY=...`
-- Optional: `HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY`, `NO_PROXY`, custom CA bundle via `--ca-bundle`
+Verify `--help` once and reuse that runner for the rest of the session. Do not
+use an independent installer or install uv or pip packages. If uv is already
+available as the final fallback and the requested Python 3.10 is missing, it may
+download a managed Python 3.10 on first use and may need network access. If that
+download is not allowed, stop and ask the user for an available runner rather
+than installing another tool.
+The script handles eligible internal retries within the same CLI invocation.
 
-## How to search
+The standard command is:
 
 ```bash
 python "{baseDir}/scripts/search.py" "your query here"
 ```
 
-The script exposes what the API can do, grouped into 6 parameters. Pick the combination that matches what the user wants.
+Replace `python` with the verified runner; with uv, keep its `run --no-project
+--python 3.10` prefix. The script loads `{baseDir}/.env` automatically. The
+agent must not read, display, copy, or parse `.env`. Required configuration is
+`XAI_API_KEY`; `HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY`, `NO_PROXY`, and
+`--ca-bundle` are optional network settings.
 
-### The 6 parameters
+## Choose the request
 
-| Parameter | What it controls | Default |
-|---|---|---|
-| `--source web\|x\|both` | Where to search | `both` |
-| `--preset single\|multi-4\|multi-16` | Select the actual model and agent count | `multi-4` |
-| `--since` / `--until` | X search time window | none |
-| `--web-allow` / `--web-exclude` / `--x-allow` / `--x-exclude` | Restrict sources | none |
-| `--continue RESPONSE_ID` | Continue a previous search | none |
-| `--image-understanding` / `--video-understanding` | Analyze media in results | off |
+Use the smallest request that fits the user's needs. The default source is
+`both`, and the default preset is `multi-4`, so omit those flags when they fit.
 
-Advanced options (`--model`, `--effort`, `--timeout`, `--max-retries`, `--env-file`, `--ca-bundle`, `--raw`) are available — run `python "{baseDir}/scripts/search.py" --help` for details.
+| Control | Decision |
+|---|---|
+| `--source web\|x\|both` | Choose Web, X, or both. With `both`, date flags affect X only. |
+| `--preset single\|multi-4\|multi-16` | `single` is for one fact, a specified page/account, or speed and has the lowest relative cost. Omit the flag for ordinary searches (`multi-4`, the default, with moderate relative cost). Use `multi-16` only when the user explicitly asks for comprehensive/deep work and the task is genuinely multi-faceted; it has the highest relative cost. |
+| `--since` / `--until` | Strict date filters for X. Web has no strict date filter: `--source web` with either flag fails, while `both` applies the flags only to X. Put hour-level freshness, such as “in the past 2 hours,” in the query text because the X filter is date-level. |
+| Web/X filters | Use `--web-allow` or `--web-exclude` for domains, and `--x-allow` or `--x-exclude` for handles. Keep each filter with a compatible source and do not combine allow and exclude for the same source. |
+| `--continue RESPONSE_ID` | Continue a prior response using its `response_id`; use follow-ups to fill a known gap or audit evidence. |
+| Media | Add `--image-understanding` for supported images. Add `--video-understanding` for video; it requires `--source x` or `both`. Both are off by default. |
 
-**Time formats**: relative (`2h`, `7d`, `2w`, `yesterday`, `today`, `now`) or ISO date (`2026-07-01`). All times are UTC.
+Time values can be relative (`2h`, `7d`, `2w`, `today`, `yesterday`, `now`) or
+ISO date/time values; they are interpreted in UTC. For Web recency, state the
+time range in the query itself.
 
-**X vs web time**: X search supports strict date filtering via `--since`/`--until`. Web search does NOT — `--source web --since ...` is rejected. When web recency matters, state the time range explicitly in the query text. With `--source both`, the flags constrain only X search. Note: `--since 2h` resolves to a date-level filter (the UTC date containing that timestamp), not an hour-level window — for precise hour-level recency, state the exact range in the query text (e.g. "in the past 2 hours").
+## Read and present the result
 
-### Preset selection
+The normal output is JSON. For a successful response, use these fields:
 
-- `single`: Explicitly use for an individual fact, version number, single official documentation page, specified account or page, or when the user asks for speed or lower cost.
-- `multi-4` (default): Omit `--preset` for ordinary current-information searches. It uses `grok-4.20-multi-agent`, `low` effort, 4 agents.
-- `multi-16`: Explicitly use only when the user requests comprehensive or deep research and the task is multi-faceted, such as work spanning multiple entities or markets, several sub-questions, conflicting-evidence audits, or complex multi-turn research. It uses `grok-4.20-multi-agent`, `high` effort, 16 agents.
+The script writes its managed success and error JSON to stdout. `Searching...`,
+`Done.`, and internal retry notices go to stderr. Parse stdout, not stderr; do
+not treat progress lines as JSON or as a parse failure. If the environment
+merges the streams, identify the script's single-line JSON and ignore the
+corresponding non-JSON progress lines; do not invoke the search again.
 
-Presets only select the model and agent count; they do not promise broader search, deeper answers, or higher quality. multi-agent is Beta. All agents' tokens are billed, requests may take minutes, and the multi-agent rate limit is 9 requests per second. A failed multi-agent request does not fall back to `single`. `--model` and `--effort` override a preset — see [references.md](references/references.md) for override and effort semantics.
+- `ok` — whether the search completed successfully.
+- `text` — the synthesized answer to present and, when needed, summarize.
+- `citations` — candidate source URLs, not fact verification. Check important
+  claims against the cited pages when the stakes justify it.
+- `response_id` — the ID to pass to `--continue` for a follow-up, when present.
+- `request_summary` — the effective source, preset, and time-filter behavior.
+- `citation_coverage` — a mechanical comparison of URLs in `text` with API
+  citations; it does not show that a source supports a claim.
 
-### Reading the result
+Separate confirmed findings, conflicting reports, social signals, and evidence
+that is still insufficient. An official X account post can establish that the
+account made a statement, but it does not by itself verify the statement's
+underlying facts; broad factual conclusions need independent support. Treat X
+posts as social signals unless independent credible sources support the claim.
+Do not claim to identify, filter, or quantify bots or coordinated behavior; the
+CLI has no bot-detection capability. Describe discussion or emotional tone
+qualitatively; do not invent percentages without a sampling method. In a
+multi-turn search, use later requests to close gaps and audit earlier evidence,
+not merely to ask for more detail. Present the answer and relevant citations,
+not the complete JSON or a long query template.
 
-The script outputs JSON to stdout:
+## Handle failures safely
 
-```json
-{
-  "ok": true,
-  "response_id": "resp_abc123",
-  "text": "The synthesized answer...",
-  "citations": ["https://example.com/source1"],
-  "request_summary": {
-    "source": "both",
-    "preset_used": "multi-4",
-    "preset_explicit": false,
-    "preset_overridden": false,
-    "model_used": "grok-4.20-multi-agent",
-    "effort_sent": "low",
-    "agent_count": 4,
-    "timeout_seconds": 300,
-    "warnings": [],
-    "x_time_filter": "strict",
-    "web_strict_filter_available": false
-  },
-  "citation_coverage": {
-    "text_urls": [],
-    "api_citation_urls": [],
-    "unmatched_text_urls": []
-  },
-  "usage": {"input_tokens": 1234, "output_tokens": 567}
-}
-```
-
-- `response_id` — use with `--continue` for follow-up questions on the same topic
-- `request_summary.x_time_filter` — tells you whether X time filtering was applied; web search has no time filter, so put its time range in the query text
-- `citation_coverage` — checks if URLs in the answer text appear in the API's citations list. This is mechanical URL matching, NOT fact verification. A URL being present doesn't mean the source supports the claim.
-
-## Decision guide: what does the user want?
-
-### Real-time events (breaking news, outages, announcements)
-
-```bash
-python "{baseDir}/scripts/search.py" --source both --since "24h" "Track [EVENT] in the past 24 hours. Build a timeline ordered by when things happened. For each item, label it: confirmed (primary source or 2+ independent credible sources), reported (named credible outlet but not independently confirmed), or X-only/unconfirmed (social signal only). List both the event time and the source publication time. Do not treat X posts as fact confirmation."
-```
-
-### X sentiment and reactions
-
-```bash
-python "{baseDir}/scripts/search.py" --source x --since "7d" "Analyze X discussion about [TOPIC] in [TIME RANGE]. Give the main viewpoints, disagreements, recurring arguments, and representative posts. Describe the qualitative sentiment shape — do not give percentages without sampling methodology. Distinguish official accounts, domain experts, regular users, and low-quality/coordinated signals."
-```
-
-For a lightweight request about specific accounts, add `--preset single` and `--x-allow handle1 --x-allow handle2`.
-
-### Fact-checking and narrative comparison
-
-```bash
-python "{baseDir}/scripts/search.py" --source both "Fact-check this claim: [CLAIM]. Find supporting, refuting, and unconfirmable evidence. For each piece: source URL, publication date, source type, and which part of the claim it supports or refutes. Separately list where X narrative and web/primary sources diverge. End with: conclusion, confidence level, unresolved questions, coverage limitations."
-```
-
-For technical claims, add `--web-allow arxiv.org --web-allow github.com` to restrict to authoritative sources.
-
-### Market and competitive intelligence
-
-```bash
-python "{baseDir}/scripts/search.py" --source both "Analyze [COMPANY/PRODUCT] in [TIME RANGE]: 1. Official announcements, funding, product launches, pricing changes. 2. Actual user/developer/analyst reactions on X. 3. Competitor responses. Separate confirmed facts, speculation, and social signals."
-```
-
-### Multi-agent multi-source research
-
-```bash
-# First round
-python "{baseDir}/scripts/search.py" --source both --preset multi-16 "Research [QUESTION]. Define scope, time window, key sub-questions, and evidence standards. Give preliminary findings, conflicting evidence, and gaps that still need verification."
-
-# Follow-up rounds (use response_id from previous output)
-python "{baseDir}/scripts/search.py" --source both --preset multi-16 --continue resp_abc123 "Address the gaps from the previous round: [SPECIFIC SUB-QUESTION]. Audit whether previous conclusions are supported by primary sources. Revise any conclusions with insufficient evidence."
-```
-
-Multi-turn value is auditing previous gaps, not just asking "more detail". Multi-agent is Beta and does not automatically fall back to `single` on failure. If a multi-agent request fails, report the failure to the user. Do not retry with `single` or change models without the user's approval.
-
-### Technical documentation lookup
-
-```bash
-python "{baseDir}/scripts/search.py" --source web --preset single --web-allow docs.python.org --web-allow github.com "Find current official documentation for [TOPIC]. Prefer original docs over blog posts. Note version numbers and publication dates."
-```
-
-Domain whitelist supports max 5 domains.
-
-## Guardrails
-
-### When NOT to use this skill
-
-- Local file search or code analysis
-- Questions where training data is sufficient and freshness doesn't matter
-- Legal opinions, compliance certification, or formal fact adjudication
-- Trading signals or price predictions (latency and rate limits make this unsuitable)
-
-### Handling results
-
-- **Citations are candidates, not verified evidence.** The `citations` list comes from `output_text.annotations` — a URL there doesn't mean the source supports the claim. Verify against source pages. URLs in `citation_coverage.unmatched_text_urls` are unverified.
-- **Tier your sources:** Tier 1 (official/academic), Tier 2 (industry media), Tier 3 (social media). Don't present Tier 3 as if it were Tier 1.
-- **Label uncertainty:** For high-stakes outputs, state what's confirmed, conflicting, social-only, or has insufficient evidence.
-- **Anti-bot is heuristic only:** You can ask the query to ignore duplicates and spam, but this isn't bot detection — don't claim filtered bots or computed sentiment statistics.
-
-### Constraints
-
-- Web search has no date filter — state time ranges in the query text
-- Breaking news on X is noisy — early posts often outrun confirmation
-- Paywalled or private content is not accessible
-- Over-filtering hides the best evidence — start broad, then narrow
-- Historical X coverage may be incomplete — verify coverage before relying on it for older events
-
-## Troubleshooting
-
-### Exit codes
-
-- Exit 1: runtime errors and script-level argument validation errors, such as using `--web-allow` with `--source x`.
-- Exit 2: authentication failure (an invalid or expired API key), or argparse parsing errors such as an unknown flag or invalid preset value.
-- Exit 3: environment configuration errors, such as a missing API key or malformed `.env` file.
-
-### ENV_ERROR: API key not found
-
-- Tell the user to get a key at https://console.x.ai and configure `XAI_API_KEY` in `<skill-root>/.env` using `.env.example`, or set the `XAI_API_KEY` OS environment variable.
-- Priority is: non-empty OS environment variable > `.env` file.
-
-### `--env-file`
-
-Use `--env-file /path/to/.env` to specify a custom `.env` path.
-
-### Windows
-
-After changing an environment variable, restart the terminal or agent process. Running processes do not detect newly set variables.
-
-### Security
-
-- Do not expose API keys in logs or output.
-- The script does not echo API keys.
+- `ENV_ERROR` means configuration is missing or malformed. Ask the user to set
+  `XAI_API_KEY` in the skill's `.env` (using `.env.example`) or in the OS
+  environment; a non-empty OS value takes priority.
+- Authentication errors indicate an invalid or expired key. Ask the user to
+  replace it through [console.x.ai](https://console.x.ai). Keep keys and
+  `.env` contents out of logs and output.
+- For a local argument error, report the actual error and exit status, and only
+  correct it when the exact fix is clear and does not change the user's intent
+  or expected cost.
+- After the script returns a final API, connection, or timeout error, do not
+  automatically start a second CLI invocation. This does not require adding
+  `--max-retries 0` and does not disable the script's internal retries. A
+  timeout may have reached the service, so check for possible processing first.
+- First report every failed request. Without the user's explicit approval, a
+  new call must not change the preset, model, or effort, and must not retry with
+  `single`.
 
 ## References
 
-- [references.md](references/references.md) — API fields, models, constraints, pricing, and parameter-to-API mapping details.
+Read [references/references.md](references/references.md) only as needed: to
+check model or effort semantics, filter limits, retry behavior, proxy
+precedence, output formats, or uncommon errors.
