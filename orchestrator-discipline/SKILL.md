@@ -22,18 +22,12 @@ At a new session's start, read `chinese-documentation` for the Orchestrator's
 direct Chinese communication with the user. Do not copy it into unrelated
 specialist prompts.
 
-## Boundaries
+## Orchestrator Interface
 
-- **User** owns goals, scope, reserved decisions, high-impact trade-offs, and
-  explicit `@agent` participation constraints.
-- **Orchestrator** preserves user intent, selects context, dispatches tasks,
-  owns runtime choices, user interaction, verification, and delivery.
-- **Navigator** understands selected context, chooses targets, makes the
-  smallest sufficient decomposition, and writes downstream prompts.
-- **Specialists** perform only the judgment or action their prompt grants.
-
-Orchestrator does not rewrite Navigator's prompt by preference. Navigator does
-not dispatch, manage runtime, contact the user, or replace specialist judgment.
+`agent-capabilities` is the authority for system roles. Here, Orchestrator
+preserves user intent, selects context, dispatches tasks, owns runtime choices,
+and delivers results. Navigator owns downstream-prompt semantics; Orchestrator
+does not rewrite them by preference.
 
 ## Select Context
 
