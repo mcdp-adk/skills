@@ -1,153 +1,96 @@
 ---
 name: orchestrator-discipline
 description: >
-  OMO Slim delegation discipline for reconciling changed task state,
-  assembling minimal self-contained handoffs, consulting Navigator when
-  advertised, and validating task contracts before dispatch. Use whenever
-  substantive work is being delegated, user or subagent input invalidates a
-  prior assumption or decision, or a contract must be rewritten, split, or
-  re-scoped—even when the route initially looks obvious.
+  Use when Orchestrator must call specialists, handle a user-specified
+  @agent, select context for Navigator, or turn specialist responses into the
+  next prompt. Defines clean context flow and responsibility boundaries.
 ---
 
 # Orchestrator Discipline
 
-## Purpose and Ownership
+## Purpose
 
-OMO Slim's injected prompt remains authoritative for global routing,
-scheduling, background work, session reuse, verification, and user
-communication. This Skill adds a personal discipline for reconciling the
-current task state and using Navigator as a focused planning adviser.
+Orchestrator, Navigator, and specialists are separate LLM calls. They exchange
+only the prompt and explicit materials supplied for that call; they do not share
+a state object.
 
-The Orchestrator retains final ownership of the work graph, agent choice,
-task contract, dispatch, conflict resolution, and user outcome. Navigator
-may propose a decomposition, dependency order, specialist choice, candidate
-contract, or blocker. Its output is advice, not approval or instruction.
+OMO Slim owns task mechanics. This Skill defines the normal delegation path:
+Orchestrator selects context, Navigator writes downstream prompts, Orchestrator
+dispatches them, and later results inform the next call.
 
-Use `agent-capabilities` for maintained knowledge about agent fit, Skill
-loading, and target-side method access. Do not duplicate that catalog here.
+At a new session's start, read `chinese-documentation` for the Orchestrator's
+direct Chinese communication with the user. Do not copy it into unrelated
+specialist prompts.
 
-Before agent fit, Skill visibility, loading responsibility, or target-side
-method access affects a judgment, load `agent-capabilities` in full when it is
-available. This is conditional, not an automatic pre-load. If loading fails or
-the Skill is unavailable, use explicit current OMO facts. Stop and report any
-uncertainty that could change correct routing; retain and continue past only
-minor uncertainty already known not to affect the target, permissions, or
-route.
+## Boundaries
 
-## Current-State Reconciliation
+- **User** owns goals, scope, reserved decisions, high-impact trade-offs, and
+  explicit `@agent` participation constraints.
+- **Orchestrator** preserves user intent, selects context, dispatches tasks,
+  owns runtime choices, user interaction, verification, and delivery.
+- **Navigator** understands selected context, chooses targets, makes the
+  smallest sufficient decomposition, and writes downstream prompts.
+- **Specialists** perform only the judgment or action their prompt grants.
 
-Before consequential user or subagent input changes orchestration, recover
-only the compact, revisable prior basis relevant to that change. Preserve
-material unknowns and alternatives rather than inventing a baseline.
+Orchestrator does not rewrite Navigator's prompt by preference. Navigator does
+not dispatch, manage runtime, contact the user, or replace specialist judgment.
 
-Examine decision authority, factual support, and applicable scope
-separately. A user decision controls matters the user owns, but does not
-settle separate factual questions. Other claims and recommendations change
-only what their evidence and scope reach.
+## Select Context
 
-Only reconciled state may enter Navigator or a formal handoff. Direct
-counter-evidence or an invalidated premise reopens the affected judgment;
-unaffected boundaries and supported conclusions remain.
+Before calling Navigator, select only information that can change planning:
 
-## Handoff Invariants
+- objective, user decisions, and explicit `@agent` constraints;
+- sourced facts, specialist judgments, conflicts, and unknowns, kept distinct;
+- relevant prior results, project constraints, exact materials, and paths;
+- expected write occupancy, acceptance boundary, and failure consequences.
 
-Every candidate and final handoff must satisfy three conditions:
+Do not pass full conversation history, task-board detail, hidden reasoning, or
+unrelated work. A conflict relevant to target choice belongs in Navigator's
+context; it belongs in a specialist prompt only when that specialist is asked
+to examine it.
 
-- **Minimum connected context.** Every included item must shape
-  understanding, judgment, permission, action, or acceptance. Remove
-  background that changes none of them.
-- **Separate reasoning freedom from action authority.** Permission to test a
-  premise or propose an alternative does not grant permission to change user
-  goals, reserved decisions, scope, or high-consequence actions.
-- **Independent closure.** A fresh target session, using only its static
-  role, contract, and explicit materials, must know how to start, what it may
-  do, what to deliver, and when to stop.
+Each later call receives its own selected context. A reused session still needs
+the latest relevant decisions, evidence, and task increment.
 
-## Prepare the Current-State Packet
+## Call Navigator Before Specialists
 
-For a substantive new or changed delegation, prepare the smallest packet
-that preserves the current causal chain:
+Orchestrator may complete a simple, low-risk action itself. Once it will call a
+specialist, it first calls Navigator for that specialist's prompt.
 
-- the current objective and the work unit's intended contribution;
-- user-confirmed and reserved decisions;
-- supported facts, material unknowns, and open questions;
-- completed direct dependencies and the evidence they produced;
-- applicable constraints, project instructions, and existing write
-  ownership;
-- exact materials and reachable paths, with their source identity;
-- the current acceptance boundary and failure consequences.
+Navigator returns a decomposition, target choices, expected write scope,
+semantic dependencies, and complete prompts. If it cannot reliably write one,
+it explains what context, capability, or constraint is missing and why.
 
-Materialize upstream results as facts, artifacts, evidence, and remaining
-uncertainty. Do not pass full history, process narration, the raw background
-task board, unrelated task IDs, other agents' internal state, or unresolved
-conflicts.
+An `@agent` mention is a user constraint, not an already-completed call.
+Orchestrator gives it to Navigator before dispatch. Navigator may split a
+compound request, but the named agent must receive meaningful work inside its
+role; it cannot be silently skipped or replaced.
 
-## Navigator-Assisted Delegation
+Before dispatch, Orchestrator checks only that the prompt preserves user
+decisions and explicit target constraints, keeps project boundaries and source
+identity intact, names a callable target, and has no live write conflict. A
+deviation goes back to Navigator with the specific problem; Orchestrator does
+not repair prompt semantics itself.
 
-When a substantive delegation needs nontrivial decomposition, dependency
-ordering, specialist choice, or contract synthesis, consult Navigator before
-finalizing it if Navigator is advertised in the current Orchestrator routing
-guidance. Do not infer availability from a static catalog or probe by issuing
-a speculative task: a probe either hard-fails or creates a real child session
-and task-board state. Follow OMO's direct-execution and coordination-cost
-gates when the route and contract are already clear.
+Foreground/background, timing, session choice, task IDs, actual write
+ownership, cancellation, retry, and user interaction remain Orchestrator's
+runtime choices.
 
-Give Navigator the current-state packet and ask for candidate decomposition,
-dependency order, specialist choices, contracts for work that is ready now,
-and blockers. Then:
+## Interpret Responses
 
-1. reconcile the proposal with current user decisions, runtime task state,
-   write ownership, actual permissions, and unresolved conflicts;
-2. remove stale or unsupported recommendations and add material runtime facts
-   Navigator could not observe;
-3. retain final responsibility for the work graph and each formal contract;
-4. dispatch only the work whose prerequisites are satisfied;
-5. when new evidence materially changes a premise, dependency, scope, or
-   specialist choice, consult Navigator again when the same conditions apply.
+Specialists return ordinary task content: a result, evidence, execution failure,
+missing information, or a role mismatch. Orchestrator retains the useful facts,
+judgments, conflicts, side effects, and uncertainty for later context.
 
-Use OMO's current lifecycle rules to decide whether a Navigator session may be
-reused. On every reuse, provide the latest decisions, changed boundaries, and
-current increment explicitly. Never rely on hidden memory. Do not pass
-Navigator's internal reasoning to target agents because it is uncoordinated
-advice that could be mistaken for final direction.
+Orchestrator first checks whether missing information is already available or
+should come from another specialist. It contacts the user only when the needed
+decision or information belongs to the user.
 
-## Direct Compilation Fallback
+When a response changes the next target, scope, evidence interpretation, or
+prompt meaning, call Navigator again with the relevant new context.
 
-If Navigator is not configured, unavailable, or fails, the Orchestrator must
-still be able to complete the delegation. Use OMO's current routing guidance
-and, when available, `agent-capabilities`; obtain every relevant current
-method body before it affects routing, scope, or acceptance.
+## Verify and Deliver
 
-Define the work unit, select a capable target, calibrate reasoning freedom and
-action authority, resolve applicable Skill and project constraints, and
-compose a self-contained contract. Rewrite or split the work when that
-resolves a conflict without changing the user objective or a reserved
-decision. Otherwise stop and ask the user.
-
-Do not infer capability from a stale projection.
-
-## Final Handoff Acceptance
-
-Before dispatch, confirm that the contract preserves the reconciled
-current-state packet without unresolved conflicts or irrelevant history. It
-must state the target's reasoning freedom and action authority, required
-contribution, output, acceptance evidence, failure behavior, and stopping
-condition. Materialize applicable Skill requirements rather than passing a
-dangling Skill name, and coordinate any Navigator proposal with current
-runtime state.
-
-Use `agent-capabilities` when agent fit, Skill visibility, loading
-responsibility, or target-side method access affects the contract. A Skill or
-file read never expands the target's role, tools, or permissions. If a required
-source cannot be identified or reached, stop instead of guessing.
-
-## Session and Stop Rules
-
-- A new session receives no hidden parent history. A reused session still
-  receives the latest decisions, changed boundaries, and current increment.
-- Do not pass full scheduling history, rejected alternatives, irrelevant
-  materials, or another agent's internal state.
-- Exact paths supplied for reading must be reachable in the target session.
-- Missing user decisions, unresolved Orchestrator-level conflicts, unknown
-  capability that could change routing, or unavailable required sources are
-  blockers, not invitations to improvise.
+Navigator states the evidence each work unit should produce. Specialists produce
+or report it. Orchestrator compares that evidence with the user goal, arranges
+any necessary follow-up, and owns final delivery.
