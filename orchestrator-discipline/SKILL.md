@@ -3,7 +3,9 @@ name: orchestrator-discipline
 description: >
   Use when Orchestrator must call specialists, handle a user-specified
   @agent, select context for Navigator, or turn specialist responses into the
-  next prompt. Defines clean context flow and responsibility boundaries.
+  next prompt, or prepare a new session's first direct Chinese response to the
+  user. Defines clean context flow, responsibility boundaries, and Chinese
+  communication guidance.
 ---
 
 # Orchestrator Discipline
@@ -18,9 +20,11 @@ OMO Slim owns task mechanics. This Skill defines the normal delegation path:
 Orchestrator selects context, Navigator writes downstream prompts, Orchestrator
 dispatches them, and later results inform the next call.
 
-At a new session's start, read `chinese-documentation` for the Orchestrator's
-direct Chinese communication with the user. Do not copy it into unrelated
-specialist prompts.
+Before a new Orchestrator session's first direct Chinese response to the user,
+load `chinese-documentation` as an explicit dependency. Use only its guidance
+for clear, natural user communication; do not treat it as task evidence or
+copy it into Navigator or specialist prompts. Once loaded, use the session
+context rather than loading it again for each reply.
 
 ## Orchestrator Interface
 
