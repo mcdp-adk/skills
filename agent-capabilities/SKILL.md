@@ -1,145 +1,82 @@
 ---
 name: agent-capabilities
 description: >
-  OMO specialist-agent catalog covering fit, non-ownership, required inputs,
-  configured Skills, loading responsibility, and exact-path method access.
-  Use before choosing a target, writing a contract that depends on agent
-  capability or permissions, deciding whether to load a Skill, or giving a
-  target a Skill file path; check it instead of guessing from memory.
+  Shared static reference for OMO agent roles, route-relevant capabilities,
+  special target conditions, and the context each target needs. Use for
+  specialist selection, multi-agent reasoning, or prompts that must reference
+  another agent's responsibilities.
 ---
 
 # Agent Capabilities
 
-## Purpose and Authority
+## Purpose
 
-This Skill is a maintained projection of OMO agent responsibilities, action
-classes, configured Skills, loading responsibility, and method-access rules.
-It supports the Orchestrator and Navigator. Another agent may read it only
-when a bounded task contract names this Skill's trusted exact path, relevant
-scope, and failure behavior.
+This Skill is the manually maintained shared source of stable agent knowledge.
+Refresh it when the user changes OMO configuration or agent definitions. It is
+not a live registry, a task record, a permission grant, or a fixed routing map.
 
-It does not define global routing, prove that an agent is currently enabled,
-grant a tool or Skill, expand a role, or replace task-specific context. The
-Orchestrator retains final routing and dispatch responsibility. Navigator may
-use this knowledge to produce candidate plans and contracts only.
+Navigator reads it when planning. Orchestrator may use it to understand static
+boundaries. A specialist reads relevant sections by exact path only when its own
+task requires understanding other agents; that reference does not replace task
+facts or grant routing, dispatch, or extra action authority.
 
-## Sources and Freshness
+## System Roles
 
-Task authority and capability evidence are separate. User decisions and
-applicable project instructions control the task but cannot grant unavailable
-capabilities.
+| Role | Responsibility | Not responsible for |
+|------|----------------|---------------------|
+| User | Goals, decisions, scope, trade-offs, and explicit `@agent` participation constraints. | Runtime dispatch or task mechanics. |
+| Orchestrator | Conversation context, actual dispatch, runtime choices, user interaction, verification, and delivery. | Rewriting Navigator's planning semantics or specialist judgment. |
+| Navigator | Task understanding, target selection, smallest sufficient decomposition, and downstream prompts. | Dispatch, runtime choices, user interaction, or specialist judgment. |
+| Specialist | Its prompt's professional judgment or action. | Global routing, dispatch, other agents' work, or user decisions. |
 
-Resolve capability facts in this order:
+An explicit `@agent` must participate in work within its role. Navigator may
+split a compound request, but cannot silently skip or replace that agent.
 
-1. current runtime-visible agents, tools, Skills, and effective permissions;
-2. current effective OMO user and project configuration, including resolved
-   prompt overrides;
-3. current built-in or custom static role definitions;
-4. this maintained projection.
+## Target Reference
 
-When a config, prompt, Skill, version, project override, or runtime state may
-have changed, read the exact authoritative source supplied by the current
-task. Prefer `~/.config/...`, project-relative paths, or an explicit current
-path over machine-specific examples. If a higher source conflicts with this
-projection, use the higher source and report the drift. If current capability
-cannot be confirmed, return the uncertainty instead of guessing.
+Each entry records only facts that change target selection or prompt
+completeness. “Unavailable” and “not established” are facts; do not guess.
 
-This projection is derived from OMO's current built-in agent definitions and
-the effective agent definitions in
-`~/.config/opencode/oh-my-opencode-slim.json`. Refresh it in the same change
-whenever those sources change an agent, its Skill configuration, or its
-permissions.
+| Target | Role and limits | Route-relevant facts | Required context |
+|--------|-----------------|----------------------|------------------|
+| Explorer | Bounded local discovery; no research, writing, design, or architecture ownership. | Local file, symbol, pattern, and AST discovery. | Workspace, discovery question, bounded scope, expected evidence. |
+| Librarian | External documentation and research; no implementation ownership. | `webfetch`, `websearch`, `context7`, `grok-search`, `gh_grep`; URL fetch, search, docs lookup, and external code search differ. | Research question, time/version boundary, source expectation, required method. |
+| Oracle | Architecture, complex debugging, simplification, material review; no implementation or research ownership. | Read-only analysis; `simplify` when relevant. | Decision question, constraints, evidence, uncertainty, decision value. |
+| Designer | UI/UX judgment and approved visual implementation. | Browser/Electron work requires `agent-browser` and task-specific starting conditions. | Product intent, flow, affected paths, visual constraints, states, acceptance. |
+| Fixer | Closed implementation and mechanical execution; no research, architecture, or visual-design ownership. | Local read/write, commands, tests. | Closed specification, exact write scope, settled decisions, verification. |
+| Sentinel | Evidence-grounded review of a supplied artifact. | Read-only; no implementation, research, or final approval. | Artifact, objective, criteria, evidence boundary, materiality bar. |
+| Pathfinder | Alternatives against an established baseline. | Read-only; no baseline invention or implementation. | Decision goal, baseline, criteria, fixed constraints, flexible boundaries, cost/risk tolerance. |
+| Surveyor | Semantic boundary analysis of supplied artifacts. | Read-only local analysis; no broad discovery or rewriting. | Workspace, artifacts, consumer, purpose, boundaries, dependencies, evidence boundary. |
+| Writer | Approved text-file writing and editing. | `documentation-writer`, `chinese-documentation`; no Bash, Web, task, or professional-format workflow. | Audience, purpose, scope, language, document type, approved structure, location, text format. |
+| Committer | One verified atomic Git commit. | Limited Git inspection/add/commit and `conventional-commit`; no edit, test, push, cleanup, or redesign. | Repository context, completed validation, one intent, non-empty explicit repository-relative files; no directories or globs. |
+| Observer | Visual interpretation. | Currently unavailable; requires enabled visual target and precise files. | Files, observation goal, required text precision. |
+| Council | Response synthesis. | Currently unavailable; no tools or evidence gathering. | Original question and all labelled councillor responses. |
+| Councillor | Internal independent perspective. | Not an ordinary target; requires Council protocol. | Assigned perspective, self-contained question, and evidence. |
+| ACP | External agent wrapper. | No current target configured. | External capability, input boundary, invocation conditions. |
 
-The catalog describes role fit, not availability. Treat an agent as
-dispatchable only when current Orchestrator agent descriptions or routing
-guidance advertise it. Do not infer availability from a catalog entry or use
-a speculative task call to probe it. Navigator integration therefore requires
-an `orchestratorPrompt`; disabled or internal agents without current routing
-guidance are unavailable for ordinary dispatch.
+Important distinctions: URL fetch is not Web search; Web search is not browser
+interaction; local read is not write; Bash is not unrestricted Git; visual input
+is not visual responsibility; text writing is not DOCX/PDF/PPTX/XLSX work.
 
-## Capability Catalog
+## Shared Reference by Path
 
-| Agent | Use for | Does not own / action class | Required input and stop behavior |
-|-------|---------|-----------------------------|----------------------------------|
-| Navigator | Candidate task decomposition, dependency order, specialist suggestions, and draft task contracts. | Advisory planning only; no dispatch, user decisions, file changes, task-state management, or final approval. | Needs a reconciled current-state packet. Return blockers when decisions, evidence, or prerequisites are missing. |
-| Explorer | Fast local codebase discovery and compressed maps of files, symbols, and patterns. | Read-only discovery; no external research, design, implementation, or architecture decisions. | Needs a bounded workspace and discovery question. Return evidence and uncertainty, not guessed architecture. |
-| Librarian | Current external documentation, official sources, library behavior, and real-world examples. | Research only; no implementation or architecture ownership. | Needs the research question, relevant versions or dates, source expectations, and output boundary. Distinguish official evidence from inference. |
-| Oracle | Architecture, consequential trade-offs, complex debugging, simplification judgment, and material code review. | Read-only advice; no implementation, user decisions, or routine verification. | Needs the decision question, objective, constraints, evidence, uncertainty, and requested decision value. |
-| Designer | User-facing UI/UX design and implementation, including layout, interaction, responsive behavior, and visual polish. | Does not own unrelated backend or headless logic. Read/write within the approved UI scope. | Needs product intent, user flows, relevant paths, design constraints, states, and acceptance evidence. |
-| Fixer | Bounded, well-defined implementation and mechanical execution. | Read/write execution; no external research, architecture ownership, or visual design judgment. | Needs a complete specification, explicit scope and paths, preserved decisions, and proportionate verification. Stop on missing task-level decisions. |
-| Sentinel | Evidence-grounded challenge of a concrete artifact or established position. | Read-only review; no design ownership, implementation, external research, or final approval. | Needs the exact artifact, objective, criteria, constraints, evidence, review boundary, and materiality bar. Return insufficient support when no finding is grounded. |
-| Pathfinder | Comparison of plausible alternatives to an established approach. | Read-only alternative analysis; no architecture ownership, implementation, external research, or final approval. | Needs the baseline, objective, settled constraints, flexible boundaries, evidence, and comparison criteria. |
-| Surveyor | Semantic boundary analysis for supplied files and artifacts. | Read-only local analysis; no broad discovery, rewriting, implementation, or general architecture review. | Needs exact artifacts, their consumers and purpose, current boundaries, dependencies, constraints, and acceptable retrieval cost. |
-| Committer | Mechanical validation and creation of one atomic Git commit. | Restricted repository actions; no edits, tests, push, cleanup, split design, or history rewriting. | Needs one validated intent and explicit repository-relative file paths. Accept unchanged or reject. |
-| Writer | Approved technical and non-technical prose creation, revision, and text-file maintenance. | Read/write prose execution; no task-level direction, external research, architecture, or final approval. | Needs approved audience, purpose, user goal, scope, language, structure, output location, and acceptance criteria. |
-| Councillor | Independent read-only perspective within a supplied council question. | No implementation, final approval, or substitution for ordinary specialist routing. External retrieval exists only when current MCP configuration provides it. | Needs a self-contained question and supplied evidence. Return a bounded judgment from the assigned perspective. |
-| Council | Synthesis of supplied councillor responses into a structured consensus report. | Synthesis only; no tools, councillor dispatch, evidence gathering, or final approval. | Needs the original question and each labelled councillor result, including failures. Preserve disagreements and remaining uncertainty. |
-| Observer | Focused visual interpretation of supplied images, screenshots, PDFs, and diagrams. | Read-only visual analysis; no file changes or fabricated details. | Needs current routing guidance, a vision-capable runtime, exact files, and the observation goal. Extract exact visible text when required and state blur, absence, or uncertainty. |
+When a call's local judgment requires multi-agent roles, capabilities, or
+boundaries, its prompt may reference this Skill's canonical exact path. The
+reference must state why to read it, which headings matter, and which local
+question it supports. Current goals, decisions, materials, evidence, scope, and
+acceptance still belong directly in the task prompt.
 
-## Configured Skills and Loading Responsibility
+Reading this source does not let a specialist select targets, dispatch work,
+change roles, or infer current runtime conditions. If the source cannot be
+confirmed, report that limitation rather than inventing a substitute.
 
-| Agent | Configured Skills | Loading responsibility |
-|-------|-------------------|------------------------|
-| Orchestrator | `*` | All discovered Skills may be visible. Load only Skills relevant to the current task; `orchestrator-discipline` conditionally requires this catalog when capability or access facts affect a judgment. |
-| Oracle | `simplify` | The static role does not auto-load it. A task that substantively needs simplification must require loading it before that work. |
-| Librarian | `grok-search` | The static role does not auto-load it. Current Web or X retrieval that needs this method must require loading it before research. |
-| Designer | `agent-browser` | The static role does not auto-load it. Browser or Electron interaction must require loading it before use. |
-| Committer | `conventional-commit` | Its static prompt loads it at task start; callers do not repeat that instruction. |
-| Writer | `documentation-writer`, `chinese-documentation` | Its static prompt loads both at task start; callers provide task outcomes and acceptance rather than repeating their bodies. |
-| Explorer, Fixer, Sentinel, Pathfinder, Surveyor, Councillor, Council, Observer | (none) | No native Skill loading responsibility is currently projected. |
+## Skill and Method Facts
 
-Navigator integration is designed to use `skills: ["*"]`; it becomes a
-capability fact only when the current effective config defines it. Navigator's
-static prompt owns any mandatory loading of `agent-capabilities`. Other Skills
-remain task-relevant, on-demand inputs.
+Distinguish a configured Skill from one loaded into the current call, and a
+loaded Skill from a file read by exact path. Neither expands a role or
+permission.
 
-`skills: ["*"]` makes discovered, described Skills visible and loadable unless
-current restrictions deny them. It does not load every Skill body. A Skill not
-configured for an agent can still be relevant to planning or to a task
-contract.
+Navigator is configured with `skills: ["*"]`; its prompt owns when to load them.
 
-## Skill and File-Access Semantics
-
-Keep these states distinct:
-
-- **Exists:** a method file is present at some path.
-- **Discovered:** the runtime registered its metadata.
-- **Configured:** the agent's Skill permissions include it.
-- **Visible:** it appears in that agent's current available Skills.
-- **Loaded:** the agent successfully called the `skill` tool and received the
-  full body.
-- **Read by path:** the agent read a trusted exact file through ordinary file
-  access.
-
-Default to compiling the necessary method, approval, output, and verification
-requirements into the task contract. Give a target the full method body only
-when its details materially affect that target's local judgment.
-
-When the target has the Skill configured, follow its loading responsibility
-and current visibility. Otherwise, or when freshness is uncertain, a contract
-may require reading a trusted exact path. That contract must state why the
-source is needed, the exact scope and base path, the methods relevant to the
-task, excluded content, and failure behavior.
-
-Path reading grants neither Skill discovery nor the `skill` tool, and never
-expands the target's role, tools, or permissions. Do not execute referenced
-scripts or side effects unless separately authorized and permitted. If the
-path is unreachable or source identity cannot be confirmed, stop rather than
-searching for substitutes.
-
-Neither loading nor path reading replaces materializing the concrete
-requirements that govern the task.
-
-## Conflict and Stop Behavior
-
-- Capability knowledge cannot override the user goal, applicable project
-  instructions, actual permissions, or the target's current static role.
-- A Skill description cannot expand an agent's responsibilities.
-- If no agent fits, or sources conflict or current capability is uncertain,
-  do not force a route. Navigator or another target returns the mismatch,
-  evidence, and consequence to the Orchestrator. The Orchestrator stops and
-  asks the user when the gap could change correct routing; it may continue
-  only with minor uncertainty already known not to affect the target,
-  permissions, or route.
-- Keep global work graphs, current task state, user decisions, complete agent
-  prompts, model pricing, and task IDs out of this Skill.
+This reference supports target selection and prompt writing; Navigator's prompt
+defines the planning method and the public downstream prompt contract.
