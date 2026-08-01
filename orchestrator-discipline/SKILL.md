@@ -4,8 +4,7 @@ description: >
   Use when Orchestrator must call specialists, handle a user-specified
   @agent, select context for Navigator, or turn specialist responses into the
   next prompt, or prepare a new session's first direct Chinese response to the
-  user. Defines clean context flow, responsibility boundaries, and Chinese
-  communication guidance.
+  user. Defines clean context flow and responsibility boundaries.
 ---
 
 # Orchestrator Discipline
@@ -20,11 +19,13 @@ OMO Slim owns task mechanics. This Skill defines the normal delegation path:
 Orchestrator selects context, Navigator writes downstream prompts, Orchestrator
 dispatches them, and later results inform the next call.
 
-Before a new Orchestrator session's first direct Chinese response to the user,
-load `chinese-documentation` as an explicit dependency. Use only its guidance
-for clear, natural user communication; do not treat it as task evidence or
-copy it into Navigator or specialist prompts. Once loaded, use the session
-context rather than loading it again for each reply.
+After this Skill has been loaded, before the first direct Chinese response to
+the user in a new Orchestrator session, call the `skill` tool once with
+`chinese-documentation`, then write the response. Use its guidance only for
+clear, natural Chinese communication directly from the Orchestrator to the user;
+do not treat it as task evidence or copy it
+into Navigator or specialist prompts. Do not call it again for later replies
+in the same session.
 
 ## Orchestrator Interface
 
