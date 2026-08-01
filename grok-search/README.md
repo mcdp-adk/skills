@@ -41,15 +41,14 @@ already installed `uv`.
 python "scripts/search.py" --help
 py -3 "scripts/search.py" --help          # Windows
 python3 "scripts/search.py" --help        # Linux/macOS
-uv run --no-project --python 3.10 "scripts/search.py" --help
+uv run --no-project "scripts/search.py" --help
 ```
 
 Use the first command whose `--help` verification succeeds, then reuse that
-runner for the real query. If the system or platform runner is unavailable, the
-already installed uv fallback may download a managed Python 3.10 on its first
-`uv run --no-project --python 3.10` and may need network access. Do not install
-uv or pip packages, or use an independent installer. If that download is not
-allowed, stop and provide an already available runner instead.
+runner for the real query. The already installed uv fallback may download a
+managed Python on first use and may need network access. Do not install uv or
+pip packages, or use an independent installer. If that download is not allowed,
+stop and provide an already available Python 3.10+ runner instead.
 
 ## Quick start
 

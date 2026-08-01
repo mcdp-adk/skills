@@ -31,7 +31,7 @@ succeeds:
 
 1. `python`.
 2. The platform runner: `py -3` on Windows or `python3` on Linux/macOS.
-3. An already installed `uv`, using `uv run --no-project --python 3.10`.
+3. An already installed `uv`, using `uv run --no-project`.
 
 Each candidate must verify the script with `--help`:
 
@@ -39,15 +39,14 @@ Each candidate must verify the script with `--help`:
 python "{baseDir}/scripts/search.py" --help
 py -3 "{baseDir}/scripts/search.py" --help          # Windows
 python3 "{baseDir}/scripts/search.py" --help        # Linux/macOS
-uv run --no-project --python 3.10 "{baseDir}/scripts/search.py" --help
+uv run --no-project "{baseDir}/scripts/search.py" --help
 ```
 
 Verify `--help` once and reuse that runner for the rest of the session. Do not
-use an independent installer or install uv or pip packages. If uv is already
-available as the final fallback and the requested Python 3.10 is missing, it may
-download a managed Python 3.10 on first use and may need network access. If that
-download is not allowed, stop and ask the user for an available runner rather
-than installing another tool.
+use an independent installer or install uv or pip packages. The uv fallback may
+download a managed Python on first use and may need network access. If that
+download is not allowed, stop and ask the user for an available Python 3.10+
+runner rather than installing another tool.
 The script handles eligible internal retries within the same CLI invocation.
 
 The standard command is:
@@ -56,8 +55,8 @@ The standard command is:
 python "{baseDir}/scripts/search.py" "your query here"
 ```
 
-Replace `python` with the verified runner; with uv, keep its `run --no-project
---python 3.10` prefix. The script loads `{baseDir}/.env` automatically. The
+Replace `python` with the verified runner; with uv, keep its `run --no-project`
+prefix. The script loads `{baseDir}/.env` automatically. The
 agent must not read, display, copy, or parse `.env`. Required configuration is
 `XAI_API_KEY`; `HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY`, `NO_PROXY`, and
 `--ca-bundle` are optional network settings.
