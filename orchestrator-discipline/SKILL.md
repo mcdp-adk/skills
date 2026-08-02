@@ -19,13 +19,12 @@ OMO Slim owns task mechanics. This Skill defines the normal delegation path:
 Orchestrator selects context, Navigator writes downstream prompts, Orchestrator
 dispatches them, and later results inform the next call.
 
-After this Skill has been loaded, before the first direct Chinese response to
-the user in a new Orchestrator session, call the `skill` tool once with
-`chinese-documentation`, then write the response. Use its guidance only for
-clear, natural Chinese communication directly from the Orchestrator to the user;
-do not treat it as task evidence or copy it
-into Navigator or specialist prompts. Do not call it again for later replies
-in the same session.
+Before the first direct Chinese response to the user in a new Orchestrator
+session, call the `skill` tool once with `chinese-documentation`, then write the
+response. Use its guidance only for clear, natural Chinese communication directly
+from the Orchestrator to the user; do not treat it as task evidence or copy it
+into Navigator or specialist prompts. Do not call it again for later replies in
+the same session.
 
 ## Orchestrator Interface
 
@@ -41,6 +40,13 @@ Orchestrator may retain and pass:
 - user intent, source tags, and project boundaries;
 - provided facts, specialist judgments, conflicts, and unknowns, kept distinct;
 - prior results, exact materials, paths, and runtime constraints.
+
+For each item that sets scope, authorization, a constraint, dependency, or
+acceptance boundary, retain its source identity and original force. Keep an
+Orchestrator inference or derived constraint distinct from a user decision,
+project rule, or sourced fact. State the basis of any enumeration used as a
+scope boundary. If an important item's source or force is unclear, keep that
+uncertainty with the item rather than normalizing it.
 
 Do not pass full conversation history, task-board detail, hidden reasoning, or
 obviously unrelated process content. A conflict relevant to target choice
@@ -63,10 +69,11 @@ Navigator first for that specialist's prompt.
 
 Navigator returns the current executable frontier: one or more complete
 specialist prompts whose inputs are present, semantic dependencies are
-satisfied, and dispatch is safe. Orchestrator receives and dispatches that
-frontier unchanged; it does not supplement it with planning fields that do not
-add value to the current dispatch. If no safe dispatch is available, Navigator
-states the necessary conditions blocking the current frontier.
+satisfied, and dispatch is safe. Orchestrator dispatches each returned
+specialist prompt unchanged. If no safe dispatch is available, Navigator states
+the necessary conditions blocking the current frontier. A coordination item for
+Orchestrator, including a needed user decision, is not a specialist prompt and
+is not dispatched as one.
 
 An `@agent` mention is a user constraint, not an already-completed call.
 Orchestrator gives it to Navigator before dispatch. Navigator may split a
@@ -74,13 +81,14 @@ compound request, but the named agent must receive meaningful work inside its
 role; it cannot be silently skipped or replaced.
 
 Before dispatch, Orchestrator checks only that the prompt preserves user
-decisions and explicit target constraints, keeps project boundaries and source
-identity intact, names a callable target, and has no live write conflict. A
-deviation goes back to Navigator with the specific problem; Orchestrator does
-not repair prompt semantics itself. When later work changes semantically or
-needs re-evaluation, Orchestrator returns the available evidence, gaps, and
-sources to Navigator. Orchestrator does not decide the next specialist or
-arrange semantic follow-up; those belong to Navigator.
+decisions and explicit target constraints; keeps project boundaries, source
+identity, and constraint force intact; introduces no untraceable binding
+constraint; names a callable target; and has no live write conflict. A deviation
+goes back to Navigator with the specific problem; Orchestrator does not repair
+prompt semantics itself. When later work changes semantically or needs
+re-evaluation, Orchestrator returns the available evidence, gaps, and sources to
+Navigator. Orchestrator does not decide the next specialist or arrange semantic
+follow-up; those belong to Navigator.
 
 Foreground/background, timing, session choice, task IDs, actual write
 ownership, cancellation, retry, and user interaction remain Orchestrator's
