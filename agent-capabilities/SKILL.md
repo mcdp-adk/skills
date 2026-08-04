@@ -1,10 +1,9 @@
 ---
 name: agent-capabilities
 description: >
-  Shared static reference for OMO agent roles, route-relevant capabilities,
-  special target conditions, and the context each target needs. Use for
-  specialist selection, multi-agent reasoning, or prompts that must reference
-  another agent's responsibilities.
+  Shared static reference for stable OMO agent roles, route-relevant
+  capabilities, limits, and required context. Use when a call needs this
+  static knowledge to understand roles or capabilities.
 ---
 
 # Agent Capabilities
@@ -13,20 +12,17 @@ description: >
 
 This Skill is the manually maintained shared source of stable agent knowledge.
 Refresh it when the user changes OMO configuration or agent definitions. It is
-not a live registry, a task record, a permission grant, or a fixed routing map.
-
-Navigator reads it when planning. Orchestrator may use it to understand static
-boundaries. Specialist use is defined in Shared Reference by Path.
+not a live registry, task record, permission grant, or fixed routing map.
 
 ## System Roles
 
 | Role | Responsibility | Not responsible for |
 |------|----------------|---------------------|
 | User | Goals, decisions, scope, trade-offs, and explicit `@agent` participation constraints. | Runtime dispatch or task mechanics. |
-| Orchestrator | Conversation context, actual dispatch, runtime choices, user interaction, verification, and delivery. | Rewriting Navigator's planning semantics or specialist judgment. |
-| Navigator | Task understanding, target selection, smallest sufficient decomposition, and downstream prompts. | Dispatch, runtime choices, user interaction, or specialist judgment. |
-| Specialist | Its prompt's professional judgment or action. | Global routing, dispatch, other agents' work, or user decisions. |
-
+| Orchestrator | Complete conversation context, actual target and boundary decisions, specialist-bound prompt authoring, runtime choices, user communication, verification, and delivery. | Outsourcing those responsibilities or changing a specialist's professional judgment. |
+| Navigator | On-demand read-only advice on task decomposition, candidate targets, cross-task dependencies, and material risks, based only on supplied material. | Complete context truth, specialist-prompt writing, ready-to-dispatch specialist-assignment generation, final target or boundary decisions, dispatch, execution, modification, research, delegation, or user interaction. |
+| Auditor | Read-only, evidence-constrained review of a supplied specialist-bound candidate prompt against its supplied authoritative review packet and explicitly necessary authoritative files. | Independent discovery, task splitting, target selection or replacement, candidate writing or rewriting, dispatch, delegation, user interaction, execution, external research, runtime, verification, delivery, or final approval. |
+| Specialist | Its approved prompt's professional judgment or closed action. | Global routing, dispatch, other agents' work, or user decisions. |
 
 ## Target Reference
 
@@ -36,7 +32,7 @@ completeness. “Unavailable” and “not established” are facts; do not gues
 | Target | Role and limits | Route-relevant facts | Required context |
 |--------|-----------------|----------------------|------------------|
 | Explorer | Bounded local discovery; no research, writing, design, or architecture ownership. | Local file, symbol, pattern, and AST discovery. | Workspace, discovery question, bounded scope, expected evidence. |
-| Librarian | External documentation and research; no implementation ownership. | `webfetch`, `websearch`, `context7`, `grok-search`, `gh_grep`; URL fetch, search, docs lookup, and external code search differ. | Research question, time/version boundary, source expectation, required method. |
+| Librarian | External documentation and research; no implementation ownership. | `context7`, `gh_grep`, `websearch`, `grok-search`; URL fetch, search, docs lookup, and external code search differ. | Research question, time/version boundary, source expectation, required method. |
 | Oracle | Architecture, complex debugging, simplification, and system trade-offs; no implementation or research ownership. | Read-only analysis; `simplify` when relevant. | Decision question, constraints, evidence, uncertainty, decision value. |
 | Designer | UI/UX judgment and approved visual implementation. | Browser/Electron work requires `agent-browser` and task-specific starting conditions. | Product intent, flow, affected paths, visual constraints, states, acceptance. |
 | Fixer | Closed implementation and mechanical execution; no research, architecture, or visual-design ownership. | Local read/write, commands, tests. | Closed specification, exact write scope, settled decisions, verification. |
@@ -56,25 +52,13 @@ is not visual responsibility; text writing is not DOCX/PDF/PPTX/XLSX work.
 
 ## Shared Reference by Path
 
-When a call's local judgment requires multi-agent roles, capabilities, or
-boundaries, its prompt may reference this Skill's canonical exact path. Use the
-active `SKILL.md` path returned when this Skill was loaded, not a repository
-development path. The reference must state why to read it, which headings
-matter, and which local question it supports. Current goals, decisions,
-materials, evidence, scope, and acceptance still belong directly in the task
-prompt.
+When a call's local judgment needs these stable role or capability definitions,
+its prompt may reference this Skill's canonical exact path. Use the active
+`SKILL.md` path returned when this Skill was loaded, not a repository development
+path. The reference should state why it is needed, which headings matter, and
+which local question it supports. Current goals, decisions, materials,
+evidence, scope, and acceptance belong directly in the task prompt.
 
-Reading this source does not let a specialist select targets, dispatch work,
-change roles, or infer current runtime conditions. If the source cannot be
-confirmed, report that limitation rather than inventing a substitute.
-
-## Skill and Method Facts
-
-Distinguish a configured Skill from one loaded into the current call, and a
-loaded Skill from a file read by exact path. Neither expands a role or
-permission.
-
-Navigator is configured with `skills: ["*"]`; its prompt owns when to load them.
-
-This reference supports target selection and prompt writing; Navigator's prompt
-defines the planning method and the public downstream prompt contract.
+Reading this source does not let any agent select targets, dispatch work, change
+roles, or infer current runtime conditions. If the source cannot be confirmed,
+report that limitation rather than inventing a substitute.
