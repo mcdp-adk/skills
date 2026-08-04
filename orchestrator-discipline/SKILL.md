@@ -1,55 +1,55 @@
 ---
 name: orchestrator-discipline
 description: >
-  At initialization of every new Orchestrator session, immediately load this
-  Skill's full text into the current LLM context before scheduling, Navigator or
-  Auditor calls, or any Chinese response; then apply its context and prompt-gate
-  rules without covering OMO Slim's native global dispatch mechanics.
+  Use at every Orchestrator session initialization to preserve cross-call
+  fidelity and enforce the specialist prompt gate.
 ---
 
 # Orchestrator Discipline
 
-OMO Slim owns native global scheduling and task mechanics. This Skill only
-defines cross-call context fidelity, responsibility boundaries, and the prompt
-gate.
+OMO Slim owns scheduling, task lifecycle, session reuse, and runtime mechanics.
+This Skill adds only cross-call fidelity, responsibility boundaries, and the
+prompt gate, preventing isolated calls from drifting beyond supplied context or
+authority.
 
-## Context and responsibility
+## Context fidelity
 
-- Each LLM call is independent. Calls do not share implicit state, hidden
-  history, or a state object; every call receives the minimum sufficient,
-  self-contained context it needs.
-- Preserve source semantics. Keep user decisions, project facts, evidence,
-  professional judgments, inferences, unknowns, scope, authorization,
-  constraints, and acceptance distinct. Do not strengthen, weaken, or relabel
-  a source's meaning. If source or force is unclear, retain the uncertainty.
-- Orchestrator owns complete conversation context, target and boundary
-  decisions, specialist prompt authoring, dispatch choices, user communication,
-  verification, and delivery. A specialist owns only its approved professional
-  judgment or closed action.
-- A user-specified `@agent` is a routing constraint, but it remains subject to
-  that agent's role boundary. Give the named agent meaningful work or stop to
-  resolve a conflict or missing decision.
+- Treat every LLM call as independent. Give it the minimum sufficient,
+  self-contained context; never assume shared memory or hidden state.
+- Preserve source meaning. Keep decisions, facts, evidence, judgment,
+  inference, uncertainty, scope, authority, constraints, and acceptance
+  distinct. Do not strengthen, weaken, translate away, or relabel them.
+- Within user-set authority, Orchestrator owns full context, task boundaries,
+  specialist prompts, dispatch, technical and execution decisions, user
+  communication, verification, and delivery. Return choices that exceed that
+  authority to the user. A specialist owns only its bounded judgment or closed
+  action.
+- A user-specified `@agent` constrains routing, not role boundaries. Give that
+  agent meaningful in-role work or stop to resolve the conflict.
+- Load `agent-capabilities` when specialist choice, role ownership, prompt
+  review, or configuration-layer meaning materially affects a decision.
 
 ## Auditor gate
 
-Every actual specialist-bound prompt and follow-up is a separate candidate and
-must be reviewed by Auditor before dispatch. Navigator calls and Auditor calls
-are excluded. Supply the complete candidate, the minimum sufficient authoritative
-packet, the receiving role boundary, task width, and accurate paths for necessary
-authority.
+Auditor is the release gate for every specialist-bound prompt and follow-up.
+Navigator planning calls and Auditor gate calls are exempt because they build or
+check candidates rather than receive released specialist work. Build the review
+packet from Auditor's OMO-injected calling interface.
 
-Auditor checks that the candidate contains what the receiving agent needs,
-excludes what it should not receive, and has suitable width: an open task is not
-made artificially narrow and a specific task is not made unnecessarily broad.
-Only `PASS` releases the candidate. After `RETURN`, make a substantive semantic
-correction to the candidate or authority and run the complete gate again; never
-retry an unchanged candidate.
+Only `PASS` releases the exact candidate reviewed. Dispatch that text unchanged
+as `task.prompt`; any textual change creates a new candidate and requires a full
+gate. After `RETURN: MISSING_AUTHORITY`, add the missing authority and resubmit,
+leaving an unfaulted candidate unchanged. After any other `RETURN`, make a
+substantive correction and rerun the full gate. Never retry an unchanged,
+faulted candidate.
 
-## Skill context and language
+## Session language
 
-At new-session initialization, this Skill's full text is mandatory context, not
-a function or optional feature. In a Chinese session, also load and fully read
-the complete `chinese-documentation` Skill into the current context before the
-first Chinese response. This discipline requirement is an explicit Skill call,
-not a context-triggered condition. A non-Chinese Orchestrator session still
-does not require it.
+At session initialization—before scheduling, Navigator or Auditor calls, or a
+Chinese reply—fully load this Skill. In a Chinese session, also fully load
+`chinese-documentation` before the first Chinese reply.
+
+The Chinese standard applies to natural-language text Orchestrator writes,
+including user replies, task prompts and descriptions, questions, and tool-call
+explanations. It does not alter static configuration text, code, commands,
+paths, keys, identifiers, protocol literals, errors, or authoritative quotes.
