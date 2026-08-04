@@ -1,151 +1,185 @@
 ---
 name: orchestrator-discipline
 description: >
-  Use when Orchestrator must call specialists, handle a user-specified
-  @agent, select context for Navigator, or turn specialist responses into the
-  next prompt, or prepare a new session's first direct Chinese response to the
-  user. Defines clean context flow and responsibility boundaries.
+  Use when Orchestrator must choose and dispatch specialists, consult Navigator
+  or Auditor, handle a user-specified @agent, or prepare a new session's first
+  direct Chinese response. Defines clean context flow and responsibility
+  boundaries.
 ---
 
 # Orchestrator Discipline
 
 ## Purpose
 
-Orchestrator, Navigator, and specialists are separate LLM calls. They exchange
-only the prompt and explicit materials supplied for that call; they do not share
-a state object.
+Orchestrator, Navigator, Auditor, and specialists are separate LLM calls. They
+exchange only the prompt and explicit materials supplied for that call; they do
+not share a state object. This Skill defines the cross-call flow and stopping
+rules. OMO Slim owns task mechanics, while the Orchestrator owns the actual
+decisions and dispatch.
 
-OMO Slim owns task mechanics. This Skill defines the normal delegation path:
-Orchestrator selects context, Navigator writes downstream prompts, Orchestrator
-dispatches them, and later results inform the next call.
+## Responsibilities
+
+### Orchestrator
+
+Orchestrator holds the complete conversation context. It preserves user intent,
+chooses relevant context, determines the specialist, local task boundary, and
+dependencies, and writes the first specialist-bound candidate prompt. It
+compiles the authoritative review packet, decides whether to adopt, modify, or
+reject Navigator's advice, and handles Auditor returns. It dispatches a
+specialist only after the candidate prompt passes the Auditor gate.
+
+Orchestrator retains actual scheduling, session and task choices, write
+ownership, cancellation, runtime status, user communication, verification, and
+delivery. It does not outsource those responsibilities to Navigator, Auditor,
+or a specialist.
+
+### Navigator
+
+Navigator is an on-demand, read-only adviser. Based only on material supplied
+by Orchestrator, it may advise on task decomposition, candidate targets,
+cross-task dependencies, and material risks. It must distinguish sources,
+assumptions, and unknowns, and does not possess the complete context truth.
+
+Navigator does not write specialist prompts, prepare a ready-to-dispatch
+specialist assignment, determine the final target or task boundary, decide an
+actual call or dispatch, execute, modify, research, delegate, or contact the
+user. Its advice is not a
+user fact, project fact, or runtime instruction. Orchestrator must independently
+evaluate any adopted advice and express the resulting decision with its real
+source. Navigator's raw advice must not be copied directly into a specialist
+prompt or review packet.
+
+### Auditor
+
+Auditor is a read-only gate reviewer of an Orchestrator-written,
+specialist-bound candidate prompt. It compares that prompt only with the
+authoritative review packet and any explicitly necessary authoritative files
+provided for the call. Its local role, evidence boundary, and exact response
+format are authoritative in the JSON agent configuration.
+
+Auditor does not split tasks, select or replace targets, write or rewrite a
+candidate prompt, dispatch or delegate, contact or question the user, discover
+project facts, execute commands, conduct external research, manage runtime,
+verify work, deliver results, or give final approval.
+
+### Specialists
+
+Each specialist owns the professional judgment or closed action stated in its
+approved prompt. It does not own global routing, dispatch, other agents' work,
+or user decisions.
+
+## Preserve Meaning Across Calls
+
+Keep user decisions, project facts, professional judgments, unknowns, and
+Orchestrator inferences distinct. For every item that sets scope,
+authorization, constraint, dependency, blocking condition, or acceptance,
+preserve its source identity and original force. Do not turn an inference or
+derived constraint into a user decision, project rule, or sourced fact. If the
+source or force is unclear, retain that uncertainty instead of normalizing it.
+
+Pass only context that can affect the receiving call's understanding, judgment,
+permitted action, risk, dependency, or acceptance. Do not pass full history,
+hidden reasoning, discarded paths, or unrelated process detail. When a
+specialist must interpret or challenge authoritative material, give the exact
+accessible path to the complete authoritative unit; a summary is not a
+substitute.
+
+## Consult Navigator When Needed
+
+Orchestrator consults Navigator only when task decomposition, candidate target,
+cross-task dependency, or material risk remains unresolved. A consultation is
+not required before every specialist call.
+
+Orchestrator supplies the relevant material and asks for advice in those
+unresolved areas. It then makes the target, boundary, dependency, and risk
+decisions itself. A user `@agent` mention remains a user constraint: the named
+agent must receive meaningful work within its role unless Orchestrator stops to
+resolve a conflict or missing decision.
+
+## Determine the Candidate
+
+Orchestrator defines the smallest coherent specialist task that satisfies the
+user goal and preserves scope, authorization, sources, dependencies,
+blockers, acceptance, and user-communication responsibility. It writes a
+specialist-bound candidate prompt for that exact target and boundary. The
+prompt must state the available authority, permitted action, required evidence,
+unknowns, and stop conditions without inventing binding constraints or passing
+unresolved execution choices to a mechanical target.
+
+Every prompt actually prepared for specialist dispatch is a separate candidate,
+including a follow-up prompt. Navigator calls and Auditor calls are advisory or
+review calls and do not enter this gate.
+
+## Compile the Authoritative Review Packet
+
+Before asking Auditor to review a candidate, Orchestrator provides the minimum
+sufficient authoritative packet for that candidate, including:
+
+- the user's original goal and any necessary original wording;
+- source-labelled facts, decisions, constraints, judgments, and their force;
+- the selected specialist's stable responsibility, capabilities, and limits;
+- Orchestrator's determined local task boundary;
+- dependencies, blockers, conflicts, and unknowns;
+- necessary acceptance criteria and evidence;
+- user-communication responsibility or matters to return to Orchestrator;
+- the complete candidate prompt; and
+- accurate full paths to authoritative materials the specialist must explain or
+  challenge.
+
+Include only information needed to judge the current candidate. Do not include
+irrelevant parent history, discarded paths, or specialist summaries without
+decision value. Navigator's raw advice is never authority for the packet. If
+Orchestrator adopted it, the packet must state the resulting Orchestrator
+decision and preserve the actual underlying sources.
+
+## Auditor Gate
+
+Send each candidate and its authoritative review packet to Auditor before
+dispatch. The Auditor's local configuration defines the only response-format
+authority; this Skill uses its `PASS` and `RETURN` outcomes for the gate.
+
+A candidate that has not received `PASS` must not be dispatched. A `RETURN`
+requires Orchestrator to address the cited authority or semantic defect by
+substantively correcting the candidate or completing the authoritative packet.
+Auditor may also require Orchestrator to reconsider the selected target or local
+boundary when the supplied evidence shows a mismatch.
+
+Do not retry an unchanged candidate or packet. There is no fixed review count or
+automatic release condition. Re-review only after the candidate or its packet
+has been substantively corrected, with a complete, current packet.
+
+## Blocking and Stopping
+
+Stop the current internal review progression when resolution requires a user
+decision, authoritative sources conflict, necessary evidence is unavailable,
+the target or task boundary must change, or no new lawful correction is
+available. Orchestrator handles the issue or contacts the user when the decision
+belongs to the user. After resolving it, re-review the candidate with an updated
+packet when only authority or evidence changed; form a new candidate when the
+target or boundary changed. In either case, run the complete gate again. Do not
+implement this flow as a state machine, retry counter, compatibility path, or
+extra agent.
+
+## Dispatch, Verify, and Deliver
+
+Only Orchestrator performs the final dispatch after `PASS`. It may choose
+foreground or background execution, sessions, timing, task IDs, cancellation,
+and retry behavior as runtime mechanics, without changing the approved task
+semantics. Later calls receive their own selected current context.
+
+Orchestrator checks returned evidence mechanically against the user's goal and
+explicit acceptance criteria, preserving failures, missing information,
+conflicts, side effects, and uncertainty. Any new semantic target, boundary,
+dependency, or professional-judgment decision requires the same process: decide
+the new candidate, prepare its packet, and pass the Auditor gate before
+dispatch. Orchestrator communicates useful risks, choices, progress, and
+results to the user concisely and owns final delivery.
+
+## New-session Chinese Response
 
 Before the first direct Chinese response to the user in a new Orchestrator
 session, call the `skill` tool once with `chinese-documentation`, then write the
-response. Use its guidance only for clear, natural Chinese communication directly
-from the Orchestrator to the user; do not treat it as task evidence or copy it
-into Navigator or specialist prompts. Do not call it again for later replies in
-the same session.
-
-## Orchestrator Interface
-
-`agent-capabilities` is the authority for system roles. Here, Orchestrator
-preserves user intent, selects context, dispatches tasks, owns runtime choices,
-and delivers results. Navigator owns downstream-prompt semantics; Orchestrator
-does not rewrite them by preference.
-
-## Select Context
-
-Orchestrator may retain and pass:
-
-- user intent, source tags, and project boundaries;
-- provided facts, specialist judgments, conflicts, and unknowns, kept distinct;
-- prior results, exact materials, paths, and runtime constraints.
-
-For each item that sets scope, authorization, a constraint, dependency, or
-acceptance boundary, retain its source identity and original force. Keep an
-Orchestrator inference or derived constraint distinct from a user decision,
-project rule, or sourced fact. State the basis of any enumeration used as a
-scope boundary. If an important item's source or force is unclear, keep that
-uncertainty with the item rather than normalizing it.
-
-Do not pass full conversation history, task-board detail, hidden reasoning, or
-obviously unrelated process content. A conflict relevant to target choice
-belongs in Navigator's context; it belongs in a specialist prompt only when
-that specialist is asked to examine it.
-
-Orchestrator does not pre-judge which materials "can change planning" or
-otherwise filter by planning semantics. When reasonable doubt exists about
-whether material is relevant, keep it with its source and let Navigator
-judge relevance.
-
-Each later call receives its own selected context. A reused session still needs
-the latest relevant decisions, evidence, and task increment.
-
-## Call Navigator Before Specialists
-
-Orchestrator does not self-complete substantive tasks by judging them
-"simple" or "low-risk." When a specialist is needed, Orchestrator calls
-Navigator first for that specialist's prompt.
-
-Navigator returns the current executable frontier: one or more complete
-specialist prompts whose inputs are present, semantic dependencies are
-satisfied, and dispatch is safe. Orchestrator dispatches each returned
-specialist prompt unchanged. If no safe dispatch is available, Navigator states
-the necessary conditions blocking the current frontier. A coordination item for
-Orchestrator, including a needed user decision, is not a specialist prompt and
-is not dispatched as one.
-
-An `@agent` mention is a user constraint, not an already-completed call.
-Orchestrator gives it to Navigator before dispatch. Navigator may split a
-compound request, but the named agent must receive meaningful work inside its
-role; it cannot be silently skipped or replaced.
-
-Before dispatch, Orchestrator checks only that the prompt preserves user
-decisions and explicit target constraints; keeps project boundaries, source
-identity, and constraint force intact; introduces no untraceable binding
-constraint; names a callable target; and has no live write conflict. A deviation
-goes back to Navigator with the specific problem; Orchestrator does not repair
-prompt semantics itself. When later work changes semantically or needs
-re-evaluation, Orchestrator returns the available evidence, gaps, and sources to
-Navigator. Orchestrator does not decide the next specialist or arrange semantic
-follow-up; those belong to Navigator.
-
-Foreground/background, timing, session choice, task IDs, actual write
-ownership, cancellation, retry, and user interaction remain Orchestrator's
-runtime choices.
-
-## Interpret Responses
-
-Specialists return ordinary task content: a result, evidence, execution failure,
-missing information, or a role mismatch. Orchestrator retains the useful facts,
-judgments, conflicts, side effects, and uncertainty for later context.
-
-Orchestrator may identify whether content is missing and whether a call
-succeeded, failed, timed out, or was unavailable — runtime status that does not
-change task semantics. Orchestrator does not decide which specialist should
-receive missing information next.
-
-When a response involves missing information, the next target or specialist,
-work scope, semantic dependencies, downstream prompt, or a specialist
-conclusion, return the available material, gaps, and sources to Navigator.
-Navigator decides whether re-decomposition, target selection, or a new
-downstream prompt is needed.
-
-Orchestrator contacts the user only when the needed decision or information
-belongs to the user.
-
-## Independent Calls
-
-Each specialist call is a separate LLM context; no shared state exists between
-calls. Downstream prompts must remove unrelated parent-history narration and
-process detail. When a specialist needs authoritative source material, provide
-the exact accessible path to the complete authoritative unit; a second-hand
-summary does not substitute for the required original.
-
-Navigator continues to own dynamic planning and final downstream-prompt
-writing, but does not conduct fact-finding, command execution, file operations,
-or professional judgment. Those belong to the appropriate specialist targets.
-
-## Verify and Deliver
-
-Navigator states the evidence each work unit should produce. Specialists produce
-or report it. Orchestrator mechanically checks the returned evidence against
-the stated user goal and explicit success criteria: whether evidence is
-complete, planned tasks are done, and deliverables are intact. Orchestrator may
-report a clear pass, fail, or missing status as-is, and dispatch any follow-up
-that Navigator has already determined.
-
-Do not automatically report internal delegation or mechanical checks to the
-user. Communicate them when doing so improves the user's understanding or
-control of progress, risks, choices, or results, using concise, natural,
-situation-appropriate judgment.
-
-Orchestrator does not form new acceptance criteria, interpret evidence that
-requires professional judgment, decide a new target or specialist, expand or
-change scope, design new semantic dependencies, write or alter the next
-downstream prompt, or propose a final system change.
-
-When follow-up requires a new target, scope, dependency, downstream prompt, or
-professional judgment, return the available evidence, gaps, and sources to
-Navigator. Navigator decides whether re-planning and a new downstream prompt
-are needed; Orchestrator dispatches only what Navigator has determined.
+response. Use that guidance only for clear, natural Chinese communication
+directly from Orchestrator to the user; do not treat it as task evidence or copy
+it into Navigator, Auditor, or specialist prompts. Do not call it again for
+later replies in the same session.
