@@ -3,7 +3,7 @@ name: atomic-commit
 description: Plan, review, and complete atomic Git commits. Use when the current task requires deciding what one commit should contain or how it should be expressed, including splitting scope, checking readiness, staging candidate changes, generating or reviewing the message, creating the commit, and verifying it. Do not use for ordinary status checks, history queries, or Git operations that require no commit-content or message decision.
 ---
 
-# Atomic Commits
+# Atomic Commit
 
 Make each commit express one intention that can be understood, verified, and reverted independently. Use one-line messages: `type(scope): description` for ordinary changes and `type(scope)!: description` for breaking changes.
 
