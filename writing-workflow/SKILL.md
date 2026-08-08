@@ -1,63 +1,47 @@
 ---
 name: writing-workflow
-description: 写作和实质改写面向人的文档。README、技术说明、指南、报告或中文技术内容需要组织成读者看得懂、找得到、能行动的成品时使用；也适用于把已有事实和结论整理成自然、准确的文字。普通代码修改不调用。
+description: Reader-centered writing and substantive rewriting for human-facing documents such as READMEs, technical explanations, guides, reports, and Chinese technical content. Use when facts or conclusions must become a document readers can understand, navigate, and act on; do not use for ordinary code edits.
 ---
 
-# 面向读者的写作
+# Reader-Centered Writing
 
-文档的完成标准不是内容已经写出，而是目标读者能够理解必要信息，并完成预期的判断或行动。结构、语言和篇幅都服务于这一结果。
+A document is complete when its intended readers can understand what matters and make the intended decision or take the intended action. Structure, language, and length all serve that result.
 
-## 读者与目标
+## Define the reader and outcome
 
-写作前明确：
+Before drafting, establish:
 
-- 谁会阅读，读者已经具备哪些背景；
-- 读完后需要理解、决定或完成什么；
-- 哪些内容有事实依据，哪些仍是推断或未知；
-- 文档需要覆盖什么，以及明确不覆盖什么。
+- who will read the document and what they already know;
+- what they must understand, decide, or do afterward;
+- which statements are established facts and which remain inference or unknown;
+- what the document covers and explicitly does not cover.
 
-读者与目标决定信息取舍。同一主题面向使用者时应优先支持实际操作，面向维护者时则需要解释设计关系与取舍。
+Use the reader and outcome to select information. A user-facing document should prioritize successful use; a maintainer-facing document usually needs design relationships and tradeoffs.
 
-只有缺失信息会改变文档方向或事实含义时才需要追问。措辞、标题和段落顺序等可逆选择，可以根据读者目标直接决定。
+Ask for clarification only when missing information would change the document's direction or factual meaning. Make reversible choices such as wording, headings, and paragraph order directly from the reader's needs.
 
-## 阅读路径
+## Build the reading path
 
-按读者解决问题的顺序组织内容，不照搬信息的收集顺序：
+Organize material in the order readers solve their problem, not the order in which the information was collected:
 
-- 读者需要行动时，先提供结论、入口与必要步骤，再补充原因和细节。
-- 读者需要理解时，先建立必要背景和整体关系，再展开机制、取舍与例外。
-- 标题应对应读者任务，使读者能够通过浏览快速定位所需部分。
-- 列表适合并列信息和步骤；表格只在需要比较固定维度时使用。
-- 每段围绕一个中心意思展开，并明确因果、条件与先后关系。
+- When readers need to act, lead with the result, entry point, and necessary steps; add reasons and detail afterward.
+- When readers need to understand, establish the minimum background and overall relationships before mechanisms, tradeoffs, and exceptions.
+- Make headings correspond to reader tasks so scanning reveals where to go.
+- Use lists for parallel items and sequences. Use tables only when fixed dimensions need comparison.
+- Give each paragraph one central idea, with causal, conditional, and sequential relationships made explicit.
 
-细节较多时可以逐层展开，但完成当前任务必需的信息应保留在主要阅读路径。来源缺失、事实冲突或逻辑跳步应直接说明或补齐依据，不用更多术语和结构掩盖问题。
+Disclose detail in layers when useful, but keep information required for the reader's task on the main path. State missing sources, conflicting facts, and logical gaps directly or supply the needed evidence; do not hide them behind more terminology or structure.
 
-## 清晰、自然的表达
+## Write clearly and naturally
 
-使用目标读者能够准确理解的词。专业术语只有在提高精度时才有价值；必要术语应在首次使用前获得足够说明，无法指向具体对象、动作或判断标准的抽象表达应改为直接陈述。
+Use words the intended reader can understand precisely. Technical terms earn their place by increasing accuracy. Give necessary terms enough context at first use, and replace abstractions that name no concrete object, action, or decision criterion with direct statements.
 
-中文内容遵循以下原则：
+Write in the requested output language and preserve established terminology. Keep one term for each concept throughout the document.
 
-- 使用自然中文语序，减少被动句、长定语和多层从句。
-- 能用中文清楚表达的概念不堆砌英文；专有名词、缩写、协议、命令和没有更清楚译法的术语保留原文。
-- 不为追求中文而生硬翻译，也不默认给每个术语添加中英对照。
-- 中文与英文、中文与数字之间留空格；中文句子使用全角标点，代码和完整英文句子使用半角标点。
-- 同一概念在全文使用一致称呼。
+When the output is Chinese, or Chinese terminology, typography, and sentence structure materially affect quality, read the [Chinese writing reference](references/chinese-writing-reference.md). Keep detailed language-specific rules and examples there rather than duplicating them here.
 
-例如：
+## Revise from the reader's entry point
 
-```text
-生硬：这个函数被用来计算用户的折扣。
-自然：这个函数用于计算用户折扣。
+Read the finished document from the intended reader's entry point. Confirm that readers can recognize its purpose, locate what they need, and understand important relationships without relying on the author's unstated background. Remove sentences that do not improve understanding or action while preserving necessary causality.
 
-空泛：后续需要完成能力链路的闭环建设。
-具体：下一步补齐失败重试，并记录每次重试结果。
-```
-
-需要处理更详细的中英混排、标点、术语和句式问题时，读取 [中文写作参考](references/chinese-writing-reference.md)。
-
-## 修订
-
-从目标读者的入口完整阅读成品，确认读者能够识别文档目的、定位所需信息，并在没有作者隐含背景的情况下理解关键关系与步骤。删除不影响理解和行动的句子，同时保留必要因果。
-
-改写已有内容时保持原意与确定性：推断不写成结论，建议不写成决定，真实路径、字段和引用保持准确。
+When rewriting existing material, preserve meaning and certainty. Do not turn inference into fact or advice into a decision. Keep real paths, fields, commands, and references accurate.
