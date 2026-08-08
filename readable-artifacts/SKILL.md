@@ -1,45 +1,45 @@
 ---
 name: readable-artifacts
-description: 规划和调整代码、文档、配置与 prompts 的文件级结构，使人和 agent 都能快速理解。文件职责混杂、阅读路径不清、接近或超过约 200 行，或需要决定拆分、合并、命名与引用方式时使用。
+description: Plan and revise file-level structure for code, documentation, configuration, and prompts so people and agents can understand them quickly. Use when responsibilities are mixed, reading paths are unclear, a hand-authored file approaches or exceeds roughly 200 lines, or a task requires decisions about splitting, merging, naming, or references.
 ---
 
-# 可读的文本产物
+# Readable Artifacts
 
-可读性的目标是降低理解成本：读者能够迅速判断文件的用途，找到当前任务所需的信息，并看清相关内容之间的关系。文件长度只是影响这一结果的因素之一。
+Readable structure lowers comprehension cost: readers can identify a file's purpose, find what the current task needs, and understand how related material fits together. Length is only one factor in that result.
 
-## 理解现有结构
+## Understand the current structure
 
-调整结构前，先确认文件的用途、读者、职责、关键约束和使用入口。通过调用处、相邻文件与实际用法补足上下文，直到能够解释内容为何位于当前文件。
+Before changing structure, identify the file's purpose, readers, responsibilities, important constraints, and entry points. Inspect callers, neighboring files, and actual usage until you can explain why the content belongs where it is.
 
-不能解释现有关系时，不宜仅凭长度或形式重排。这样的改动通常只是移动复杂度，而没有减少理解成本。
+Do not reorganize content based only on length or appearance while its existing relationships remain unexplained. That usually moves complexity instead of reducing it.
 
-## 确定语义边界
+## Set semantic boundaries
 
-一个文件适合回答一个连贯问题，或承担一组共同变化的职责。围绕这一原则判断：
+A file should answer one coherent question or hold responsibilities that change together. Use that principle to decide:
 
-- 定义、规则、例外和验证方式应靠近首次使用它们的位置。
-- 必须一起阅读才能成立的内容应当合并；能够独立命名、独立变化或服务不同读者的内容可以拆分。
-- 同一含义只保留一个权威表述；其他位置使用说明目标与读取条件的指针，避免复制。
-- 文件和目录名称应表达实际用途。含义宽泛的 `utils`、`common`、`helpers` 容易持续接纳无关职责，应谨慎使用。
+- Keep definitions, rules, exceptions, and verification guidance near where they first matter.
+- Keep material together when it must be read together to make sense. Split material that can be named independently, change independently, or serve a different reader.
+- Keep one authoritative expression of each meaning. Elsewhere, use a pointer that states what the target contains and when to read it instead of copying the content.
+- Name files and directories for their actual purpose. Broad names such as `utils`, `common`, and `helpers` tend to accumulate unrelated responsibilities.
 
-拆分后的实际阅读路径是最终判断依据。如果理解一个不变量、执行一段短流程或修改一个局部功能需要频繁跨文件跳转，说明边界可能过细。
+Judge a split by the resulting reading path. If understanding one invariant, following a short procedure, or changing one local behavior requires repeated jumps across files, the boundaries may be too fine.
 
-## 约 200 行的软目标
+## Treat roughly 200 lines as a soft review point
 
-约 200 行最初来自 Claude Code 对完整加载到上下文中的 `CLAUDE.md` 的经验性建议：过长的常驻指导会消耗注意力并降低遵循度。Anthropic 的上下文工程方法进一步说明，上下文是有限的注意力预算，应保留足以完成任务的最小高信号信息。
+The roughly 200-line figure originated as practical guidance for `CLAUDE.md` files loaded fully into Claude Code context: long persistent instructions consume attention and reduce adherence. Anthropic's context-engineering guidance further treats context as a finite attention budget that should contain the smallest high-signal set sufficient for the task.
 
-本 Skill 将约 200 行扩展为人工编写文本的软性复查点，而不是通用阈值。代码和文档同样需要被人和 agent 扫描、定位和组合；接近这一规模时，值得重新检查是否混入多个语义单元。精确数字不证明文件好坏，语义内聚始终优先。
+This Skill extends roughly 200 lines into a soft review point for hand-authored text artifacts, including source code, rather than a universal limit. People and agents must scan, locate, and combine meaning in both code and documentation; near this scale, check whether multiple semantic units have accumulated. The number does not prove quality. Semantic cohesion remains the stronger criterion.
 
-接近或超过这一规模时，依次考虑：
+When a file approaches or exceeds this scale, consider these steps in order:
 
-1. 删除过时、重复或不影响理解与行为的内容。
-2. 提取真正独立的职责、读者分支或长参考资料，并保留明确指针。
-3. 从读者入口重新检查导航成本；如果前提被隐藏或跨文件耦合增加，撤销拆分。
+1. Remove stale or duplicated material, and remove other material only when it supports neither understanding nor behavior.
+2. Extract genuinely independent responsibilities, reader branches, or long reference material, and leave a clear pointer.
+3. Recheck navigation cost from the reader's entry point. Undo the split if it hides prerequisites or increases cross-file coupling.
 
-生成文件、原始资料和受外部格式约束的文件不适用这一目标。必须一起理解的内容也可以超过约 200 行，但应确认保留完整语义确实比拆分更易读。
+Do not apply this review point to generated files, source material preserved verbatim, or files constrained by an external format. Content that must be understood together may also exceed roughly 200 lines when preserving the complete semantic unit is easier to read than splitting it.
 
-需要进一步理解注意力预算、渐进披露和按需检索时，读取 [Anthropic 的上下文工程原文](references/effective-context-engineering.md)。
+For the underlying treatment of attention budgets, progressive disclosure, and just-in-time retrieval, read [Anthropic's context-engineering article](references/effective-context-engineering.md).
 
-## 完成判断
+## Check the result
 
-结构调整完成后，从实际消费者的入口复核：文件用途是否清楚，相关内容是否足够靠近，名称与指针是否能引导后续阅读。代码、链接、加载顺序和格式约束仍应保持有效；可读性的前提是产物仍能正确使用。
+Review the result from the actual consumer's entry point. Confirm that each file's purpose is clear, related material remains close enough, and names and pointers guide later reading. Keep code behavior, links, loading order, and format constraints valid; an artifact is not more readable if it no longer works correctly.
