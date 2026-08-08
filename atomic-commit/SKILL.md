@@ -1,73 +1,73 @@
 ---
 name: atomic-commit
-description: 规划、审查和完成原子 Git 提交。当前任务需要决定一个提交应包含什么或如何表达时使用，包括划分或拆分范围、检查提交就绪状态、暂存候选变更、生成或审核消息、创建与核对提交。普通开发中的状态查看、单纯历史查询，以及不涉及提交内容或消息取舍的 Git 操作不使用。
+description: Plan, review, and complete atomic Git commits. Use when the current task requires deciding what one commit should contain or how it should be expressed, including splitting scope, checking readiness, staging candidate changes, generating or reviewing the message, creating the commit, and verifying it. Do not use for ordinary status checks, history queries, or Git operations that require no commit-content or message decision.
 ---
 
-# 原子提交
+# Atomic Commits
 
-一次提交只表达一个可独立理解、验证和回滚的意图。提交消息只有一行：普通变更使用 `type(scope): description`，破坏性变更使用 `type(scope)!: description`。
+Make each commit express one intention that can be understood, verified, and reverted independently. Use one-line messages: `type(scope): description` for ordinary changes and `type(scope)!: description` for breaking changes.
 
-原子历史便于定位问题、独立回滚和理解变更。文件数量不是判断标准；关键在于提交是否形成一个一致状态。
+Atomic history supports fault isolation, independent rollback, and change comprehension. File count is not the criterion; the commit must form one coherent state.
 
-未要求写操作时，只分析范围或生成消息；明确要求暂存时可以修改 index；只有明确要求提交时才创建 commit。
+When write operations are not authorized, only analyze scope or propose a message. Modify the index only when staging is authorized, and create a commit only when committing is explicitly authorized.
 
-## 了解仓库与变更
+## Understand the repository and changes
 
-先确认仓库根目录，然后查看：
+Confirm the repository root, then inspect:
 
-- `git status`，区分 staged、unstaged 与 untracked 文件；
-- 完整 diff 与 staged diff，逐个检查候选 hunk；
-- 候选 untracked 文件的实际内容，因为普通 `git diff` 不显示它们；
-- 最近 10 条 commit subjects；历史不足 10 条时查看全部；
-- 候选路径的近期提交，例如 `git log -10 -- <paths>`。
+- `git status`, distinguishing staged, unstaged, and untracked files;
+- the complete working-tree and staged diffs, examining every candidate hunk;
+- the actual content of candidate untracked files, which ordinary `git diff` does not show;
+- the latest 10 commit subjects, or the full history when fewer than 10 exist;
+- recent history for the candidate paths, such as `git log -10 -- <paths>`.
 
-整体历史用于确定语言、描述长度和措辞习惯；候选路径的历史用于判断 scope 是按目录、包、模块、功能还是文件命名。消息格式由本 Skill 统一，具体表达遵循仓库惯例。
+Use repository-wide history to determine language, description length, and wording conventions. Use candidate-path history to determine whether scopes follow directories, packages, modules, features, or files. This Skill fixes the message shape; the repository determines its established expression.
 
-如果已经存在来源不明的 staged changes，先确认其归属，避免把其他意图带入本次提交。
+If the index already contains changes of uncertain ownership, establish their origin before proceeding so another intention does not enter the commit.
 
-## 确定原子范围
+## Determine the atomic scope
 
-用一句话说明提交意图，并列出对应的 repository-relative paths 与 hunks。一个原子范围同时满足：
+State the commit intention in one sentence and list the repository-relative paths and hunks that implement it. An atomic scope satisfies all four tests:
 
-- **单一意图**：消息不需要用“以及”“顺便”等方式连接不同目的。
-- **独立回滚**：撤销这个提交只移除该意图，不会撤掉无关变化或留下半套实现。
-- **状态完整**：提交后的仓库保持一致并可验证；不可分离的测试、文档、配置和生成产物应一起提交。
-- **不可再分**：如果两部分拆开后仍能分别理解、验证和回滚，就应拆分。
+- **Single intention:** The message does not need “and” or “also” to connect unrelated purposes.
+- **Independent rollback:** Reverting the commit removes only that intention, without removing unrelated work or leaving an incomplete state.
+- **Complete state:** The repository remains coherent and verifiable after the commit. Inseparable tests, documentation, configuration, and generated artifacts belong with the change.
+- **Indivisible scope:** If two parts can still be understood, verified, and reverted independently after separation, split them.
 
-同一文件包含多个意图时，只有 hunk 边界可靠时才部分暂存；否则停止并说明当前工作区无法形成原子范围，不自行修改工作区来制造边界。
+When one file contains multiple intentions, stage only selected hunks when the boundaries are reliable. Otherwise stop and explain that the current working tree cannot form the intended atomic scope; do not edit the working tree merely to manufacture staging boundaries.
 
-先确定原子范围，再选择 scope。候选路径对应多个历史 scope 时，先重新检查是否应拆分；确实不可分时，使用历史中能够覆盖整个意图的最窄共同 scope。没有先例时使用真实的共同领域，不拼接多个 scope，也不使用 `misc` 等含义空泛的名称。
+Determine atomic scope before choosing the message scope. When candidate paths map to several historical scopes, reconsider whether the change should split. If it is genuinely indivisible, use the narrowest established scope that covers the whole intention. Without precedent, use the real shared domain; do not concatenate scopes or use vague names such as `misc`.
 
-对于 amend、revert 等会形成或替换提交的操作，以操作后的完整 commit 相对于其父提交的 diff 为判断对象，不只检查本次新增的 delta。
+For amend, revert, and other operations that create or replace a commit, judge the complete resulting commit against its parent, not only the newly introduced delta.
 
-候选中包含凭据、密钥、个人数据或不应进入仓库的临时文件时停止。
+Stop when the candidate includes credentials, secrets, personal data, or temporary files that should not enter the repository.
 
-## 编写单行消息
+## Write the one-line message
 
 ```text
 type(scope): description
 type(scope)!: description  # breaking change
 ```
 
-- `type` 和 `scope` 使用小写。
-- `scope` 必须填写，并使用范围确定后选出的稳定名称。
-- `description` 使用仓库惯用语言与祈使语气，简短说明变更，不加句号。
-- `!` 只用于破坏现有兼容性的变更，使发布与 changelog 工具能够识别。
-- 消息不包含 body 或 footer。仓库若强制要求 trailer 或其他格式，在提交前报告冲突。
+- Write `type` and `scope` in lowercase.
+- Always include `scope`, using the stable name selected after determining atomic scope.
+- Write `description` in the repository's customary language and imperative mood. Keep it brief and omit the final period.
+- Use `!` only for compatibility-breaking changes so release and changelog tooling can identify them.
+- Do not add a body or footer. Report a conflict before committing when repository policy requires trailers or another format.
 
-| type | 适用变化 |
-|------|----------|
-| `feat` | 新增用户可见能力 |
-| `fix` | 修复缺陷 |
-| `docs` | 只修改文档 |
-| `style` | 不改变代码含义的格式调整 |
-| `refactor` | 不新增功能、不修复缺陷的结构调整 |
-| `perf` | 性能改进 |
-| `test` | 新增或修正测试 |
-| `build` | 构建系统或依赖变化 |
-| `ci` | CI 配置或脚本变化 |
-| `chore` | 其他维护工作 |
-| `revert` | 撤销之前的提交 |
+| type | Use for |
+|------|---------|
+| `feat` | User-visible capability |
+| `fix` | Defect correction |
+| `docs` | Documentation-only change |
+| `style` | Formatting with no semantic change |
+| `refactor` | Structural change that adds no feature and fixes no defect |
+| `perf` | Performance improvement |
+| `test` | New or corrected tests |
+| `build` | Build system or dependency change |
+| `ci` | CI configuration or scripts |
+| `chore` | Other maintenance work |
+| `revert` | Reversal of an earlier commit |
 
 ```text
 feat(auth): add passkey login
@@ -76,14 +76,14 @@ feat(api)!: remove legacy pagination
 docs(readme): clarify local setup
 ```
 
-消息只包含理解本次变更所需、适合永久进入仓库历史的信息。
+Include only information needed to understand this change and suitable for permanent repository history.
 
-## 暂存、提交与核对
+## Stage, commit, and verify
 
-只暂存已确认的路径或 hunk。暂存后重新读取 staged diff，确认所有变更服务于同一意图，必要的测试与文档没有遗漏，消息准确概括实际内容。创建或替换提交前，确认预期的完整 commit diff。
+Stage only confirmed paths or hunks. Reread the staged diff and confirm that every change serves the same intention, necessary tests and documentation are present, and the message accurately summarizes the content. Before creating or replacing a commit, confirm the expected complete commit diff.
 
-提交时将整行消息作为单个参数传入。只能通过 shell 且消息含有 `$`、反引号等特殊字符时，先写入仓库外的临时文件并使用 `git commit -F`，避免 shell 插值。
+Pass the entire one-line message as one argument. When only a shell is available and the message contains `$`, backticks, or other interpolation-sensitive characters, write it to a temporary file outside the repository and use `git commit -F`.
 
-提交后读取 `git log -1 --format=%H%n%B` 与完整 patch，确认实际消息与批准的单行逐字一致，实际 commit diff 也等于提交前确认的完整结果。
+After committing, read `git log -1 --format=%H%n%B` and the complete patch. Confirm that the recorded message exactly matches the approved line and that the commit diff equals the complete result reviewed before committing.
 
-消息、范围或命令结果不一致时保留现场并报告。不要自动 amend、revert、push 或绕过 hooks；这些动作需要新的明确授权。
+If the message, scope, or command result differs from the approved result, preserve the state and report it. Do not automatically amend, revert, push, or bypass hooks; each action requires separate explicit authorization.
