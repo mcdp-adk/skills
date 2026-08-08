@@ -1,5 +1,5 @@
 ---
-name: writing-workflow
+name: reader-centered-writing
 description: Reader-centered writing and substantive rewriting for human-facing documents such as READMEs, technical explanations, guides, reports, and Chinese technical content. Use when facts or conclusions must become a document readers can understand, navigate, and act on; do not use for ordinary code edits.
 ---
 
