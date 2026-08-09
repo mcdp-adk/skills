@@ -1,58 +1,37 @@
 # grok-search
 
-An [Agent Skills](https://agentskills.io) skill for live Web and X (Twitter)
-search through xAI Grok. Install it with:
+An [Agent Skills](https://agentskills.io) skill for retrieving live Web and X
+content through xAI Grok. Use it for current information, specified pages or
+accounts, historical date ranges, and external verification—not for local file
+search, legal certification, or price prediction.
+
+## Install
+
+The Vercel Labs `skills` CLI requires Node.js 22.20 or newer.
 
 ```bash
 npx skills add mcdp-adk/skills --skill grok-search
 ```
 
-## What it does
+## Set up
 
-Use it when you need actual external Web or X retrieval: current information,
-recent discussions or events, a specified official document or account, a
-historical date range, or outside verification of a claim. It is not a local
-file or repository search tool, and it does not provide legal certification or
-price predictions.
+You need:
 
-## Requirements and setup
-
-- A Python 3.10+ runner, either an existing system interpreter or a managed
-  interpreter that an already installed uv can obtain.
-- The script uses only the Python standard library; no pip package is needed.
+- Python 3.10 or newer. The bundled script uses only the standard library.
 - An xAI API key from [console.x.ai](https://console.x.ai).
 
-Copy `.env.example` to `.env` in this directory and set `XAI_API_KEY`, or set
-`XAI_API_KEY` in the operating-system environment. A non-empty OS environment
-value takes priority over `.env`. Optional proxy variables are
-`HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY`, and `NO_PROXY`. A custom CA bundle can
-be supplied with `--ca-bundle`.
+Copy `.env.example` to `.env` in this directory and set `XAI_API_KEY`, or set it
+in the operating-system environment. A non-empty OS environment value takes
+priority. Keep the key out of commands, logs, and source control.
 
-The script loads `.env` automatically from the skill directory. Keep the file
-private and do not put the API key in commands, logs, or source control.
+The skill also supports `HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY`, `NO_PROXY`,
+and a custom CA bundle through `--ca-bundle`.
 
-### Runner fallback
+## Run a search
 
-Verify the first available runner with `--help`, in this order: `python`, the
-platform runner (`py -3` on Windows or `python3` on Linux/macOS), then an
-already installed `uv`.
-
-```bash
-python "scripts/search.py" --help
-py -3 "scripts/search.py" --help          # Windows
-python3 "scripts/search.py" --help        # Linux/macOS
-uv run --no-project "scripts/search.py" --help
-```
-
-Use the first command whose `--help` verification succeeds, then reuse that
-runner for the real query. The already installed uv fallback may download a
-managed Python on first use and may need network access. Do not install uv or
-pip packages, or use an independent installer. If that download is not allowed,
-stop and provide an already available Python 3.10+ runner instead.
-
-## Quick start
-
-Run these commands from the `grok-search` directory:
+Once installed and configured, ask your agent for information that requires
+live Web or X retrieval. To run the bundled CLI directly, use these commands
+from the `grok-search` directory:
 
 ```bash
 python "scripts/search.py" --help
@@ -61,44 +40,38 @@ python "scripts/search.py" --source x --since "7d" "developer reactions to MCP"
 python "scripts/search.py" --source web --preset single --web-allow docs.python.org "asyncio TaskGroup"
 ```
 
-Use the first runner whose `--help` command succeeds, and reuse it for the
-session. The script writes the normal result as JSON to stdout; `Searching...`,
-`Done.`, and retry notices are progress lines on stderr.
+If `python` is unavailable, try `py -3` on Windows, `python3` on Linux or macOS,
+then an already installed `uv` with `uv run --no-project`. Verify the runner
+with `--help` once and reuse it for the session. No pip packages are required.
 
-## Web and X time filters
+The CLI writes result JSON to stdout. Progress and retry notices go to stderr.
+Treat citations as candidate sources, and check the cited pages before relying
+on important claims.
 
-`--since` and `--until` are strict, date-level filters for X. Web search has no
-strict date filter, so `--source web --since ...` and `--source web --until ...`
-fail. With `--source both`, the flags constrain only X. For Web freshness or
-hour-level X freshness, put the time range directly in the query text, such as
-“in the past 2 hours.” Relative values (`2h`, `7d`, `2w`, `today`, `yesterday`,
-`now`) and ISO date/time values are interpreted in UTC.
+## Choose the request
 
-## Presets
+| Option | Use it for |
+|---|---|
+| `--source web\|x\|both` | Select Web, X, or both. The default is both. |
+| `--preset single\|multi-4\|multi-16` | Use `single` for one fact or speed, omit the option for ordinary searches (`multi-4`), and reserve `multi-16` for explicitly requested deep research. |
+| `--since` / `--until` | Apply strict, date-level filters to X. Web search does not support these filters; state Web freshness in the query instead. |
+| `--web-allow`, `--web-exclude`, `--x-allow`, `--x-exclude` | Limit Web domains or X accounts. Do not combine allow and exclude for the same source. |
+| `--continue RESPONSE_ID` | Continue a previous response to fill a known gap or audit its evidence. |
 
-- `single`: one fact, specified page/account, or a speed-sensitive request; lowest relative cost.
-- `multi-4`: default for ordinary searches; omit `--preset`.
-- `multi-16`: highest relative cost; use only for an explicitly requested, genuinely deep and multi-faceted investigation.
+Relative time values such as `2h`, `7d`, `today`, and `yesterday`, as well as ISO
+date and time values, are interpreted in UTC.
 
-## Troubleshooting
+## Troubleshoot
 
-- `ENV_ERROR`: set `XAI_API_KEY` in `.env` or the OS environment; start a new
-  terminal or agent process after changing environment variables.
-- Authentication failure: the key is invalid or expired; replace it at
+- `ENV_ERROR`: set `XAI_API_KEY` in `.env` or the OS environment, then start a
+  new terminal or agent process.
+- Authentication failure: replace an invalid or expired key at
   [console.x.ai](https://console.x.ai).
-- Argument failure: run `python "scripts/search.py" --help` and correct only a
-  clearly local flag mistake that does not change the intended request or
-  expected cost; Web still rejects `--since` and `--until`.
-- After the script returns a final API, connection, or timeout error, do not
-  automatically start a second CLI call. Internal retries remain the script's
-  responsibility; a timeout may already have been processed.
-- The script never automatically changes the preset, model, or effort; any
-  retry that changes one requires your explicit decision.
+- Argument failure: run the script with `--help` and correct the reported flag.
+- Final API, connection, or timeout error: report the failure before starting a
+  new call. The script manages eligible retries internally, and a timeout may
+  already have reached the service.
 
-## License
-
-[MIT](LICENSE)
-
-For model/effort semantics, filter limits, retry behavior, proxy precedence,
-output formats, and uncommon errors, see
+For model and effort semantics, media options, filter limits, retry behavior,
+proxy precedence, output fields, and uncommon errors, see
 [references/references.md](references/references.md).

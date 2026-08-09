@@ -1,0 +1,34 @@
+# Agent Skills
+
+**English** | [简体中文](README.zh-CN.md)
+
+A small collection of [Agent Skills](https://agentskills.io) for coding agents. Install only the skills you need.
+
+## Install
+
+Use the [Vercel Labs `skills` CLI](https://github.com/vercel-labs/skills) with Node.js 22.20 or newer:
+
+```bash
+npx skills add mcdp-adk/skills
+```
+
+The CLI will ask which skills to install. To install a specific skill:
+
+```bash
+npx skills add mcdp-adk/skills --skill reader-centered-writing
+```
+
+## Available skills
+
+| Skill | Use it when | Notes |
+|---|---|---|
+| [`atomic-commit`](atomic-commit/SKILL.md) | A Git change needs a coherent commit scope, message, staging plan, or final verification. | Not intended for routine status or history queries. |
+| [`everything-cli`](everything-cli/SKILL.md) | A file, directory, or project has an unknown location on Windows. | Requires the Everything desktop app and ES (`es.exe`). |
+| [`grok-search`](grok-search/SKILL.md) | A task needs current or externally verified information from the Web or X. | Requires Python 3.10+ and an xAI API key. See the [setup and usage guide](grok-search/README.md). |
+| [`readable-artifacts`](readable-artifacts/SKILL.md) | A file's responsibilities, reading path, boundaries, or references need restructuring. | Treats roughly 200 lines as a review point, not a hard limit. |
+| [`reader-centered-writing`](reader-centered-writing/SKILL.md) | A human-facing document needs to help its readers understand, decide, or act. | Includes guidance for Chinese technical writing. |
+| [`review-to-closure`](review-to-closure/SKILL.md) | Non-trivial work or review fixes need a complete review, verification, and re-review loop. | Keeps the review anchored to the original goal and cumulative result. |
+
+## License
+
+[MIT](LICENSE)
