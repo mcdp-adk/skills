@@ -1,6 +1,8 @@
 ---
 name: readable-artifacts
 description: Plan and revise file-level structure for code, documentation, configuration, and prompts so people and agents can understand them quickly. Use when responsibilities are mixed, reading paths are unclear, a hand-authored file approaches or exceeds roughly 200 lines, or a task requires decisions about splitting, merging, naming, or references.
+metadata:
+  internal: true
 ---
 
 # Readable Artifacts

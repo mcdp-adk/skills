@@ -26,7 +26,6 @@ npx skills add mcdp-adk/skills --skill reader-centered-writing
 | [`everything-cli`](everything-cli/SKILL.md) | 文件、目录或项目位置不明，需要在 Windows 上快速定位。 | 需要安装 Everything 和 ES（`es.exe`），并保持 Everything 运行。 |
 | [`grok-search`](grok-search/SKILL.md) | 需要从 Web 或 X 获取最新信息，或借助外部来源核实内容。 | 需要 Python 3.10+ 和 xAI API key。详见[配置与用法](grok-search/README.md)。 |
 | [`durable-project-knowledge`](durable-project-knowledge/SKILL.md) | 在任务明确要求时建立或重组持久项目知识；帮助跨会话、交接或协作者的实质性工作发现、读取和维护持久的目标、设计、决策与计划知识；修复造成工作阻塞的入口或来源问题；并更新持久变化。 | 包含有条件使用的软件开发与创意/实验项目指南。 |
-| [`readable-artifacts`](readable-artifacts/SKILL.md) | 文件职责混杂、阅读顺序不清，或需要决定如何拆分和引用。 | 约 200 行只是提醒检查结构，并非硬性限制。 |
 | [`reader-centered-writing`](reader-centered-writing/SKILL.md) | 需要撰写或重写 README、技术说明等面向读者的文档。 | 包含中文技术写作指南。 |
 
 ## 许可证
