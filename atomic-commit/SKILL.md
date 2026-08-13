@@ -1,6 +1,6 @@
 ---
 name: atomic-commit
-description: Group related Git changes into one coherent commit and name it `type(scope): description`. Use when committing work, splitting or grouping changes into commits, or writing a commit message.
+description: "Group related Git changes into one coherent commit and name it `type(scope): description`. Use when committing work, splitting or grouping changes into commits, or writing a commit message."
 ---
 
 # Atomic Commit
