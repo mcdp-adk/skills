@@ -3,11 +3,10 @@ name: everything-cli
 compatibility: Windows only. Requires the official Everything desktop app and ES (`es.exe`); Everything must be running.
 description: >
   Use on Windows when a file, directory, or project may be outside the known
-  working directory or its location is unclear. Locate it through Everything's
-  filename and path index before using recursive filesystem search, especially
-  where OneDrive Files On-Demand may be present. Once a concrete root is known,
-  use normal local tools for scoped structure or content search. Do not use for
-  content search inside an already known directory.
+  working directory or its location is unclear, especially with OneDrive Files
+  On-Demand. Locate it through Everything's filename and path index before
+  recursive filesystem search. Do not use for content search inside an already
+  known directory.
 ---
 
 # Everything CLI
@@ -17,22 +16,16 @@ index; it does not replace local code search.
 
 ## Locate the target
 
-1. Confirm that ES can reach Everything:
-
-   ```powershell
-   es.exe -get-everything-version
-   ```
-
-   If this fails, report that the official Everything desktop app and ES are
-   required. When the target root is already known, continue with local tools;
-   otherwise, do not replace ES with a broad recursive scan.
-
-2. Start with a filename fragment and return full paths with a small result
+1. Start with a filename fragment and return full paths with a small result
    limit:
 
    ```powershell
    es.exe -n 20 -full-path-and-name filename-fragment
    ```
+
+   If `es.exe` fails, report that the official Everything desktop app and ES are
+   required. When the target root is already known, continue with local tools;
+   otherwise, do not replace ES with a broad recursive scan.
 
    To combine filename and project or directory clues, match the full path and
    pass each fragment as a separate argument:
@@ -47,7 +40,7 @@ index; it does not replace local code search.
    `-path "C:\known\root"` when the task already limits the search to a particular
    root.
 
-3. Use the returned paths and task context to identify the intended result.
+2. Use the returned paths and task context to identify the intended result.
    Once its directory is known, switch to the normal local tools for any
    structure or content search, keeping those tools within that directory.
 
@@ -61,6 +54,3 @@ index; it does not replace local code search.
   wider index.
 - Treat results as an indexed view. If a query misses, simplify or reformulate
   its fragments first; the location may also be excluded or the index stale.
-
-These rules reduce file reads caused by the Agent's search strategy; they do
-not control Everything's or OneDrive's own background behavior.
