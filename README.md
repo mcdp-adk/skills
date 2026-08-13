@@ -22,7 +22,7 @@ npx skills add mcdp-adk/skills --skill reader-centered-writing
 
 | Skill | Use it when | Notes |
 |---|---|---|
-| [`atomic-commit`](atomic-commit/SKILL.md) | A Git change needs a coherent commit scope, message, staging plan, or final verification. | Not intended for routine status or history queries. |
+| [`atomic-commit`](atomic-commit/SKILL.md) | Committing work that needs a coherent scope and a `type(scope): description` message. | Groups related changes; splits only unrelated intentions. |
 | [`everything-cli`](everything-cli/SKILL.md) | A file, directory, or project has an unknown location on Windows. | Requires the Everything desktop app and ES (`es.exe`). |
 | [`grok-search`](grok-search/SKILL.md) | A task needs current or externally verified information from the Web or X. | Requires Python 3.10+ and an xAI API key. See the [setup and usage guide](grok-search/README.md). |
 | [`reader-centered-writing`](reader-centered-writing/SKILL.md) | A human-facing document needs to help its readers understand, decide, or act. | Includes guidance for Chinese technical writing. |
