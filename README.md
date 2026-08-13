@@ -28,7 +28,6 @@ npx skills add mcdp-adk/skills --skill reader-centered-writing
 | [`durable-project-knowledge`](durable-project-knowledge/SKILL.md) | Establish or reorganize durable project knowledge when explicitly required; help substantial work across sessions, handoffs, or collaborators discover, read, and maintain durable goal, design, decision, and plan knowledge; repair entry-point or source problems that block the work; and update lasting changes. | Includes conditional software-development and creative/experimental guidance. |
 | [`readable-artifacts`](readable-artifacts/SKILL.md) | A file's responsibilities, reading path, boundaries, or references need restructuring. | Treats roughly 200 lines as a review point, not a hard limit. |
 | [`reader-centered-writing`](reader-centered-writing/SKILL.md) | A human-facing document needs to help its readers understand, decide, or act. | Includes guidance for Chinese technical writing. |
-| [`review-to-closure`](review-to-closure/SKILL.md) | Non-trivial work or review fixes need a complete review, verification, and re-review loop. | Keeps the review anchored to the original goal and cumulative result. |
 
 ## License
 

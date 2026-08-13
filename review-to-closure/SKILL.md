@@ -1,6 +1,8 @@
 ---
 name: review-to-closure
 description: Goal-anchored review and fix–verify–re-review workflow for code, documents, configurations, plans, and other artifacts. Use after non-trivial changes when review is requested or required, after addressing review findings, before declaring reviewed work complete, or whenever review must cover the cumulative result rather than only a checklist, latest diff, or previous findings.
+metadata:
+  internal: true
 ---
 
 # Review to Closure
