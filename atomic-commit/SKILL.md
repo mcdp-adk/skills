@@ -26,30 +26,14 @@ Look at recent commit subjects for language and how this repository names scopes
 
 ## Name it
 
-- Write `type` and `scope` in lowercase. Always include `scope`.
+- Write `type` and `scope` in lowercase. Always include `scope`. Use Conventional Commits types.
 - Write `description` in the repository's language, in imperative mood, with no trailing period.
 - Use `!` only for compatibility-breaking changes.
 - Use one line. If the repository requires trailers or another format, follow the repository.
 
-| type | Use for |
-|------|---------|
-| `feat` | User-visible capability |
-| `fix` | Defect correction |
-| `docs` | Documentation-only change |
-| `style` | Formatting with no semantic change |
-| `refactor` | Structural change that adds no feature and fixes no defect |
-| `perf` | Performance improvement |
-| `test` | New or corrected tests |
-| `build` | Build system or dependency change |
-| `ci` | CI configuration or scripts |
-| `chore` | Other maintenance work |
-| `revert` | Reversal of an earlier commit |
-
 ```text
 feat(auth): add passkey login
-fix(parser): handle empty arrays
 feat(api)!: remove legacy pagination
-docs(readme): clarify local setup
 ```
 
 ## Create it
