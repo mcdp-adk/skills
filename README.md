@@ -15,7 +15,7 @@ npx skills add mcdp-adk/skills
 The CLI will ask which skills to install. To install a specific skill:
 
 ```bash
-npx skills add mcdp-adk/skills --skill reader-centered-writing
+npx skills add mcdp-adk/skills --skill writing-to-be-understood
 ```
 
 ## Available skills
@@ -25,7 +25,7 @@ npx skills add mcdp-adk/skills --skill reader-centered-writing
 | [`atomic-commit`](atomic-commit/SKILL.md) | Committing work that needs a coherent scope and a `type(scope): description` message. | Groups related changes; splits only unrelated intentions. |
 | [`everything-cli`](everything-cli/SKILL.md) | A file, directory, or project has an unknown location on Windows. | Requires the Everything desktop app and ES (`es.exe`). |
 | [`grok-search`](grok-search/SKILL.md) | A task needs current or externally verified information from the Web or X. | Requires Python 3.10+ and an xAI API key. See the [setup and usage guide](grok-search/README.md). |
-| [`reader-centered-writing`](reader-centered-writing/SKILL.md) | A human-facing document needs to help its readers understand, decide, or act. | Includes guidance for Chinese technical writing. |
+| [`writing-to-be-understood`](writing-to-be-understood/SKILL.md) | Choosing wording so the person reading can understand the dialogue content. | |
 
 ## License
 
