@@ -22,17 +22,18 @@ Keep together what serves that intention. Split only when the working tree holds
 
 If one file mixes two intentions, stage the matching hunks when the boundary is clear. If it is not, stop and say so rather than rewriting the working tree to manufacture a split.
 
-Look at recent commit subjects for language and how this repository names scopes. This skill fixes the message shape; the repository supplies the established wording. When paths span several historical scopes and the change is still one intention, use the narrowest established scope that covers it.
-
 ## Name it
 
-- Write `type` and `scope` in lowercase. Always include `scope`. Use Conventional Commits types.
+For `scope`, reuse an established name for this area when one exists: a scope in recent commits, or a directory or package name when commits have none. Write it as the repository already writes it. When nothing established exists, invent a lowercase kebab-case scope. When paths span several historical scopes and the change is still one intention, use the narrowest established scope that covers it.
+
+- Write `type` in lowercase. Always include `scope`. Use Conventional Commits types.
 - Write `description` in the repository's language, in imperative mood, with no trailing period.
 - Use `!` only for compatibility-breaking changes.
 - Use one line. If the repository requires trailers or another format, follow the repository.
 
 ```text
 feat(auth): add passkey login
+feat(user-profile): add avatar upload
 feat(api)!: remove legacy pagination
 ```
 
