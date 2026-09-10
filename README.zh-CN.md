@@ -23,6 +23,7 @@ npx skills add mcdp-adk/skills --skill atomic-commit
 | Skill | 什么时候用 | 说明 |
 |---|---|---|
 | [`atomic-commit`](atomic-commit/SKILL.md) | 提交时需要确定范围，并写成 `type(scope): description`。 | 相关改动放一起；只有无关意图才拆。 |
+| [`chinese-typography`](chinese-typography/SKILL.md) | 中文对话、中英混排文本的生成、编辑和排版检查。 | 统一空格与标点，保护 Markdown、图表及代码语法。 |
 | [`everything-cli`](everything-cli/SKILL.md) | 文件、目录或项目位置不明，需要在 Windows 上快速定位。 | 需要安装 Everything 和 ES（`es.exe`），并保持 Everything 运行。 |
 | [`explanatory-mode`](explanatory-mode/SKILL.md) | 希望边做任务边看懂正在发生什么，以及重要选择的理由。 | Insight 写在对话里，不写进代码库。 |
 | [`grok-search`](grok-search/SKILL.md) | 需要从 Web 或 X 获取最新信息，或借助外部来源核实内容。 | 需要 Python 3.10+ 和 xAI API key。详见[配置与用法](grok-search/README.md)。 |

@@ -23,6 +23,7 @@ npx skills add mcdp-adk/skills --skill atomic-commit
 | Skill | Use it when | Notes |
 |---|---|---|
 | [`atomic-commit`](atomic-commit/SKILL.md) | Committing work that needs a coherent scope and a `type(scope): description` message. | Groups related changes; splits only unrelated intentions. |
+| [`chinese-typography`](chinese-typography/SKILL.md) | Writing or editing Chinese conversation and mixed Chinese-English text. | Consistent spacing and punctuation, with Markdown, diagram, and code syntax protected. |
 | [`everything-cli`](everything-cli/SKILL.md) | A file, directory, or project has an unknown location on Windows. | Requires the Everything desktop app and ES (`es.exe`). |
 | [`explanatory-mode`](explanatory-mode/SKILL.md) | The work should stay understandable as it proceeds: what is happening, and why important choices were made. | Insights stay in the conversation, not in the codebase. |
 | [`grok-search`](grok-search/SKILL.md) | A task needs current or externally verified information from the Web or X. | Requires Python 3.10+ and an xAI API key. See the [setup and usage guide](grok-search/README.md). |
