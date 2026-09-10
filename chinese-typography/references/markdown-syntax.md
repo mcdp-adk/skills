@@ -7,7 +7,7 @@
 空格应加在显示文字的边界，保持语法定界符完整。例如：
 
 ```markdown
-请从 [SDK 下载页](https://example.org/sdk)获取文件。
+请从 [SDK 下载页](https://example.org/sdk) 获取文件。
 执行 `tool --check` 后查看结果。
 ```
 
