@@ -4,6 +4,8 @@ description: >-
   Chooses wording so the person reading can understand the dialogue content from
   the text. Use when writing text a human will read. Do not use to rewrite text
   that must stay as written.
+metadata:
+  internal: true
 ---
 
 # Writing to Be Understood

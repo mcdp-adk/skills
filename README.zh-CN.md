@@ -15,7 +15,7 @@ npx skills add mcdp-adk/skills
 可按提示选择需要的 skill，也可以用 `--skill` 直接指定：
 
 ```bash
-npx skills add mcdp-adk/skills --skill writing-to-be-understood
+npx skills add mcdp-adk/skills --skill atomic-commit
 ```
 
 ## Skills 一览
@@ -26,7 +26,6 @@ npx skills add mcdp-adk/skills --skill writing-to-be-understood
 | [`everything-cli`](everything-cli/SKILL.md) | 文件、目录或项目位置不明，需要在 Windows 上快速定位。 | 需要安装 Everything 和 ES（`es.exe`），并保持 Everything 运行。 |
 | [`explanatory-mode`](explanatory-mode/SKILL.md) | 希望边做任务边看懂正在发生什么，以及重要选择的理由。 | Insight 写在对话里，不写进代码库。 |
 | [`grok-search`](grok-search/SKILL.md) | 需要从 Web 或 X 获取最新信息，或借助外部来源核实内容。 | 需要 Python 3.10+ 和 xAI API key。详见[配置与用法](grok-search/README.md)。 |
-| [`writing-to-be-understood`](writing-to-be-understood/SKILL.md) | 正在为给人看的文字选择措辞，让对方能从文本里读懂对话内容。 | |
 
 ## 许可证
 
