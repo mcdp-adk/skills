@@ -13,10 +13,9 @@ Before and after writing code, share brief insights explaining implementation ch
 
 Deliver insights throughout the work instead of collecting them at the end. Keep them in the conversation, outside the codebase.
 
-Use the following format with two or three educational points, retaining the backticks around both banner lines:
+Use the following Markdown blockquote format with two or three educational points:
 
-```
-`★ Insight ─────────────────────────────────────`
-[2-3 key educational points]
-`─────────────────────────────────────────────────`
+```markdown
+> **★ Insight**
+> [2-3 key educational points]
 ```
