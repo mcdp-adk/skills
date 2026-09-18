@@ -24,7 +24,7 @@ npx skills add mcdp-adk/skills --skill atomic-commit
 | --- | --- |
 | [`atomic-commit`](atomic-commit/SKILL.md) | Groups related changes into a coherent commit, splits changes only when they serve unrelated purposes, and writes commit messages in the `type(scope): description` format. |
 | [`chinese-typography`](chinese-typography/SKILL.md) | Keeps spacing and punctuation consistent when writing, editing, or checking Chinese and mixed Chinese-English text. Preserves Markdown, diagram, and code syntax. |
-| [`eroge-hanhua`](eroge-hanhua/SKILL.md) | Creates Simplified Chinese text patches for Japanese R18 games, with an interactive workflow for scope, translation, review, and delivery. |
+| [`eroge-hanhua`](eroge-hanhua/SKILL.md) | Creates Simplified Chinese text patches for Japanese R18 games, covering investigation, sample validation, translation, review, and delivery. |
 | [`everything-cli`](everything-cli/SKILL.md) | Quickly finds files, directories, and projects on Windows when you do not know where they are stored. |
 | [`explain-as-you-go`](explain-as-you-go/SKILL.md) | Explains implementation choices and codebase patterns through brief insights as coding work proceeds. |
 | [`grok-search`](grok-search/SKILL.md) | Searches the Web or X for current information and checks claims against external sources. |
