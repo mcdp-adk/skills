@@ -20,7 +20,7 @@ description: 在生成中文回复、撰写或编辑中英混排文档、检查�
 | 引号与书名号 | 新写简体中文用 `“”`，内层用 `‘’`；书名用 `《》`。 |
 | 省略号与破折号 | 中文正文写作 `……`、`——`；按含义区分破折号、区间连接符和负号。 |
 
-这些约定以[《中文文案排版指北》](https://github.com/sparanoid/chinese-copywriting-guidelines/blob/master/README.zh-Hans.md)为主要参考，用于统一日常输出。风格有合理选择时，以当前文本的一致性为准。
+这些约定以 [中文文案排版指北](https://github.com/sparanoid/chinese-copywriting-guidelines/blob/master/README.zh-Hans.md) 为主要参考，用于统一日常输出。风格有合理选择时，以当前文本的一致性为准。
 
 ## 排版边界
 
