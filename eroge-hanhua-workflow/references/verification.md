@@ -68,7 +68,3 @@
 候选包或条件变化后，判断哪些结论受到影响。文件清单或哈希可以帮助核对对象，不能替代语义或运行验证。只改变无关元数据不必全部重测；相关内容变化、相反证据或检查误判则需补验。
 
 工具当前故障和已有证据分别判断。启动前失败不能写成运行通过，也不自动推翻同一候选先前有效的运行结果。修复或替换被阻塞的手段，继续不依赖它的任务；接手 Agent 据实际材料辨认仍有效的结果和待验证部分。
-
-## 查证入口
-
-[KAG 存档数据](https://krkrz.github.io/krkr2doc/kag3doc/contents/SaveData.html) 说明标签、调用位置和系统状态的关系；[WOLF 保存与读取](https://silversecond.com/WolfRPGEditor/Help/04ev_file.html) 展示不同状态保存方式；[Ren'Py 开发工具](https://www.renpy.org/doc/html/developer_tools.html#lint) 明确区分 lint 与实际测试。这些资料支持检查思路，具体引擎和版本的路径、控制方法仍需现场核实。
