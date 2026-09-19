@@ -4,7 +4,9 @@
 
 ## 初查与方案
 
-从用户指定原版和已有材料确认版本、运行条件、资源组织与语言来源。先读入口、清单和代表文件，再按实际发现扩大调查。引擎名称只提供线索，游戏版本、定制脚本和加载方式仍需核实，不预设游戏带有本地化表。原版只读，调查中的运行同样遵循 [数据保护](verification.md#运行与数据保护)。
+从用户指定原版和已有材料确认版本、运行条件、资源组织与语言来源。先读入口、清单和代表文件，区分现有材料是开发工程、可编辑资源还是打包发行文件，再按实际发现扩大调查。结合文件内容和运行信息核实引擎、版本及定制加载方式；引擎名称和扩展名只提供线索。原版只读，调查中的运行同样遵循 [数据保护](verification.md#运行与数据保护)。
+
+选择方法时按 [查证入口](#查证入口) 查相关机制及版本，核对工具需要的输入和可生成的输出。官方本地化功能可能依赖开发工程或预先配置，提取工具也可能只有读取能力；以当前材料能否完成修改、载入和中文显示为依据。资料有限的自研引擎按下表追踪实际来源与读取端，从代表资源验证可行路径。
 
 按实际作品关注剧情对白、角色称呼、选项、界面，以及涉及玩法的状态、道具、活动或动态组合。回想、分支和不同关系阶段可能共用或改变文字；不能只提取对白就宣称覆盖全部语言内容，也不要求每部作品都具备这些类型。
 
@@ -20,7 +22,7 @@
 
 ## 翻译材料与实际接口
 
-优先利用能满足目标的现成工具和原生格式，按 [材料关系](workspace.md#翻译材料的必要关系) 保留原文定位、可维护译文与判义入口。没有原生本地化机制时，建立当前游戏所需的最小处理方法；可以采用文件转换、补充语言资源或适用的运行时方式，不预先建设跨引擎平台。
+优先利用当前材料可用、能满足目标的现成工具和原生格式，按 [材料关系](workspace.md#翻译材料的必要关系) 保留原文定位、可维护译文与判义入口。没有可用的原生本地化机制时，建立当前游戏所需的最小处理方法；可以采用文件转换、补充语言资源或适用的运行时方式，不预先建设跨引擎平台。
 
 只读取或提取纳入内容及判义、制作实际需要的资源。图片可以帮助定位界面或人物动作，字体用于文字呈现；能直接引用就无需另复制一份。现成工具顺带导出的材料可以保留，完整资源整理不作为翻译前置任务。
 
@@ -54,6 +56,12 @@
 
 ## 查证入口
 
-按识别出的机制选相关资料，不逐引擎展开阅读：吉里吉里/KAG 的 [制作准备](https://krkrz.github.io/krkr2doc/kag3doc/contents/Prepare.html) 和 [补丁发布](https://krkrz.github.io/krkr2doc/kag3doc/contents/Distribute.html) 涉及脚本编码、预渲染字体及封包覆盖；[TyranoScript 标签](https://tyrano.jp/tag/) 可追查正文、脚本和系统页面；WOLF 的 [字符串操作](https://silversecond.com/WolfRPGEditor/Help/04ev_string.html) 与 [素材规格](https://silversecond.com/WolfRPGEditor/Help/06material.html) 展示事件文字、外部数据和字体等关系。
+以下入口用于 eroge 制作中的剧本、事件和资源机制，按已识别的情况选读：
 
-核对手册所指版本，旧 KAG 文档和当前工具约定不能互相套用。遇到其他引擎、私有格式或定制加载器时，沿其实际工具、文档与输入输出查证行为。
+- 吉里吉里／KAG 的 [制作准备](https://krkrz.github.io/krkr2doc/kag3doc/contents/Prepare.html) 和 [补丁发布](https://krkrz.github.io/krkr2doc/kag3doc/contents/Distribute.html)：核对脚本编码、预渲染字体及封包覆盖条件。
+- [ONScripter 作者文档](https://ogapee.github.io/www/onscripter_en.html)：核对脚本、资源包与字体入口。用于 NScripter 系作品时先核对实际解释器及兼容范围，不能直接据此更换运行程序。
+- [TyranoScript 标签](https://tyrano.jp/tag/)：沿正文、脚本和系统页面查文字来源。
+- RPG Maker 的 [MZ 插件说明](https://www.rpgmakerweb.com/blog/using-plugins-in-mz) 与 WOLF 的 [字符串操作](https://silversecond.com/WolfRPGEditor/Help/04ev_string.html)、[素材规格](https://silversecond.com/WolfRPGEditor/Help/06material.html)：关注事件、数据库、插件及外部数据之间的关系。RPG Maker 先区分具体世代，工具与格式按对应版本查证。
+- [Ren’Py 翻译文档](https://www.renpy.org/doc/html/translation.html)：区分对白翻译、界面字符串和样式适配，核实当前游戏能否使用这些入口。
+
+Unity、Unreal、Godot 等通用引擎及其他引擎沿同一制作链路处理，按实际文字来源选择对应版本的文档与工具。例如 [Unity 本地化配置](https://docs.unity3d.com/Packages/com.unity.localization@1.5/manual/QuickStartGuide.html) 面向开发工程，发行版是否已采用该机制需另查。以上入口不是引擎白名单；旧版手册、兼容实现与游戏定制行为分别核实。
