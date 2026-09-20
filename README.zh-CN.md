@@ -24,7 +24,7 @@ npx skills add mcdp-adk/skills --skill atomic-commit
 | --- | --- |
 | [`atomic-commit`](atomic-commit/SKILL.md) | 将相关改动归为一次完整的提交，仅在改动目的无关时拆分，并按 `type(scope): description` 格式编写提交说明。 |
 | [`chinese-typography`](chinese-typography/SKILL.md) | 在撰写、编辑或检查中文及中英混排文本时，统一空格和标点，保留 Markdown、图表及代码语法。 |
-| [`eroge-hanhua-workflow`](eroge-hanhua-workflow/SKILL.md) | 制作并验证日文 R18 游戏的简体中文汉化补丁，支持开始或接续项目、单独审校译文和修正补丁。 |
+| [`eroge-hanhua-workflow`](eroge-hanhua-workflow/SKILL.md) | 指导日文 R18 游戏的简体中文汉化，涵盖资源调查与整理、翻译审校、必要适配及补丁验证与交付。明确原始资源、编辑成果和生成结果的边界，便于不同 Agent 接续工作。 |
 | [`everything-cli`](everything-cli/SKILL.md) | 在 Windows 上快速查找位置不明的文件、目录或项目。 |
 | [`explain-as-you-go`](explain-as-you-go/SKILL.md) | 在完成编程任务的过程中，用简短讲解说明实现选择和代码库模式。 |
 | [`grok-search`](grok-search/SKILL.md) | 搜索 Web 或 X 上的最新信息，或通过外部来源核实内容。 |
