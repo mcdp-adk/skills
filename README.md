@@ -15,19 +15,19 @@ npx skills add mcdp-adk/skills
 Follow the prompts to choose your skills, or specify one with `--skill`:
 
 ```bash
-npx skills add mcdp-adk/skills --skill atomic-commit
+npx skills add mcdp-adk/skills --skill repo-style-guide
 ```
 
 ## Available skills
 
 | Skill | What it does |
 | --- | --- |
-| [`atomic-commit`](atomic-commit/SKILL.md) | Groups related changes into a coherent commit, splits changes only when they serve unrelated purposes, and writes commit messages in the `type(scope): description` format. |
 | [`chinese-typography`](chinese-typography/SKILL.md) | Keeps spacing and punctuation consistent when writing, editing, or checking Chinese and mixed Chinese-English text. Preserves Markdown, diagram, and code syntax. |
 | [`eroge-hanhua-workflow`](eroge-hanhua-workflow/SKILL.md) | Guides Simplified Chinese localization of Japanese R18 games, from resource investigation and organization through translation, review, adaptation, and patch verification and delivery. Keeps source resources, editable work, and generated outputs distinct so different agents can continue the work. |
 | [`everything-cli`](everything-cli/SKILL.md) | Quickly finds files, directories, and projects on Windows when you do not know where they are stored. |
 | [`explain-as-you-go`](explain-as-you-go/SKILL.md) | Explains implementation choices and codebase patterns through brief insights as coding work proceeds. |
 | [`grok-search`](grok-search/SKILL.md) | Searches the Web or X for current information and checks claims against external sources. |
+| [`repo-style-guide`](repo-style-guide/SKILL.md) | Keeps naming, content, and links consistent across Git commits and GitHub issues and pull requests. |
 
 Additional requirements:
 
