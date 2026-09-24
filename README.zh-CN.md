@@ -28,6 +28,7 @@ npx skills add mcdp-adk/skills --skill repo-style-guide
 | [`explain-as-you-go`](explain-as-you-go/SKILL.md) | 在完成编程任务的过程中，用简短讲解说明实现选择和代码库模式。 |
 | [`grok-search`](grok-search/SKILL.md) | 搜索 Web 或 X 上的最新信息，或通过外部来源核实内容。 |
 | [`repo-style-guide`](repo-style-guide/SKILL.md) | 统一 Git 提交与 GitHub issue、PR 的命名、内容和关联约定。 |
+| [`setup-project-conventions`](setup-project-conventions/SKILL.md) | 通过交互设置项目的写作与协作约定，展示完整规则和 Agent 读取入口，确认后写入项目。需手动调用。 |
 
 额外依赖：
 

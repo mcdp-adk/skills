@@ -28,6 +28,7 @@ npx skills add mcdp-adk/skills --skill repo-style-guide
 | [`explain-as-you-go`](explain-as-you-go/SKILL.md) | Explains implementation choices and codebase patterns through brief insights as coding work proceeds. |
 | [`grok-search`](grok-search/SKILL.md) | Searches the Web or X for current information and checks claims against external sources. |
 | [`repo-style-guide`](repo-style-guide/SKILL.md) | Keeps naming, content, and links consistent across Git commits and GitHub issues and pull requests. |
+| [`setup-project-conventions`](setup-project-conventions/SKILL.md) | Interactively sets up project writing and collaboration conventions. Previews the complete rules and agent entry points before writing them to the project. Invoke manually. |
 
 Additional requirements:
 
