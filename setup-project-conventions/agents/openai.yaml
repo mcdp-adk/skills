@@ -1,5 +1,5 @@
 interface:
   display_name: "Setup Project Conventions"
-  short_description: "Configure writing and collaboration rules"
+  short_description: "Configure writing, collaboration, and delivery"
 policy:
   allow_implicit_invocation: false

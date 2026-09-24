@@ -1,6 +1,6 @@
 ---
 name: setup-project-conventions
-description: "Configure this repo's writing languages, collaboration rules, commit conventions, and reader checks. Run when setting up project conventions."
+description: "Configure this repo's writing languages, collaboration rules, change delivery workflow, and reader checks. Run when setting up project conventions."
 disable-model-invocation: true
 ---
 
@@ -10,7 +10,7 @@ Set up the per-repo conventions that contributors and agents follow:
 
 - **Writing languages**: which languages to use, with a separate wording guide when Chinese is used
 - **Collaboration**: how to write and maintain shared records, hand off work, and share information
-- **Changes and delivery**: commit conventions, PR descriptions, and delivery evidence
+- **Changes and delivery**: how changes enter the project, commit conventions, and delivery evidence
 - **Reader checks**: when a fresh-context subagent should read a draft before publication
 
 This is a prompt-driven skill, not a deterministic script. Explore, present what you found, confirm with the user, then write.
@@ -24,51 +24,93 @@ Look at the current repo to understand its starting state. Read whatever exists;
 - `AGENTS.md` and `CLAUDE.md` at the repo root: does either exist? Is there already an `## Agent skills` section in either?
 - Contributor guidance, linked project conventions, and issue/PR templates
 - `docs/conventions/` and `docs/agents/`: does this skill's prior output already exist?
-- Git remotes and relevant examples of project writing and contributions
+- Git remotes, default branch, documented branch and integration rules, and available merge methods
+- Relevant examples of project writing and contributions
 
-Identify explicit language and contribution rules, work-record locations, maintenance responsibilities, engineering guidance, and sharing boundaries. Reuse existing tracker, labels, domain docs, and artifact contracts, including those configured by Matt's setup; keep their definitions in their existing sources.
+Identify explicit language and contribution rules, work-record locations, maintenance responsibilities, engineering guidance, and sharing boundaries. Reuse existing tracker, labels, domain docs, and workflow definitions; keep their definitions in their existing sources.
 
 Explicit rules settle a choice. Examples inform a recommendation.
 
 ### 2. Present findings and ask
 
-Summarize the existing choices and gaps. Take the sections in order. Ask one unresolved choice, wait for its answer, then continue. Lead with the recommended answer. Skip settled or inapplicable choices.
+Summarise what's present and what's missing. Take the sections in order. Ask one unresolved choice, wait for its answer, then continue. Lead with the recommended answer so the user can accept it in a word. Skip settled or inapplicable choices.
 
 **Section A: Writing languages.**
 
-Establish the project's current readers and collaborators from project guidance and the user's context. Identify their language needs, distinguishing product users from contributors where relevant. Clarify missing information that affects the recommendation.
+Establish the project's current readers and collaborators from project guidance and the user's context. If this is unclear, ask:
 
-Recommend a shared language for contributor communication and material they maintain, including requirements, design explanations, development records, and code comments. Offer:
+> Who will read and maintain this project's content?
+
+Use the answer to recommend a language for contributor communication and material they maintain, including requirements, design explanations, development records, and code comments. Name the content covered by the recommendation, then ask which language to use. Offer:
 
 - **English**
 - **Current conversation language**: name it; omit this option when it duplicates English
-- **Other**: ask which language
+- **Other**: ask for the language
 
-Carry each answer forward to the content it covers. Ask separately where different readers, existing conventions, or tooling create an actual difference. Choose the language of user documentation for its intended readers.
+Carry each answer forward to the content it covers. If the user describes different languages for different content, record that arrangement. Ask separately only where readers or project requirements differ. User documentation follows its intended readers; it may need a different language from contributor material.
 
-For multilingual material, record the language of each version and reference its existing translation guidance. When a new multilingual arrangement is requested, establish its languages and file locations, then clarify how corresponding versions should be kept aligned if that is still unresolved.
+For existing multilingual material, record the versions and link its translation guidance. If the user requests a new multilingual arrangement, ask them to describe the versions they need. Collect missing languages, file locations, and maintenance expectations one at a time, rather than proposing a fixed set of language combinations.
 
 Use English for the main convention files produced by this setup unless the user chooses otherwise. The separate `chinese-wording.md` uses Chinese. Record both choices in `language.md`. If Chinese is used, generate `chinese-wording.md` and its pointer from the wording seed, preserving the recommended forms unless the user or existing project conventions specify an override.
 
-Apply the chosen collaboration language to both issues and PRs, including titles, bodies, and comments. Resolve commit-message language separately when unsettled. For example, English commits and Chinese collaboration means English commit messages and Chinese issue/PR titles and discussions.
+Apply the chosen collaboration language to both issues and PRs, including titles, bodies, and comments. When Git is used and commit-message language is unsettled, ask which language commit messages should use. Record that answer separately from the collaboration language.
 
-**Section B: Commit format.** Skip when commits don't apply or the project already specifies a format.
+**Section B: Changes and delivery.** Skip Git-specific choices when the project doesn't use Git.
+
+> Explainer: This is how a change enters the project: where work starts, where it is submitted, and how it is integrated. Existing project workflows take precedence.
+
+**Submission workflow.** If exploration settled it, use that workflow. Otherwise, ask:
+
+> How should changes enter this project?
+
+Recommend **pull requests** when available. Describe the applicable choices briefly so the user can accept the recommendation or choose another workflow:
+
+- **Pull requests**: develop on a task branch and submit a PR to the receiving branch. Use the platform's equivalent, such as a merge request, where applicable.
+- **Branch merges**: develop on a task branch and merge it into the receiving branch without a PR.
+- **Direct commits**: commit changes on the receiving branch, without a PR.
+- **Other**: ask the user to describe their workflow in a short paragraph; record it as prose and clarify only missing steps needed to use it.
+
+For projects without Git, collect their delivery workflow as freeform prose and skip the branch, merge-method, and commit-format questions.
+
+**Branches.** Use existing branch rules. Otherwise, use the default branch as the starting point for new work and the receiving branch, and include that choice in the preview without a separate confirmation. When a branch cannot be established, ask for its name directly. Continue a task's assigned branch where applicable. Leave branch naming and workspace tools to existing project conventions.
+
+**Integration.** For workflows that merge branches, ask only if the merge method is unsettled:
+
+> How should task branches be integrated?
+
+Recommend **merge commit**. Offer the methods supported by the project:
+
+- **Merge commit**: retain the individual commits and add a merge commit.
+- **Squash**: combine the submitted changes into one commit.
+- **Rebase**: replay the individual commits onto the receiving branch without a merge commit.
+
+Record the selected method in `changes.md`. Skip this question for direct commits or when the user's custom workflow already explains integration.
+
+**Commit format.** If not already specified, ask:
 
 > Use `type(scope): description` for commit titles, with `!` for breaking changes? (recommended: **yes**)
 
 On **yes**, keep the seed's commit format. Otherwise, collect the preferred format and update the commit rule in `changes.md`. Write descriptions in the chosen commit-message language.
 
+Use [changes.md](./changes.md) as the PR-based seed. Replace its integration section with the selected workflow and resolved branches. For branch merges without a PR, keep the task-branch and merge steps. For direct commits, describe committing on the receiving branch. In both cases, replace PR-specific reporting with the project's delivery record or task handoff. For other workflows, write the integration section from the user's description. Keep only applicable rules; the generated file describes this project's workflow, not a menu of alternatives.
+
+Adapt work references and completion rules to the project's record system, even when it differs from the code host. Use automatic closing links only where that system supports them and its workflow permits closure on merge.
+
 **Section C: Record maintenance.** Skip when an explicit project rule already settles this or there are no shared work records.
 
-> When a task or handoff hasn't assigned body maintenance, should the creator maintain the body and others propose changes in comments? (recommended: **yes**)
+The default is that the creator maintains the body and others propose changes in comments, unless a task or workflow assigns responsibility differently. Describe this using the project's records and discussion locations, then ask:
 
-On **yes**, keep the seed's fallback. Otherwise, record the preferred fallback in `collaboration.md`. Adapt it to the project's actual records and discussion locations. Task and workflow assignments take precedence over this fallback.
+> Do you want to keep this default division of responsibility? (recommended: **yes**)
+
+On **yes**, keep the seed's fallback. Only if the user says no, ask who maintains the records and how others propose changes; record that arrangement in `collaboration.md`.
 
 **Section D: Independent reader check.** Skip when already configured.
 
-> Before publishing new or substantially changed instructions, decisions, or handoffs that others will act on, should a subagent unfamiliar with this conversation read the draft and explain what they understand and would do next? (recommended: **yes**)
+> Explainer: A subagent unfamiliar with this conversation reads a draft and explains what they understand and would do next. This checks whether readers can act on it without private conversation context. It applies to new or substantially changed instructions, decisions, and handoffs; ordinary short replies use self-review.
 
-Ordinary short replies use self-review. On **yes**, include `reader-check.md` and its entry point. On **no**, omit both.
+> Do you want to use this reader check before publishing? (recommended: **yes**)
+
+On **yes**, include `reader-check.md` and its entry point. On **no**, omit both.
 
 Use the remaining template rules directly in the draft. Raise an additional question for a concrete conflict or missing fact needed to finish it.
 
@@ -114,7 +156,7 @@ The block:
 
 ### Changes and delivery
 
-[one-line summary of commit, PR, and delivery conventions]. See `docs/conventions/changes.md`.
+[one-line summary of the submission workflow, integration method, and commit conventions]. See `docs/conventions/changes.md`.
 
 ### Independent reader check
 
@@ -128,7 +170,7 @@ Then write the docs files using the seed templates in this skill folder as a sta
 - [language.md](./language.md): chosen languages and language-version rules
 - [chinese-wording.md](./chinese-wording.md): Chinese wording choices (only when Chinese is used)
 - [collaboration.md](./collaboration.md): shared records, handoffs, and sharing boundaries
-- [changes.md](./changes.md): commits, PR descriptions, and delivery evidence
+- [changes.md](./changes.md): submission, integration, commit conventions, and delivery evidence
 - [reader-check.md](./reader-check.md): fresh-context reading procedure (only when adopted)
 
 Resolve placeholders and relative links. Check that the written files and entry points match the confirmed draft.
