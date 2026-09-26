@@ -18,22 +18,21 @@ Follow the prompts to choose your skills, or specify one with `--skill`:
 npx skills add mcdp-adk/skills --skill repo-style-guide
 ```
 
+Active skills live in `skills/`; archived skills are retained in `deprecated/` with `metadata.internal: true`.
+
 ## Available skills
 
 | Skill | What it does |
 | --- | --- |
-| [`chinese-typography`](chinese-typography/SKILL.md) | Keeps spacing and punctuation consistent when writing, editing, or checking Chinese and mixed Chinese-English text. Preserves Markdown, diagram, and code syntax. |
-| [`eroge-hanhua-workflow`](eroge-hanhua-workflow/SKILL.md) | Guides Simplified Chinese localization of Japanese R18 games, from resource investigation and organization through translation, review, adaptation, and patch verification and delivery. Keeps source resources, editable work, and generated outputs distinct so different agents can continue the work. |
-| [`everything-cli`](everything-cli/SKILL.md) | Quickly finds files, directories, and projects on Windows when you do not know where they are stored. |
-| [`explain-as-you-go`](explain-as-you-go/SKILL.md) | Explains implementation choices and codebase patterns through brief insights as coding work proceeds. |
-| [`grok-search`](grok-search/SKILL.md) | Searches the Web or X for current information and checks claims against external sources. |
-| [`repo-style-guide`](repo-style-guide/SKILL.md) | Keeps naming, content, and links consistent across Git commits and GitHub issues and pull requests. |
-| [`setup-project-conventions`](setup-project-conventions/SKILL.md) | Interactively sets up project writing, collaboration, and change delivery conventions. Previews the complete rules and agent entry points before writing them to the project. Invoke manually. |
+| [`chinese-typography`](skills/chinese-typography/SKILL.md) | Standardizes spacing and punctuation when writing or editing Chinese and mixed Chinese-English text. |
+| [`eroge-hanhua-workflow`](skills/eroge-hanhua-workflow/SKILL.md) | Guides Japanese R18 game localization into Simplified Chinese, from resource investigation to patch verification and delivery. |
+| [`everything-cli`](skills/everything-cli/SKILL.md) | Finds files, directories, and projects on Windows when their location is unknown. |
+| [`explain-as-you-go`](skills/explain-as-you-go/SKILL.md) | Explains implementation choices and codebase patterns while carrying out coding tasks. |
+| [`repo-style-guide`](skills/repo-style-guide/SKILL.md) | Keeps naming, content, and links consistent across Git commits and GitHub issues and pull requests. |
 
 Additional requirements:
 
 - **everything-cli**: Install Everything and ES (`es.exe`), and keep Everything running.
-- **grok-search**: Requires Python 3.10+ and an xAI API key. See the [setup and usage guide](grok-search/README.md).
 
 ## License
 

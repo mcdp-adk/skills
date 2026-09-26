@@ -1,18 +1,9 @@
 ---
 name: grok-search
+description: 'Use when the task requires actually retrieving content from the external Web or X: current information, a specified official page or account, a specified historical date range, or external verification of a claim or other content the user supplied. It also covers the narrow management of this CLI: running, configuring, or troubleshooting `grok-search`, and explaining its JSON, errors, `response_id`, or continuation behavior. Do not use for general local file or repository search, code analysis, analysis of user-provided content without external sources, or stable-knowledge answers when external retrieval was not requested. Even troubleshooting must not read or display `.env`. Current legal or market materials may be retrieved, but this skill does not provide legal certification or predict prices.'
 compatibility: Requires a Python 3.10+ runner (try python, then platform python, then uv). Stdlib-only.
-description: >
-  Use when the task requires actually retrieving content from the external Web
-  or X: current information, a specified official page or account, a specified
-  historical date range, or external verification of a claim or other content
-  the user supplied. It also covers the narrow management of this CLI: running,
-  configuring, or troubleshooting `grok-search`, and explaining its JSON,
-  errors, `response_id`, or continuation behavior. Do not use for general local
-  file or repository search, code analysis, analysis of user-provided content
-  without external sources, or stable-knowledge answers when external retrieval
-  was not requested. Even troubleshooting must not read or display `.env`.
-  Current legal or market materials may be retrieved, but this skill does not
-  provide legal certification or predict prices.
+metadata:
+  internal: true
 ---
 
 # Grok Search

@@ -1,9 +1,8 @@
 # grok-search
 
-An [Agent Skills](https://agentskills.io) skill for retrieving live Web and X
-content through xAI Grok. Use it for current information, specified pages or
-accounts, historical date ranges, and external verification—not for local file
-search, legal certification, or price prediction.
+Retrieves Web and X content through xAI Grok for current information, specified sources, and external fact-checking.
+
+This skill is archived in `deprecated/` and marked `metadata.internal: true`.
 
 ## Install
 
