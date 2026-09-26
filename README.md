@@ -28,7 +28,7 @@ Active skills live in `skills/`; archived skills are retained in `deprecated/` w
 | [`eroge-hanhua-workflow`](skills/eroge-hanhua-workflow/SKILL.md) | Guides Japanese R18 game localization into Simplified Chinese, from resource investigation to patch verification and delivery. |
 | [`everything-cli`](skills/everything-cli/SKILL.md) | Finds files, directories, and projects on Windows when their location is unknown. |
 | [`explain-as-you-go`](skills/explain-as-you-go/SKILL.md) | Explains implementation choices and codebase patterns while carrying out coding tasks. |
-| [`repo-style-guide`](skills/repo-style-guide/SKILL.md) | Keeps naming, content, and links consistent across Git commits and GitHub issues and pull requests. |
+| [`repo-style-guide`](skills/repo-style-guide/SKILL.md) | Standardizes names and wording when preparing Git branches and commits or writing GitHub issues, pull requests, and comments. |
 
 Additional requirements:
 

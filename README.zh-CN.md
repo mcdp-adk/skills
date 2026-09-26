@@ -28,7 +28,7 @@ npx skills add mcdp-adk/skills --skill repo-style-guide
 | [`eroge-hanhua-workflow`](skills/eroge-hanhua-workflow/SKILL.md) | 指导日文 R18 游戏的简体中文汉化，涵盖资源调查、补丁验证与交付。 |
 | [`everything-cli`](skills/everything-cli/SKILL.md) | 在 Windows 上查找位置不明的文件、目录和项目。 |
 | [`explain-as-you-go`](skills/explain-as-you-go/SKILL.md) | 在执行编程任务时，解释实现选择和代码库模式。 |
-| [`repo-style-guide`](skills/repo-style-guide/SKILL.md) | 统一 Git 提交与 GitHub issue、PR 的命名、内容和关联约定。 |
+| [`repo-style-guide`](skills/repo-style-guide/SKILL.md) | 在命名分支、准备提交或撰写 GitHub issue、PR 和评论时，统一命名与表达风格。 |
 
 额外依赖：
 
