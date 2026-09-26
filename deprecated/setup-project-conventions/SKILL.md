@@ -1,6 +1,6 @@
 ---
 name: setup-project-conventions
-description: Configure this repo's writing languages, collaboration rules, change delivery workflow, and reader checks. Run when setting up project conventions.
+description: Configure a repository's writing languages, collaboration rules, change delivery workflow, and reader checks. Use when setting up project conventions.
 disable-model-invocation: true
 metadata:
   internal: true

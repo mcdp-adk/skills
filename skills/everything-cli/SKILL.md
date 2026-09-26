@@ -1,6 +1,6 @@
 ---
 name: everything-cli
-description: Use on Windows when a file, directory, or project may be outside the known working directory or its location is unclear, especially with OneDrive Files On-Demand. Locate it through Everything's filename and path index before recursive filesystem search. Do not use for content search inside an already known directory.
+description: Locate files, directories, and projects on Windows through Everything's filename and path index. Use when a target's location is unknown or may lie outside the current working directory, rather than for content search within a known directory.
 compatibility: Windows only. Requires the official Everything desktop app and ES (`es.exe`); Everything must be running.
 ---
 

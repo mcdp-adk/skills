@@ -1,6 +1,6 @@
 ---
 name: chinese-typography
-description: 生成中文回复，或撰写、编辑、检查中西文混排内容时使用。统一可见文字的间距、标点和字符形式，兼顾 Markdown 渲染。
+description: 统一中文及中西文混排的间距、标点和字符形式，兼顾 Markdown 渲染。在生成中文回复，或撰写、编辑、检查中西文混排内容时使用。
 ---
 
 # 中文混排

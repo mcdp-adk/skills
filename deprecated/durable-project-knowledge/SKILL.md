@@ -1,6 +1,6 @@
 ---
 name: durable-project-knowledge
-description: Use when a task explicitly requires establishing or reorganizing durable project knowledge; when substantial project work spans sessions, handoffs, or collaborators and needs to discover, read, and maintain durable goal, design, decision, or plan knowledge; when a durable knowledge entry point or source is missing, conflicting, or undiscoverable and blocks the work; or when completed work may have changed that durable knowledge.
+description: Find, use, and maintain durable project goals, designs, decisions, and plans. Use when substantial work spans sessions or collaborators, project knowledge needs establishing or repair, or completed work changes lasting knowledge.
 metadata:
   internal: true
 ---
