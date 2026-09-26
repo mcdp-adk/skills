@@ -1,7 +1,6 @@
 ---
 name: grok-search
 description: Search the live Web and X with the grok-search CLI and interpret its results. Use when external retrieval or verification is needed, or when running, configuring, or troubleshooting this CLI.
-compatibility: Requires a Python 3.10+ runner (try python, then platform python, then uv). Stdlib-only.
 metadata:
   internal: true
 ---
