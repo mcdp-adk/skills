@@ -9,17 +9,21 @@ Follow the user's explicit instructions for the task, then explicit project conv
 
 ## Branch names
 
-Use `type/short-topic`: a lowercase Conventional Commits type followed by a short kebab-case topic. Name the branch for its overall purpose. Where the project or tool requires a prefix, use that prefix with the topic.
+Use `type/short-topic`: a lowercase change type followed by a short kebab-case topic. Choose the type using the same meanings as commit types, based on the branch's overall purpose. Where the project or tool requires a prefix, use that prefix with the topic.
 
 ## Commits
 
 Keep one coherent intention per commit, including its supporting tests and docs.
 
-For ordinary change commits, use `type(scope): description`, with lowercase Conventional Commits types and `!` before the colon for breaking changes. Reuse established scopes; otherwise use the affected module or directory in lowercase kebab-case. Omit scope when no single area fits.
+For ordinary change commits, use `type(scope): description`, with `!` before the colon for breaking changes. Use lowercase types following Conventional Commits and established project usage. Choose the type for the change represented by that commit. Reuse established scopes; otherwise use the affected module or directory in lowercase kebab-case. Omit scope when no single area fits.
 
-Describe the commit's change in imperative mood, without a trailing period. Default to a one-line message; add a body when the reason, constraints, or references are needed to understand the change.
+Describe the commit's change in imperative mood, without a trailing period. Apply this format regardless of how the change commit is created or combined; a PR title used to draft its message must be adapted to the commit format.
 
-For messages recording Git operations, such as merges, follow the project or tool's established format. Check generated messages for an accurate description and useful references; supplement them when important information is missing.
+Default to a one-line message. When needed, add a body explaining reasons, constraints, or important consequences. Separate it from the title with a blank line. Use short paragraphs, or `-` bullets for parallel points, without fixed section headings.
+
+Put references and standard metadata in a footer, separated from the preceding text by a blank line, with each entry on its own line. Use `Refs: <reference>` for ordinary associations and the appropriate syntax for other relationships or metadata.
+
+Preserve operation-specific structure in merge and revert messages, and tool-interpreted markers such as `fixup!`. Within those structures, keep descriptions accurate and relevant. Automatically suggested prose is a draft, not a separate style convention.
 
 ## Issues and pull requests
 
