@@ -13,17 +13,17 @@ Use `type/short-topic`: a lowercase change type followed by a short kebab-case t
 
 ## Commits
 
-Keep one coherent intention per commit, including its supporting tests and docs.
+Keep one coherent intention per commit, including its supporting tests and docs. Write the message for the change that commit represents, whether newly created, combined, or rewritten. Reuse existing text where it remains accurate and useful.
 
 For ordinary change commits, use `type(scope): description`, with `!` before the colon for breaking changes. Use lowercase types following Conventional Commits and established project usage. Choose the type for the change represented by that commit. Reuse established scopes; otherwise use the affected module or directory in lowercase kebab-case. Omit scope when no single area fits.
 
-Describe the commit's change in imperative mood, without a trailing period. Apply this format regardless of how the change commit is created or combined; a PR title used to draft its message must be adapted to the commit format.
+Describe the commit's overall change in imperative mood, without a trailing period.
 
-Default to a one-line message. When needed, add a body explaining reasons, constraints, or important consequences. Separate it from the title with a blank line. Use short paragraphs, or `-` bullets for parallel points, without fixed section headings.
+Default to a title only. Add a body when readers need more context or explanation to understand the commit, such as its rationale, behavior, or important consequences. Separate it from the title with a blank line. Use short paragraphs for connected explanations or `-` bullets for parallel points, with plain wording rather than repeated commit-title prefixes. Keep the length proportional to the explanation needed, without fixed section headings.
 
 Put references and standard metadata in a footer, separated from the preceding text by a blank line, with each entry on its own line. Use `Refs: <reference>` for ordinary associations and the appropriate syntax for other relationships or metadata.
 
-Preserve operation-specific structure in merge and revert messages, and tool-interpreted markers such as `fixup!`. Within those structures, keep descriptions accurate and relevant. Automatically suggested prose is a draft, not a separate style convention.
+Preserve operation-specific structure in merge and revert messages, and tool-interpreted markers such as `fixup!`. Describe the integration or reversal where relevant. Treat automatically suggested prose as a draft to adapt to these conventions.
 
 ## Issues and pull requests
 
