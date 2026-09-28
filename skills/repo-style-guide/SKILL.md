@@ -1,15 +1,19 @@
 ---
 name: repo-style-guide
-description: Apply default conventions for names, wording, and links. Use when naming Git branches, preparing commits, or writing GitHub issues, pull requests, and comments.
+description: Standardize names, wording, and links in Git and GitHub collaboration. Use when naming branches, creating or rewriting commits, pushing or merging changes, or creating, editing, or publishing issues, pull requests, and comments.
 ---
 
 # Repository Style Guide
 
 Follow the user's explicit instructions for the task, then explicit project conventions and templates, then these defaults. Use English by default and reuse project terminology.
 
-## Branch names
+## Applying the conventions
 
-Use `type/short-topic`: a lowercase change type followed by a short kebab-case topic. Choose the type using the same meanings as commit types, based on the branch's overall purpose. Where the project or tool requires a prefix, use that prefix with the topic.
+Before recording or publishing names or text, check their final form against the applicable conventions. Treat reused and tool-generated wording as drafts to check and adapt.
+
+Local commits can proceed under the current task's instructions, with each message checked. Before publishing names or text whose later correction would require rewriting shared history or disrupt others' work, show the complete proposed text and wait for confirmation. Group related items into one preview, including the full messages for a series of commits.
+
+Previously approved text needs no further confirmation while it and the applicable conventions remain unchanged. Check new or changed text produced by later operations. If the user explicitly requests direct execution, check the text and proceed within that request.
 
 ## Commits
 
@@ -23,7 +27,11 @@ Default to a title only. Add a body when readers need more context or explanatio
 
 Put references and standard metadata in a footer, separated from the preceding text by a blank line, with each entry on its own line. Use `Refs: <reference>` for ordinary associations and the appropriate syntax for other relationships or metadata.
 
-Preserve operation-specific structure in merge and revert messages, and tool-interpreted markers such as `fixup!`. Describe the integration or reversal where relevant. Treat automatically suggested prose as a draft to adapt to these conventions.
+Preserve operation-specific structure in merge and revert messages, and tool-interpreted markers such as `fixup!`. Describe the integration or reversal where relevant.
+
+## Branch names
+
+Use `type/short-topic`: a lowercase change type followed by a short kebab-case topic. Choose the type using the same meanings as commit types, based on the branch's overall purpose. Where the project or tool requires a prefix, use that prefix with the topic.
 
 ## Issues and pull requests
 
