@@ -7,45 +7,29 @@ description: Standardize names, wording, and links in Git and GitHub collaborati
 
 Follow the user's explicit instructions for the task, then explicit project conventions and templates, then these defaults. Use English by default and reuse project terminology.
 
-## Context and references
+## Default style
 
-Write messages and descriptions so their intended readers can understand what they represent and the key facts without access to the private task conversation. Use accessible references for supporting evidence, detailed discussion, and history. Include sources and related work when needed to explain the record's origin, rationale, or relationship to other work, and make each relationship clear. Keep the text proportional to its purpose.
+Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for ordinary change commits and for PR titles. Choose a lowercase type for the overall change and describe it in the title in imperative mood, without a trailing period. Include a scope when it helps locate the change, reusing names and granularity established for similar work. For new scopes, use project terminology in lowercase kebab-case.
 
-## Commits
+Use natural language for issue titles, naming the problem or requested outcome.
 
-Keep one coherent intention per commit, including its supporting tests and docs. Write the message for the change that commit represents, whether newly created, combined, or rewritten.
+Name branches `type/short-topic`, using the same change types and a short kebab-case topic that describes the branch's overall purpose. Use a required project or tool prefix in place of the default type prefix.
 
-For ordinary change commits, use `type(scope): description`, with `!` before the colon for breaking changes. Use lowercase types following Conventional Commits and established project usage. Choose the type for the change represented by that commit.
+Keep one coherent intention per commit, including its supporting tests and docs.
 
-Include a scope when the change has a meaningful project area. Reuse the scope names and granularity established for similar changes. Otherwise, choose a feature or module that captures the main change, using project terminology in lowercase kebab-case. Supporting tests, configuration, and wiring across directories do not by themselves make the scope broader. Omit scope when no meaningful area captures the change.
+## Content and references
 
-Describe the commit's overall change in imperative mood, without a trailing period.
+Write for the current record's purpose and intended readers. Include the key facts needed to understand it without the private task conversation. Distinguish proposals from established decisions.
 
-Add an explanatory body when readers need more than the title to understand the commit, such as its rationale, behavior, or important consequences. Separate it from the title with a blank line. Use short paragraphs for connected explanations or `-` bullets for parallel points, with plain wording rather than repeated commit-title prefixes and without fixed section headings.
+Use the applicable project or task template for the body. Organize supporting explanations in short paragraphs or lists. A commit needs an explanatory body only when its title leaves important rationale, behavior, or consequences unclear. Reuse earlier descriptions where they remain accurate and useful for the final record.
 
-Put references and standard metadata in a footer, whether or not an explanatory body is needed. Separate it from the preceding text with a blank line, with each entry on its own line. Use `Refs: <reference>` for ordinary associations and the appropriate syntax for other relationships or metadata.
+Use comments to add information needed to decide or continue the work.
 
-Preserve operation-specific structure in merge and revert messages, and tool-interpreted markers such as `fixup!`. Describe the integration or reversal where relevant.
-
-## Branch names
-
-Use `type/short-topic`: a lowercase change type followed by a short kebab-case topic. Choose the type using the same meanings as commit types, based on the branch's overall purpose. Where the project or tool requires a prefix, use that prefix with the topic.
-
-## Issues and pull requests
-
-### Titles
-
-Use natural language to name the problem, requested outcome, or proposed change. Use existing labels for classification rather than type or status prefixes in titles.
-
-### Bodies and comments
-
-Use the applicable project or task template for the body. Distinguish proposals from established decisions.
-
-Publish comments that add information needed to decide or continue the work, such as a question, decision, blocker, or new evidence. Omit routine progress narration and repeated summaries; link existing information instead.
+Link accessible sources for supporting evidence, detailed discussion, and history rather than repeating their contents. Make relationships clear and use the appropriate syntax for references and metadata, avoiding duplicate references that convey the same relationship.
 
 ## Applying the conventions
 
-Before recording or publishing names or text, check their final form against the applicable conventions. Reuse existing or tool-generated wording where it remains accurate and useful, adapting it to the final record.
+Where a record's format carries operation semantics or is interpreted by tooling, retain that structure and apply these defaults to its descriptive text where compatible. Before recording or publishing names or text, check their final form for accuracy, necessary context, and conformity to the applicable conventions.
 
 Local commits can proceed under the current task's instructions, with each message checked. Before publishing names or text whose later correction would require rewriting shared history or disrupt others' work, show the complete proposed text as it will be recorded and wait for confirmation. Include any body and footer in the preview. Group related items into one preview, including the full messages for a series of commits.
 
