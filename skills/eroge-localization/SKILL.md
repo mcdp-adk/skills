@@ -1,48 +1,48 @@
 ---
 name: eroge-localization
-description: Localize Japanese eroge into Simplified Chinese with guidance for translation, resource adaptation, and patch acceptance. Use when investigating a game's localization requirements, translating or reviewing its text, adapting resources, or preparing and checking a Chinese patch.
+description: Localize Japanese eroge into Simplified Chinese using reusable language, asset processing, and engine adaptation knowledge. Use when investigating a game's resources, translating or reviewing its content, adapting assets or program behavior, or preparing a Chinese localization patch.
 ---
 
 # Eroge Localization
 
-Apply the references in this package to the requested Japanese-to-Simplified-Chinese localization task. They provide reusable language knowledge, technical methods, and acceptance criteria. Work from the title's actual version, resources, and agreed scope; use the matching material without repeating research already covered here.
+Use the prepared methods in this package for the requested localization work. Choose them from the game's actual resources and loading behavior; an engine name narrows the investigation but does not determine every format or modification route.
 
-## Scope
+## Establish the task
 
-For a whole-game request, account for dialogue, narration, choices, interface text, and generated messages. Treat image lettering, redraws, and voice replacement as separate scope decisions. For a local correction or investigation, work on the requested content and its affected uses.
+Determine the source release, available materials, desired result, and affected content. A playable distribution, editable project, translation draft, and existing patch provide different modification opportunities. Reuse established project records rather than imposing a new project structure.
 
-Patch preparation produces the package and its instructions. Include publication or changes to a player's existing installation only when requested.
+For a whole-game request, inventory the sources of dialogue, narration, choices, interface text, and generated messages, together with the assets they depend on. Select image, animation, audio, video, subtitle, font, and data changes from the project's needs. An asset can be useful as translation context without needing modification. For a scoped correction, follow its affected references rather than processing the whole game.
 
-Use existing project records, editable files, and terminology decisions. Establish missing facts from the supplied materials; bring choices about coverage, characterization, visual style, or accepted limitations to the user with a recommendation and its consequences. Ordinary file organization and implementation choices belong to the current task.
+Bring consequential choices about linguistic style, asset replacement, coverage, and accepted limitations to the user with a recommendation. Technical investigation and routine implementation choices belong to the task. Patch preparation includes its files and instructions; publication and changes to the player's existing installation require that scope to have been requested.
 
-## Choose the relevant reference
+## Read for the work at hand
 
-Read only the rows that apply. An engine guide supplements the shared technical guidance when its conditions match the game.
-
-| Current need | Reference and what it supplies |
+| Need | Prepared guidance |
 | --- | --- |
-| Interpret, translate, or revise text | [Text and context](references/text-and-context.md): Japanese meaning, character voice, dynamic expressions, and linguistic review |
-| Resolve a recurring term or register | [Terminology](references/terminology.md): reusable distinctions and context-dependent Chinese candidates |
-| Find content, preserve editable translations, or build a patch | [Resources and patching](references/resources-and-patching.md): coverage, source relationships, encoding, loading, and package construction |
-| Choose or adapt fonts and layout | [Fonts and layout](references/fonts-and-layout.md): Chinese glyphs, display paths, character coverage, and line fitting |
-| Judge coverage, a repair, or a deliverable | [Quality and evidence](references/quality-and-evidence.md): language, runtime, compatibility, and patch acceptance |
-| Work with Ren'Py resources | [Ren'Py](references/engines/renpy.md): native translation, script availability, language selection, and engine-specific constraints |
-| Work with RPG Maker MV or MZ resources | [RPG Maker MV/MZ](references/engines/rpg-maker.md): database and event text, escapes, plugins, fonts, and saved state |
+| Identify an engine, generation, or modification route | [Engine selection](references/engine-selection.md): matching engine guides and investigation of unlisted formats |
+| Locate, extract, convert, modify, and re-integrate assets | [Asset processing](references/asset-processing.md): shared method, dependencies, and reversible working formats |
+| Extract or rewrite strings, scripts, or data fields | [Text resources](references/text-resources.md): identity, control syntax, encodings, and compiled data |
+| Translate or review Japanese meaning and Chinese expression | [Chinese adaptation](references/chinese-adaptation.md): context, voice, dialogue, UI, and review |
+| Resolve recurring lexical ambiguity | [Lexical distinctions](references/lexical-distinctions.md): reusable meanings and contextual candidates |
+| Adapt images, UI, animation, fonts, or layout | [Visual resources](references/visual-resources.md) |
+| Adapt audio, video, or subtitles | [Media resources](references/media-resources.md) |
+| Change decoding, resource loading, or runtime behavior | [Program adaptation](references/program-adaptation.md) |
+| Package results or assess a completion claim | [Patch delivery](references/patch-delivery.md): coverage, compatibility, installation, and evidence |
 
-For an unlisted engine, start from the shared resource guidance and identify the actual reader, format, and display mechanism. Research the unresolved mechanism; record title-specific findings with the title's materials. An engine name or familiar extension alone does not establish compatibility with a tool or method.
+Read only the relevant shared references and engine details. A known engine still needs the matching generation and asset-specific method; an unfamiliar engine can use the shared investigation and processing methods immediately.
 
-## Keep the work grounded
+## Preserve the useful relationships
 
-- Keep the original release unchanged. Edit maintainable translation or adaptation sources and generate the patch from them; apply and run it in a suitable test copy when runtime work is in scope.
-- Preserve the relationship between source location, context, current translation, generated output, and checked candidate. Identical Japanese strings can need different translations in different contexts.
-- Resolve meaning at the level of a complete expression. Maintain variable identity and program behavior while adapting Chinese wording and order.
-- Use the title's glossary for confirmed choices and their conditions. The bundled terminology reference provides meanings and candidates, not automatic substitutions. Use the [title glossary template](assets/templates/title-glossary.md) only when an existing format does not already serve this purpose.
-- Match completion claims to actual evidence. Translation review, structural checks, runtime observation, and installation checks answer different questions; [quality and evidence](references/quality-and-evidence.md) defines their boundaries.
+- Keep original material, editable work, and generated output distinguishable. Corrections belong in the maintained inputs so rebuilding preserves them.
+- Retain each asset's identity, source location, consumers, transformation, and destination. Text equality or a filename alone may lose scene, object, or version context.
+- Resolve complete expressions and preserve program semantics. Localized names and labels must remain separate from resource identifiers and control data.
+- Keep reusable meanings here and title-specific choices with the title. Adapt the [language decisions template](assets/language-decisions.md) only when no suitable record already exists.
+- Match completion claims to the actual candidate and inspected scope. File extraction, successful conversion, game loading, and acceptable presentation establish different things.
 
-## Use the prepared knowledge
+## Apply documented methods selectively
 
-The references include the working knowledge needed for their stated scope. Source links document the basis of technical or linguistic claims. Revisit a source when a version mismatch, conflicting evidence, or an uncovered mechanism makes further research useful.
+The references contain working guidance; source links support its technical basis. Consult upstream material when a version difference, conflicting result, or uncovered mechanism requires it. Named utilities are optional candidates, selected for the specific input and output route, rather than prerequisites for using this skill.
 
-Keep tool choices conditional on the available materials and their supported formats. A method documented for an editable developer project may not apply to a shipped game. Establish that distinction before producing a large translation set or recommending additional tools.
+When a method's support ends, record the exact unresolved boundary and investigate that boundary. Avoid rediscovering the already covered parts or treating a listed tool's extraction capability as proof of a complete patching route.
 
-Return the requested result in its maintenance location, with the applicable source version, remaining uncertainties, and evidence for any completion claim. When delivering a patch, adapt the [release notes template](assets/templates/release-notes.md) to the actual package and supported installation method.
+Return the requested material in its maintenance location. For a patch, adapt the [patch readme template](assets/patch-readme.md) to its actual base release, assets, application method, and supported behavior.

@@ -25,7 +25,7 @@ Active skills live in `skills/`; archived skills are retained in `deprecated/` w
 | Skill | What it does |
 | --- | --- |
 | [`chinese-typography`](skills/chinese-typography/SKILL.md) | Standardizes spacing and punctuation when writing or editing Chinese and mixed Chinese-English text. |
-| [`eroge-localization`](skills/eroge-localization/SKILL.md) | Provides reusable language guidance, resource adaptation methods, and patch acceptance criteria for Japanese eroge localization into Simplified Chinese. |
+| [`eroge-localization`](skills/eroge-localization/SKILL.md) | Provides Japanese-to-Simplified-Chinese language guidance, asset processing methods, and adaptation references across eroge engines. |
 | [`everything-cli`](skills/everything-cli/SKILL.md) | Finds files, directories, and projects on Windows when their location is unknown. |
 | [`repo-style-guide`](skills/repo-style-guide/SKILL.md) | Standardizes names and wording when preparing Git branches and commits or writing GitHub issues, pull requests, and comments. |
 
