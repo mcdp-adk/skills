@@ -25,8 +25,8 @@ Register text-bearing tag parameters, including custom macro parameters; otherwi
 the extractor can omit captions even when it collects dialogue. Preserve extracted
 identities and review regenerated tables when scenarios change.
 
-Choose a project language code, for example `zhcn`, and use that same value in tables,
-language selection, and conditional assets:
+Choose a project language code, such as `zhcn` for Simplified Chinese, and use that
+same value in tables, language selection, and conditional assets:
 
 ```text
 [lang_set name="zhcn"]
@@ -34,7 +34,7 @@ language selection, and conditional assets:
 
 This code is an application identifier, not automatic locale negotiation. Map browser
 language values and saved user preferences explicitly. The official example's `ch`
-is also an example identifier, not a requirement for Simplified Chinese.
+is also an example identifier, not a required code.
 Keep character-name translations distinct from scenario passages.
 
 ## Direct scenario and UI editing
@@ -52,7 +52,7 @@ by a custom plugin. Keep markup and escapes valid in the actual consuming contex
 Adjust message area, font metrics, margins, and ruby treatment alongside translation.
 The [V6 tag reference](https://tyranoscript.com/tag/) documents font face selection and
 web-font use. Define the font in the title's CSS, ensure the shipped font covers the
-Chinese corpus, and reference the defined family. An installed development-machine
+target-language text, and reference the defined family. An installed development-machine
 font alone is insufficient for a portable build.
 
 ## Images and language-dependent assets

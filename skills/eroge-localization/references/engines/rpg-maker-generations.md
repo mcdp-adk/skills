@@ -62,7 +62,7 @@ Inspect enabled plugins, their order, parameters, custom data files, and UI draw
 
 ## Fonts, other assets, and loading
 
-**MV:** `fonts/gamefont.css` defines `GameFont`, but stock window font selection can choose a Chinese system-font list instead when the game's locale is Chinese. Trace `Window_Base.standardFontFace` and plugins before assuming one CSS change covers every window. [Font selection](https://github.com/rpgtkoolmv/corescript/blob/master/js/rpg_windows/Window_Base.js)
+**MV:** `fonts/gamefont.css` defines `GameFont`, but stock window font selection can choose a Chinese system-font list instead when the game's locale is Chinese. Trace `Window_Base.standardFontFace` and plugins for the target language before assuming one CSS change covers every window. [Font selection](https://github.com/rpgtkoolmv/corescript/blob/master/js/rpg_windows/Window_Base.js)
 
 **MZ:** System 2 defines main/number font files, fallback, and size. Inspect the shipped font manager and `Game_System` accessors; do not apply MV's CSS recipe automatically. [MZ font settings](https://rpgmakerofficial.com/product/MZ_help-en/01_08_12_02.html)
 
@@ -70,4 +70,4 @@ For image/audio deployment encryption, select a reader and writer or an explicit
 
 Use the actual content root for replacement data and scripts. Preserve plugin order and account for wrapper archives and stale caches. Actor names and other text can be copied into runtime objects and saves; database edits may only affect newly initialized state. Do not overwrite player-authored names during migration. [MV actor initialization](https://github.com/rpgtkoolmv/corescript/blob/master/js/rpg_objects/Game_Actor.js)
 
-Treat database loading, Chinese rendering, choice behavior, media, and claimed old-save compatibility separately under [patch delivery](../patch-delivery.md). A parsed data file establishes neither full text coverage nor runtime compatibility.
+Treat database loading, target-language rendering, choice behavior, media, and claimed old-save compatibility separately under [patch delivery](../patch-delivery.md). A parsed data file establishes neither full text coverage nor runtime compatibility.

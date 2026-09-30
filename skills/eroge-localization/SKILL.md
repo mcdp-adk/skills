@@ -1,6 +1,6 @@
 ---
 name: eroge-localization
-description: Localize Japanese eroge into Simplified Chinese using reusable language, asset processing, and engine adaptation knowledge. Use when investigating a game's resources, translating or reviewing its content, adapting assets or program behavior, or preparing a Chinese localization patch.
+description: Localize Japanese eroge into target languages using shared translation, asset processing, and engine adaptation methods, with detailed Chinese guidance. Use when investigating game resources, translating or reviewing content, adapting assets or program behavior, or preparing a localization patch.
 ---
 
 # Eroge Localization
@@ -9,7 +9,9 @@ Use the prepared methods in this package for the requested localization work. Ch
 
 ## Establish the task
 
-Determine the source release, available materials, desired result, and affected content. A playable distribution, editable project, translation draft, and existing patch provide different modification opportunities. Reuse established project records rather than imposing a new project structure.
+Determine the Japanese source release, target language and regional conventions, available materials, desired result, and affected content. A playable distribution, editable project, translation draft, and existing patch provide different modification opportunities. Reuse established project records rather than imposing a new project structure.
+
+Apply the shared methods to the requested target language. The prepared language-specific guidance is most detailed for Simplified Chinese; use it only where it fits the target. Resolve additional language requirements from the actual content and runtime rather than assuming that an engine or font supports every language.
 
 For a whole-game request, inventory the sources of dialogue, narration, choices, interface text, and generated messages, together with the assets they depend on. Select image, animation, audio, video, subtitle, font, and data changes from the project's needs. An asset can be useful as translation context without needing modification. For a scoped correction, follow its affected references rather than processing the whole game.
 
@@ -22,8 +24,9 @@ Bring consequential choices about linguistic style, asset replacement, coverage,
 | Identify an engine, generation, or modification route | [Engine selection](references/engine-selection.md): matching engine guides and investigation of unlisted formats |
 | Locate, extract, convert, modify, and re-integrate assets | [Asset processing](references/asset-processing.md): shared method, dependencies, and reversible working formats |
 | Extract or rewrite strings, scripts, or data fields | [Text resources](references/text-resources.md): identity, control syntax, encodings, and compiled data |
-| Translate or review Japanese meaning and Chinese expression | [Chinese adaptation](references/chinese-adaptation.md): context, voice, dialogue, UI, and review |
-| Resolve recurring lexical ambiguity | [Lexical distinctions](references/lexical-distinctions.md): reusable meanings and contextual candidates |
+| Interpret Japanese and translate or review the requested content | [Translation method](references/translation-method.md): context, voice, complete expressions, and review |
+| Adapt wording for a Chinese target | [Chinese adaptation](references/chinese-adaptation.md): expression, address, register, and regional usage |
+| Resolve recurring Japanese terms for a Chinese target | [Chinese terminology](references/chinese-terminology.md): semantic distinctions and contextual candidates |
 | Adapt images, UI, animation, fonts, or layout | [Visual resources](references/visual-resources.md) |
 | Adapt audio, video, or subtitles | [Media resources](references/media-resources.md) |
 | Change decoding, resource loading, or runtime behavior | [Program adaptation](references/program-adaptation.md) |

@@ -22,9 +22,9 @@ For animation or layered characters, retain the project’s state mapping rather
 
 Trace a font to its actual renderer. Dialogue, names, menus, backlog, input, ruby, bitmap text, and plugin windows may use separate fonts or fallback rules. Determine whether an issue comes from decoding, font selection, missing glyphs, regional glyph design, shaping, or layout before changing font settings.
 
-Build the required characters from final visible strings, punctuation, Japanese retained in the game, symbols, ruby, and runtime substitutions. Include arbitrary player input only if that behavior is in scope. A Unicode cmap check establishes character mapping, not which font the game loads or whether the glyph looks like Simplified Chinese. OpenType defines cmap lookup; fontTools exposes the selected Unicode map through TTFont.getBestCmap(). [OpenType cmap](https://learn.microsoft.com/en-us/typography/opentype/spec/cmap) · [fontTools TTFont API](https://fonttools.readthedocs.io/en/latest/ttLib/ttFont.html)
+Build the required characters from final visible strings, punctuation, Japanese retained in the game, symbols, ruby, and runtime substitutions. Include arbitrary player input only if that behavior is in scope. A Unicode cmap check establishes character mapping, not which font the game loads or whether its glyph forms suit the target language. OpenType defines cmap lookup; fontTools exposes the selected Unicode map through TTFont.getBestCmap(). [OpenType cmap](https://learn.microsoft.com/en-us/typography/opentype/spec/cmap) · [fontTools TTFont API](https://fonttools.readthedocs.io/en/latest/ttLib/ttFont.html)
 
-Example Python check for a known required string:
+Example Python check for a known Chinese string; use the actual target content for the project:
 
     from fontTools.ttLib import TTFont
     required = set(map(ord, "中文示例"))
@@ -40,7 +40,7 @@ The subset still needs review for required layout tables and runtime compatibili
 
 Codepoint coverage does not by itself validate variation selectors, combining marks, ligatures, or shaping substitutions. Include the actual sequences from the content and inspect them with the renderer and locale settings the game uses. If fallback fonts participate, check that adjacent glyphs do not change baseline, weight, or spacing unexpectedly.
 
-Use a font design and regional glyph forms appropriate to Simplified Chinese. Check fallback, shaping, variable-font support, metrics, line height, baseline, outline, punctuation, and ruby in the target renderer. Preserve the font license and notices if distributing it. Chinese line breaking and punctuation placement should follow the project style and the renderer’s actual behavior. [W3C Chinese Layout Requirements](https://www.w3.org/TR/clreq/)
+Use a font design and regional glyph forms appropriate to the target language. Check fallback, shaping, variable-font support, metrics, line height, baseline, outline, punctuation, and ruby in the target renderer. Preserve the font license and notices if distributing it. Check line breaking, text direction, and punctuation placement against the target language and the renderer’s actual behavior. For Chinese-specific conventions, see [Chinese adaptation](chinese-adaptation.md).
 
 ## Fit the actual control
 
@@ -48,4 +48,4 @@ When text overflows, identify the owning constraint: fixed canvas, text box widt
 
 Inspect art at the target scale, display density, and background. Check button states, image-language switching, atlas selection, animation, and each affected renderer. A correct exported image can still fail through wrong import settings, stale atlas metadata, missing fallbacks, or selection of the original resource.
 
-For an image-heavy interface, check text safe areas and localization expansion against the actual localized string. The original label width is not a reliable constraint for Chinese; ensure translated text stays inside its visual background and does not cover an icon, state marker, or input focus cue.
+For an image-heavy interface, check text safe areas and localization expansion against the actual localized string. The original label width is not a reliable measure of the space a translation needs; ensure translated text stays inside its visual background and does not cover an icon, state marker, or input focus cue.

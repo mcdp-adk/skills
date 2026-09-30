@@ -30,8 +30,9 @@ that the original authoring project or all symbolic names were recovered.
 [Unicode mode](https://github.com/kichikuou/xsys35c/blob/master/docs/unicode.adoc)
 uses `unicode = true` in `xsys35c.cfg` to emit UTF-8 scenarios. **Those outputs require
 xsystem35 and are incompatible with the stock System 3.x runtime.** This is a
-compiler-and-interpreter route, not a file-encoding-only fix. Supply a Chinese font
-through xsystem35's `.xsys35rc` settings `ttfont_gothic` and `ttfont_mincho`.
+compiler-and-interpreter route, not a file-encoding-only fix. Supply a font covering
+the target text through xsystem35's `.xsys35rc` settings `ttfont_gothic` and
+`ttfont_mincho`.
 Retain Japanese coverage if untranslated names or resources remain.
 
 ## System 4: edit AIN text without discarding identity
@@ -54,7 +55,8 @@ Determine the target AIN/runtime's encoding and font path separately. Editing to
 UTF-8 text interfaces do not imply stock-runtime UTF-8 decoding. For a runtime port,
 [xsystem4](https://github.com/nunuhara/xsystem4) has a title compatibility table;
 use it as a separate dependency with title-specific behavior limits.
-Use [program adaptation](../program-adaptation.md) if Chinese requires code changes.
+Use [program adaptation](../program-adaptation.md) if the target language requires
+code changes.
 
 ## Images, tables, and other resources
 

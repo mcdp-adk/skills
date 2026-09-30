@@ -7,7 +7,7 @@ Use this reference for a confirmed WOLF distribution. `Game.exe`, `Data/BasicDat
 | Release family | Localization implication |
 | --- | --- |
 | Older 2.x data/runtime | Historical parsers and encoding assumptions; do not assume Unicode |
-| 3.00 onward | Unicode engine; still needs a Chinese-capable font and compatible data writer |
+| 3.00 onward | Unicode engine; still needs a font covering the target text and a compatible data writer |
 | 3.50 onward | Additional encryption format and Pro individual-file `.wolfx` support |
 
 The official release history identifies 3.00 as the Unicode transition. Record editor and shipped runtime versions separately; converting editable older data is a migration, not a transparent text patch. [Official release information](https://silversecond.com/WolfRPGEditor/)
@@ -28,7 +28,7 @@ String conditions and assignments can be extracted too; they are not automatical
 
 ## Choose a writer suited to the data
 
-For supported 3.00+ data, the optional official translation support tool offers a concrete route:
+For Simplified Chinese in supported 3.00+ data, the optional official translation support tool offers a concrete route:
 
 1. Select the game's executable to establish the input data root and choose Simplified Chinese as the output language.
 2. Extract the XLSX mapping; retain location codes and the original column, editing the translation column.
@@ -40,7 +40,7 @@ Historical [wolftrans](https://github.com/elizagamedev/wolftrans) is an alternat
 
 Keep each string's map/event/database location with its translation. If a reader can extract a newer format but lacks its writer, use editable authoring data or a supported writer; plaintext extraction alone cannot produce engine data.
 
-## Text controls and Chinese layout
+## Text controls and target-language layout
 
 Preserve variable/control syntax and distinguish actual line breaks from editor notation. Representative native controls include `\f[n]` font size, `\c[n]` color, `\font[n]` font selection, `\sp[n]` speed, `\r[A,B]` ruby, and `<C>`/`<R>`/`<L>` alignment. Games can add common-event conventions around them. [Official text effects](https://silversecond.com/WolfRPGEditor/Guide/EFFECT_006.html)
 

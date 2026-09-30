@@ -16,7 +16,7 @@ equivalent original project with a guaranteed rebuild path.
 
 ## Available project: integrate through its data model
 
-For a title using Unity Localization, add a Simplified Chinese locale and retain
+For a title using Unity Localization, add a locale for the target language and retain
 shared entry identities while editing String Tables. Its
 [String Table model](https://docs.unity3d.com/Packages/com.unity.localization@1.5/manual/StringTables.html)
 separates shared keys from per-locale text; preserve Smart String placeholders and
@@ -77,7 +77,7 @@ gaps. Audio/video replacement generally needs another resource or custom hook ro
 
 ## Fonts, visual assets, and delivery consequences
 
-For TMP, add a Chinese glyph corpus to the generated atlas or provide compatible
+For TMP, add the target-language glyphs to the generated atlas or provide compatible
 [fallback font assets](https://docs.unity3d.com/Packages/com.unity.textmeshpro@4.0/manual/FontAssetsFallback.html).
 Check fallback availability and font/material references, rather than assuming the
 source font file guarantees glyphs in a static atlas. Adjust layouts for names,
@@ -91,5 +91,5 @@ when changing those assets. Localized data tables need their own schema-aware im
 
 Choose native asset changes or a runtime-dependent package per resource. Record
 which game build and loader/plugin combination each replacement targets. Runtime
-acceptance requires actual consumption and Chinese rendering; custom protection, missing schemas,
+acceptance requires actual consumption and target-language rendering; custom protection, missing schemas,
 unsupported hooks, and Addressables updates remain distinct unresolved capabilities.

@@ -1,4 +1,4 @@
-# Chinese Localization Patch
+# Localization Patch
 
 <!-- Replace instructions with facts about the actual package. Omit inapplicable sections. -->
 
@@ -6,6 +6,7 @@
 
 - Game and base release:
 - Patch identifier:
+- Target language and regional convention:
 - Runtime and existing-patch conditions:
 
 ## Included changes

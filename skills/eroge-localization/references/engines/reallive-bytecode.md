@@ -24,13 +24,13 @@ Inspect reconstructed instructions before translating. Retain unsupported instru
 
 The archive writer updates a fixed index of scenario entries. Use its insertion operation rather than concatenating translated bytecode or hex-replacing longer strings. [Archive implementation](https://raw.githubusercontent.com/eglaysher/rldev/master/src/kprl/archiver.ml)
 
-## Chinese decoding and text coverage
+## Text decoding and coverage
 
 UTF-8 editable source does not make the runtime Unicode. RLdev's Chinese output transform uses a nonstandard GB2312-based mapping requiring matching interpreter changes or a compatible rlBabel extension. Font substitution cannot supply that decoder. [Encoding and extension model](https://github.com/eglaysher/rldev/blob/master/Manual.html)
 
 Trace translated content through the actual decoder and renderer. Keep language expression, control syntax, speaker transition, voice cue, and scenario destination distinct. Classify configuration strings by their consumers: a title is display text, while a resource path or function key can be program identity.
 
-Follow generated phrases and comparison operands separately from dialogue literals. Check whether choices, backlog, name input, and system UI use the same text path. Use [program adaptation](../program-adaptation.md) where the existing decoder or display boundary cannot represent the requested Chinese.
+Follow generated phrases and comparison operands separately from dialogue literals. Check whether choices, backlog, name input, and system UI use the same text path. Use [program adaptation](../program-adaptation.md) where the existing decoder or display boundary cannot represent the target language.
 
 ## Images and media
 

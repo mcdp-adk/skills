@@ -26,7 +26,7 @@ VNTextPatch insertlocal WORK/original-scenarios WORK/scenario.xlsx OUT/scenarios
 
 Retain the extracted row identities and original text; fill translations in the tool's expected fields. Keep speaker/name mappings consistent across scenarios. The format switch selects the scenario parser; it does not make arbitrary `._bp` scripts eligible inputs. [CLI and supported formats](https://raw.githubusercontent.com/arcusmaximus/VNTranslationTools/master/README.md)
 
-The writer rebuilds the scenario string region and patches code-relative string addresses while retaining internal strings. It checks translation count and performs word wrapping during insertion. Therefore, inspect its encoding and wrapping policy before relying on it for Chinese; an XLSX containing Unicode does not establish Unicode runtime support. [Scenario writer](https://raw.githubusercontent.com/arcusmaximus/VNTranslationTools/main/VNTextPatch.Shared/Scripts/Ethornell/EthornellScript.cs)
+The writer rebuilds the scenario string region and patches code-relative string addresses while retaining internal strings. It checks translation count and performs word wrapping during insertion. Therefore, inspect its encoding and wrapping policy before relying on it for the target text; an XLSX containing Unicode does not establish Unicode runtime support. [Scenario writer](https://raw.githubusercontent.com/arcusmaximus/VNTranslationTools/main/VNTextPatch.Shared/Scripts/Ethornell/EthornellScript.cs)
 
 Do not hex-replace longer strings in place. Operand offsets and string-region lengths can change; use the matching writer. Preserve code addresses, scenario names, resource references, and ordering independently from visible translation values.
 
@@ -41,7 +41,7 @@ Do not hex-replace longer strings in place. Operand offsets and string-region le
 
 EthornellTools describes separate rendering calls for dialogue/name, backlog, and choices. Some releases use per-message font-size instructions and proportional-spacing configuration. Trace those consumers in the target system/scenario scripts; the documented addresses and parameters are examples for particular binaries, not universal patch offsets. [Rendering notes](https://raw.githubusercontent.com/arcusmaximus/EthornellTools/master/README.md)
 
-Select a Chinese-capable font and compatible text encoding at the actual decoder/renderer. Preserve name-window positioning, choice hit areas, history behavior, and wrapping. Do not copy a byte patch from another release solely because both games contain BGI.exe. See [program adaptation](../program-adaptation.md).
+Select a font covering the target text and compatible text encoding at the actual decoder/renderer. Preserve name-window positioning, choice hit areas, history behavior, and wrapping. Do not copy a byte patch from another release solely because both games contain BGI.exe. See [program adaptation](../program-adaptation.md).
 
 ## Images, audio, and packaging
 

@@ -36,7 +36,7 @@ Keep outer encryption/compression and scene-string XOR settings distinct. Use th
 - Inspect control syntax in actual strings and the consuming commands before changing braces, delimiters, or line breaks; do not import another engine's escape rules.
 - Search configuration and system scenes for menus, backlog, name entry, and error text beyond dialogue strings.
 - Trace generated text and comparison operands before translating the `other` string category. A Japanese filename or lookup key remains a program dependency.
-- Separate a font selection setting from the decoder and renderer. Chinese coverage cannot repair a writer/runtime encoding mismatch; see [program adaptation](../program-adaptation.md).
+- Separate a font selection setting from the decoder and renderer. Font coverage cannot repair a writer/runtime encoding mismatch; see [program adaptation](../program-adaptation.md).
 
 ## Images, sound, and video
 

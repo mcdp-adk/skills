@@ -6,7 +6,7 @@ Use this reference to assemble a localization result and describe what its evide
 
 Compare the requested scope with the resource inventory and maintained edits. Distinguish completed work, intentionally retained material, context-only assets, excluded changes, unresolved readings, and inaccessible sources. A string count or low Japanese-residue count cannot establish whole-game coverage: kanji-only labels, images, generated messages, and unreadable sources may be missed.
 
-For translated content, record the actual bilingual and Chinese review ranges described in [Chinese adaptation](chinese-adaptation.md). For other assets, identify the edited source, generated resource, dependencies, and checks appropriate to its role. An extracted asset is not necessarily an edited or integrated asset.
+For translated content, record the actual bilingual and target-language review ranges described in [translation method](translation-method.md). For other assets, identify the edited source, generated resource, dependencies, and checks appropriate to its role. An extracted asset is not necessarily an edited or integrated asset.
 
 ## Match the claim to the evidence
 
@@ -14,7 +14,7 @@ For translated content, record the actual bilingual and Chinese review ranges de
 | --- | --- | --- |
 | Resource inventory | Located sources and known gaps | Unexamined or unreadable sources |
 | Bilingual comparison | Fidelity in the reviewed range | Unreviewed entries and runtime contexts |
-| Chinese reading | Coherence, voice, terminology, readability | Fidelity without comparison |
+| Target-language reading | Coherence, voice, terminology, readability | Fidelity without comparison |
 | Parsing, compilation, or re-decoding | Structural acceptance by that reader | Correct game loading and behavior |
 | Static font or asset inspection | Examined mappings, metadata, dimensions or streams | Actual selection and presentation |
 | Runtime observation | Candidate behavior on the observed path and state | Other routes, versions and saved states |
@@ -29,7 +29,7 @@ In-game language checking reveals context and presentation problems that file re
 | Dialogue, UI string, or shared term | Meaning, context, syntax, applicable occurrences and display |
 | Choice or dynamic template | Branch identity, cancellation if present, meaningful substitutions and complete outputs |
 | Parser, compiler, or archive writer | Retained structure, identifiers, references, format generation and actual consumption |
-| Font or layout | Affected renderers, Chinese forms, input repertoire, ruby, clipping and hit regions |
+| Font or layout | Affected renderers, target glyph forms, input repertoire, ruby, clipping and hit regions |
 | Image, atlas, animation or scene data | Transparency, geometry, frame/cell references, timing and dependent variants |
 | Audio, video or subtitle | Runtime decoding, channels, loop/cue behavior, synchronization, skipping and transitions |
 | Program hook or binary adaptation | Exact target, matching context, buffer/lifetime behavior, loading and failure behavior |

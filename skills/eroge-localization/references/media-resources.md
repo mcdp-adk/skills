@@ -24,7 +24,7 @@ The -n option refuses to overwrite an existing output. Change codec, bitrate, ch
 
 If replacement voice is in scope, map each take to its speaker, line, route, resource key, and playback event. Keep the approved spoken wording and pronunciation decisions with the recording. Preserve the resource name or update the target mapping deliberately. Check alternate takes and voiced choices where they exist.
 
-Match the target's sample rate, channel layout, format, and playback convention. Preserve voice start/stop behavior, fades, silence, and tails that align with animation or the next line. A longer Chinese take may collide with input timing or another speaker; retiming is a project change, not an automatic consequence of translation. Listen in the surrounding mix and compare levels against adjacent lines.
+Match the target's sample rate, channel layout, format, and playback convention. Preserve voice start/stop behavior, fades, silence, and tails that align with animation or the next line. A longer localized take may collide with input timing or another speaker; retiming is a project change, not an automatic consequence of translation. Listen in the surrounding mix and compare levels against adjacent lines.
 
 For music and sound effects, change media only when it contains language-dependent material or the project explicitly requires an alternate. Preserve cue points, loop boundaries, fades, spatial placement, and mixing role. Loop points may be embedded, stored in a sidecar, or defined by script; converting the waveform alone may discard them. Verify the loop for clicks or gaps and retain the expected channel count when audio is streamed.
 

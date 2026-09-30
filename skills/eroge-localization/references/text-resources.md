@@ -1,6 +1,6 @@
 # Text Resources
 
-Use this reference when extracting, translating in structured formats, or reinserting text. Linguistic choices belong in [Chinese adaptation](chinese-adaptation.md); resource-level transformations belong in [asset processing](asset-processing.md).
+Use this reference when extracting, translating in structured formats, or reinserting text. Linguistic choices belong in [translation method](translation-method.md); resource-level transformations belong in [asset processing](asset-processing.md).
 
 ## Locate the expression, not just the string
 
@@ -26,15 +26,15 @@ Classify ambiguous fields from their consumers before editing. A string can be a
 
 Identify the format grammar before applying substitutions. Distinguish a literal backslash or percent sign from an escape or format operator. Preserve paired markup, nesting, speaker controls, line/page breaks, waits, voice commands, and branch mapping.
 
-Reorder placeholders only where the formatter supports it. Named arguments may allow Chinese word order; positional values may require format changes. Review the assembled expression for names, numbers, optional clauses, and alternate genders or roles where the source actually provides those branches.
+Reorder placeholders only where the formatter supports it. Named arguments may allow the required target word order; positional values may require format changes. Review the assembled expression for names, numbers, optional clauses, and alternate genders or roles where the source actually provides those branches.
 
-For example, a template meaning “give [item] to [person]” needs both identities preserved even if Chinese changes their order. A choice's translated label must stay attached to the original choice target. Moving a voiced line across a wait or page command can change timing despite preserving all words.
+For example, a template meaning “give [item] to [person]” needs both identities preserved even if the translation changes their order. A choice's translated label must stay attached to the original choice target. Moving a voiced line across a wait or page command can change timing despite preserving all words.
 
 ## Follow the bytes through the reader
 
 Determine encoding from the reader, declared format, and known content. Preserve undecodable bytes while investigating. Use strict conversion that identifies unrepresentable characters; replacement characters hide information loss.
 
-Windows code page 932 and code page 936 encode different repertoires. Writing Chinese bytes with a new encoder does not change the runtime's decoder. If required characters cannot pass through the existing path, use a supported Unicode route or adapt the decoder and renderer together. [Microsoft code-page documentation](https://github.com/MicrosoftDocs/globalization/blob/main/globalization/encoding/code-pages.md)
+Changing the output encoding does not change the runtime's decoder. For example, Windows code page 932 and code page 936 encode different repertoires; switching between them for a Chinese target requires a matching reader. If required characters cannot pass through the existing path, use a supported Unicode route or adapt the decoder and renderer together. [Microsoft code-page documentation](https://github.com/MicrosoftDocs/globalization/blob/main/globalization/encoding/code-pages.md)
 
 | Constraint | Check at the relevant boundary |
 | --- | --- |

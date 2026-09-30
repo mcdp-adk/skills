@@ -12,8 +12,8 @@ and title-specific builds. Keep the executable version with the translation form
 explicitly describes incomplete command compatibility. A replacement interpreter
 can change DLL calls, movie playback, text behavior, and saves. Its Unicode font
 requirement concerns font rendering, not a promise that scripts accept UTF-8.
-For Simplified Chinese, establish a decoder and glyph path capable of the required
-characters. A font substitution cannot repair text decoded as the wrong code page.
+Establish a decoder and glyph path capable of the target text. A font substitution
+cannot repair text decoded as the wrong code page.
 
 ## Script recovery and editing
 
@@ -36,9 +36,9 @@ general decoder for newer title-specific formats.
    markers. A text parser must handle command arguments as well as dialogue lines.
 5. Emit source or a recognized encoded container accepted by the selected runtime.
    Use `nscmake` only for its supported standard script format; packaging a script
-   does not add Chinese decoding or change command semantics.
+   does not add decoding for the target language or change command semantics.
 
-If the intended runtime cannot represent Chinese, choose an explicit compatible
+If the intended runtime cannot represent the target language, choose an explicit compatible
 interpreter adaptation or a documented title-specific encoding modification.
 Treat that choice as a changed runtime dependency. Use
 [text resources](../text-resources.md) for encoding and stable passage identities.
@@ -61,13 +61,14 @@ required by the title, with exact resource paths. `nsaconv` is documented primar
 as an archive/image resizing converter; its presence does not establish a general
 edited-directory-to-archive route. Extraction and packing must be selected separately.
 
-## Chinese layout and nontext resources
+## Text layout and nontext resources
 
 Inspect `setwindow` and title macros for character grid, font size, spacing, and
 line count. Check choice hit regions and name/backlog rendering separately.
 ONScripter supports `default.ttf` beside the scripts or an explicit font argument;
-use a licensed font with Chinese coverage and predictable metrics. For its documented
-upstream command line, this selects inputs and font rather than rewriting scripts:
+use a licensed font covering the target text with predictable metrics. The following
+documented command uses a Chinese font path; it selects inputs and font rather than
+rewriting scripts:
 
 ```text
 onscripter --root staging --font staging/fonts/Chinese.ttf
@@ -85,6 +86,6 @@ Replacing voice or video therefore requires its own supported encode/playback pa
 an interpreter that displays translated dialogue may still fail media playback.
 
 Runtime acceptance means the selected interpreter actually consumes the translated
-text and assets, renders Chinese, and preserves route and replay behavior.
+text and assets, renders the target language, and preserves route and replay behavior.
 Save compatibility, native DLL integration, and unsupported commands remain distinct
 gaps; record them rather than describing an interpreter port as a drop-in patch.

@@ -41,11 +41,11 @@ the source-to-output mapping, particularly when several archives contain one nam
    `@command`, labels, comments, and `[iscript]` blocks. A `&` attribute value is an
    evaluated TJS expression. These distinctions come from the
    [KAG tag reference](https://krkrz.github.io/krkr2doc/kag3doc/contents/Tags.html).
-4. Preserve the meaning of `[r]`, `[l]`, and `[p]`; decide Chinese line wrapping from
+4. Preserve the meaning of `[r]`, `[l]`, and `[p]`; decide target-language line wrapping from
    the message layer instead of converting editor line endings into new pauses.
    KAG 3's treatment of source newlines differs from older KAG.
 5. Serialize using the verified decoder's accepted format. Inspect an encoded
-   Chinese sample for loss before packaging; re-encoding does not change a decoder.
+   target-language sample for loss before packaging; re-encoding does not change a decoder.
 
 For custom TJS systems, extract text from the title's data structures or text API.
 Treat code literals used in comparisons as program data until their callers are known.
@@ -61,7 +61,7 @@ loader permits it. Renaming PNG bytes to `.tlg` is not a format conversion.
 
 Adjust message geometry, font face, size, and ruby behavior in the title's configuration
 and macros. If `mappfont` maps a face to a prerendered `.tft`, rebuild that font with
-`krkrfont.exe` for the Chinese character set or revise the mapping to a valid live
+`krkrfont.exe` for the target character set or revise the mapping to a valid live
 font. A new OS font alone may leave the prerendered mapping active.
 
 Voice replacements retain their scenario bindings. Track loop metadata and event

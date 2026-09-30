@@ -8,7 +8,7 @@ Distinguish readable `.rpy` source, compiled `.rpyc`, `.rpa` archives, and suppl
 
 ## Native translation with available source
 
-Choose one language identifier, such as `schinese`; the original language is `None`, regardless of its language. Use the matching launcher's Generate Translations operation, or the SDK's translation command. These authoring commands can load project code, so use a working copy with suitable state handling. The executable path varies by SDK; this is the documented Windows Python 3 layout:
+Choose one language identifier. For Simplified Chinese, this guide uses `schinese`; the original language is `None`, regardless of its language. Use the matching launcher's Generate Translations operation, or the SDK's translation command. These authoring commands can load project code, so use a working copy with suitable state handling. The executable path varies by SDK; this is the documented Windows Python 3 layout:
 
 ```powershell
 .\lib\py3-windows-x86_64\python.exe renpy.py C:\work\game-project translate schinese
@@ -40,7 +40,7 @@ Immediate calls to `renpy.translate_string` do not make dynamic strings statical
 
 ## Fonts, artwork, and media
 
-For standard GUI projects, language-specific GUI variables can select the bundled Chinese font. Trace the actual styles because custom screens and older templates may bypass these variables:
+For standard GUI projects, language-specific GUI variables can select a bundled font. The following Simplified Chinese example uses a Chinese font; choose a font that covers the target text. Trace the actual styles because custom screens and older templates may bypass these variables:
 
 ```renpy
 translate schinese python:
@@ -54,11 +54,11 @@ translate schinese python:
 
 The font file must exist with the required glyphs. `gui.language` selects line-breaking behavior, not the translation language. Check dialogue, input, history, ruby, and button geometry independently. [GUI translation](https://www.renpy.org/doc/html/gui.html#translation-and-gui-variables)
 
-Language-specific files retain relative resource paths: `game/gui/title.png` can have a counterpart at `game/tl/schinese/gui/title.png`. Preserve the original reference so the language-aware loader can select the alternate. Check image layers, animation, and image-backed UI through [visual resources](../visual-resources.md). For voice or movies, establish that the playback path uses translated-file lookup and retain cue/channel associations; handle codec and duration constraints separately through [media resources](../media-resources.md). [File translation](https://www.renpy.org/doc/html/translation.html#image-and-file-translations)
+Language-specific files retain relative resource paths: for the `schinese` example, `game/gui/title.png` can have a counterpart at `game/tl/schinese/gui/title.png`. Preserve the original reference so the language-aware loader can select the alternate. Check image layers, animation, and image-backed UI through [visual resources](../visual-resources.md). For voice or movies, establish that the playback path uses translated-file lookup and retain cue/channel associations; handle codec and duration constraints separately through [media resources](../media-resources.md). [File translation](https://www.renpy.org/doc/html/translation.html#image-and-file-translations)
 
 ## Selection and patch loading
 
-An existing preferences screen can expose `Language("schinese")` and `Language(None)`. Distinguish a forced startup `config.language` from a first-run `config.default_language`; remembered preferences and `RENPY_LANGUAGE` also affect selection. A populated translation directory does not prove it is selected. [Language selection](https://www.renpy.org/doc/html/translation.html#default-language)
+For the `schinese` example, an existing preferences screen can expose `Language("schinese")` and `Language(None)`. Distinguish a forced startup `config.language` from a first-run `config.default_language`; remembered preferences and `RENPY_LANGUAGE` also affect selection. A populated translation directory does not prove it is selected. [Language selection](https://www.renpy.org/doc/html/translation.html#default-language)
 
 Standard distributions discover added scripts, so additive translation files are a possible route. Inspect custom packaging and `config.archives` before relying on that route; archive list order controls which matching entry wins. If renaming or removing source, account for an orphaned `.rpyc`, which can still execute. Preserve original compiled files; source builds can use `old-game/` to retain earlier script IDs. [Archive order](https://www.renpy.org/doc/html/config.html#config.archives), [old-game](https://www.renpy.org/doc/html/build.html#the-old-game-directory)
 
