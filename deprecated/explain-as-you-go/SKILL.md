@@ -1,6 +1,8 @@
 ---
 name: explain-as-you-go
 description: Explain implementation choices and codebase patterns through brief insights during coding tasks. Use when the user wants explanations as you work or wants to learn while you complete a coding task.
+metadata:
+  internal: true
 ---
 
 # Explain as You Go
