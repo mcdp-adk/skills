@@ -25,7 +25,7 @@ npx skills add mcdp-adk/skills --skill repo-style-guide
 | 技能 | 用途 |
 | --- | --- |
 | [`chinese-typography`](skills/chinese-typography/SKILL.md) | 在撰写或编辑中文及中英混排文本时，统一空格和标点。 |
-| [`eroge-hanhua-workflow`](skills/eroge-hanhua-workflow/SKILL.md) | 指导日文 R18 游戏的简体中文汉化，涵盖资源调查、补丁验证与交付。 |
+| [`eroge-localization`](skills/eroge-localization/SKILL.md) | 为日文 eroge 的简体中文汉化提供可复用的语言知识、资源适配方法和补丁验收依据。 |
 | [`everything-cli`](skills/everything-cli/SKILL.md) | 在 Windows 上查找位置不明的文件、目录和项目。 |
 | [`repo-style-guide`](skills/repo-style-guide/SKILL.md) | 在命名分支、准备提交或撰写 GitHub issue、PR 和评论时，统一命名与表达风格。 |
 
