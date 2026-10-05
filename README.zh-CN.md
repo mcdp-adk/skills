@@ -27,7 +27,7 @@ npx skills add mcdp-adk/skills --skill repo-style-guide
 | [`chinese-typography`](skills/chinese-typography/SKILL.md) | 在撰写或编辑中文及中英混排文本时，统一空格和标点。 |
 | [`eroge-localization`](skills/eroge-localization/SKILL.md) | 为日文 eroge 的多语言本地化提供通用方法、深入的中文指导、按需资产处理方法和多引擎适配参考。 |
 | [`everything-cli`](skills/everything-cli/SKILL.md) | 在 Windows 上查找位置不明的文件、目录和项目。 |
-| [`repo-style-guide`](skills/repo-style-guide/SKILL.md) | 在命名分支、准备提交或撰写 GitHub issue、PR 和评论时，统一命名与表达风格。 |
+| [`repo-style-guide`](skills/repo-style-guide/SKILL.md) | 为分支名、commit message 以及 PR 和 issue 标题提供兜底格式。 |
 
 额外依赖：
 
