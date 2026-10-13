@@ -25,12 +25,14 @@ npx skills add mcdp-adk/skills --skill repo-style-guide
 | 技能 | 用途 |
 | --- | --- |
 | [`chinese-typography`](skills/chinese-typography/SKILL.md) | 在撰写或编辑中文及中英混排文本时，统一空格和标点。 |
+| [`design-md`](skills/design-md/SKILL.md) | 在界面开发中遵循项目的 DESIGN.md，并按 Google 的开放 DESIGN.md 格式创建、更新和校验它。 |
 | [`eroge-localization`](skills/eroge-localization/SKILL.md) | 为日文 eroge 的多语言本地化提供通用方法、深入的中文指导、按需资产处理方法和多引擎适配参考。 |
 | [`everything-cli`](skills/everything-cli/SKILL.md) | 在 Windows 上查找位置不明的文件、目录和项目。 |
 | [`repo-style-guide`](skills/repo-style-guide/SKILL.md) | 为分支名、commit message 以及 PR 和 issue 标题提供兜底格式。 |
 
 额外依赖：
 
+- **design-md**：校验时通过 npx 运行 `@google/design.md`。
 - **everything-cli**：需要安装 Everything 和 ES（`es.exe`），并保持 Everything 运行。
 
 ## 许可证
