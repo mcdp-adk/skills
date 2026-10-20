@@ -28,6 +28,7 @@ Active skills live in `skills/`; archived skills are retained in `deprecated/` w
 | [`design-md`](skills/design-md/SKILL.md) | Applies a project's DESIGN.md to UI work, and creates, updates, and validates it in Google's open DESIGN.md format. |
 | [`eroge-localization`](skills/eroge-localization/SKILL.md) | Provides methods for localizing Japanese eroge into target languages, with detailed Chinese guidance, asset processing, and engine adaptation references. |
 | [`everything-cli`](skills/everything-cli/SKILL.md) | Finds files, directories, and projects on Windows when their location is unknown. |
+| [`migrate-practices`](skills/migrate-practices/SKILL.md) | Rebuilds the working practices of reference repositories in a target repository. |
 | [`repo-style-guide`](skills/repo-style-guide/SKILL.md) | Sets fallback formats for branch names, commit messages, and pull request and issue titles. |
 
 Additional requirements:

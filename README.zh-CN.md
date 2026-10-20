@@ -28,6 +28,7 @@ npx skills add mcdp-adk/skills --skill repo-style-guide
 | [`design-md`](skills/design-md/SKILL.md) | 在界面开发中遵循项目的 DESIGN.md，并按 Google 的开放 DESIGN.md 格式创建、更新和校验它。 |
 | [`eroge-localization`](skills/eroge-localization/SKILL.md) | 为日文 eroge 的多语言本地化提供通用方法、深入的中文指导、按需资产处理方法和多引擎适配参考。 |
 | [`everything-cli`](skills/everything-cli/SKILL.md) | 在 Windows 上查找位置不明的文件、目录和项目。 |
+| [`migrate-practices`](skills/migrate-practices/SKILL.md) | 参考已有仓库的工作实践，在目标仓库中重新实现。 |
 | [`repo-style-guide`](skills/repo-style-guide/SKILL.md) | 为分支名、commit message 以及 PR 和 issue 标题提供兜底格式。 |
 
 额外依赖：
