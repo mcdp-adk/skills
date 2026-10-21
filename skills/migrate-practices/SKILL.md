@@ -32,7 +32,7 @@ Design each practice from its root need. Pick the earliest point on the path of 
 - **Checked**: a check decides the practice when the agent produces the output, and its failure names the rule and the fix. A check fails only on a violation; a missing tool fails with the step that provides it. A check whose result arrives after the agent has moved on binds the agent only through a completion criterion that waits for it.
 - **Written**: what no configuration or check decides completely is written for the agent as a principle that decides cases nobody foresaw. A check that decides only part of a principle is replaced by the principle, since passing it would certify the cases it misses.
 
-Where a tool or skill defines an artifact's form, use that form. The step is done when every moving practice has a design, and every check has been tried against a violation and a conforming case.
+Where a tool or skill defines an artifact's form, use that form and its wording, changing only what the artifact's medium requires. The step is done when every moving practice has a design, and every check has been tried against a violation and a conforming case.
 
 ### 4. Confirm
 
