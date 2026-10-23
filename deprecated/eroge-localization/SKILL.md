@@ -1,6 +1,8 @@
 ---
 name: eroge-localization
 description: Localize Japanese eroge into target languages using shared translation, asset processing, and engine adaptation methods, with detailed Chinese guidance. Use when investigating game resources, translating or reviewing content, adapting assets or program behavior, or preparing a localization patch.
+metadata:
+  internal: true
 ---
 
 # Eroge Localization
