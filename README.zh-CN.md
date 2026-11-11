@@ -29,6 +29,7 @@ npx skills add mcdp-adk/skills --skill repo-style-guide
 | [`everything-cli`](skills/everything-cli/SKILL.md) | 在 Windows 上查找位置不明的文件、目录和项目。 |
 | [`migrate-practices`](skills/migrate-practices/SKILL.md) | 参考已有仓库的工作实践，在目标仓库中重新实现。 |
 | [`repo-style-guide`](skills/repo-style-guide/SKILL.md) | 为分支名、commit message 以及 PR 和 issue 标题提供兜底格式。 |
+| [`take-it`](skills/take-it/SKILL.md) | 在隔离环境中准备、验证并审查改动，再将完成的候选结果呈交最终批准。 |
 
 额外依赖：
 
